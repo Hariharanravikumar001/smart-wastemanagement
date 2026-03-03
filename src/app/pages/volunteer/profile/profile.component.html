@@ -1,0 +1,87 @@
+<div class="db-body">
+  <h1 class="db-page-title">🛡️ Agent Profile</h1>
+  <p class="db-page-sub">Manage your service details and account security</p>
+
+  <div class="db-grid-two-col">
+    <!-- Profile Info Card -->
+    <div class="db-card">
+      <div class="db-card-header">
+        <h3 class="db-card-title">👤 Operational Details</h3>
+        <button class="db-edit-toggle" (click)="toggleEditMode()">
+          {{ isEditMode ? 'Cancel' : 'Edit Profile' }}
+        </button>
+      </div>
+
+      <div *ngIf="profileSuccess" class="db-alert success">{{ profileSuccess }}</div>
+      <div *ngIf="profileError" class="db-alert error">{{ profileError }}</div>
+
+      <div class="db-profile-content" *ngIf="!isEditMode">
+        <div class="db-profile-avatar-large">
+          {{ currentUser?.name?.charAt(0) }}
+        </div>
+        <div class="db-detail-list">
+          <div class="db-detail-item">
+            <span class="db-label">Full Name</span>
+            <span class="db-value">{{ currentUser?.name }}</span>
+          </div>
+          <div class="db-detail-item">
+            <span class="db-label">Username</span>
+            <span class="db-value">{{ "@" }}{{ currentUser?.username }}</span>
+          </div>
+          <div class="db-detail-item">
+            <span class="db-label">Email</span>
+            <span class="db-value">{{ currentUser?.email }}</span>
+          </div>
+          <div class="db-detail-item">
+            <span class="db-label">Location</span>
+            <span class="db-value">{{ currentUser?.location || 'Not Specified' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Form -->
+      <form class="db-form" *ngIf="isEditMode" (ngSubmit)="updateProfile()">
+        <div class="db-form-group">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="editUser.name" name="name" class="db-input" placeholder="Enter full name" />
+        </div>
+        <div class="db-form-group">
+          <label>Username</label>
+          <input type="text" [(ngModel)]="editUser.username" name="username" class="db-input" placeholder="Enter username" />
+        </div>
+        <div class="db-form-group">
+          <label>Location</label>
+          <input type="text" [(ngModel)]="editUser.location" name="location" class="db-input" placeholder="Enter location" />
+        </div>
+        <button type="submit" class="db-btn-primary">Save Changes</button>
+      </form>
+    </div>
+
+    <!-- Security / Password Card -->
+    <div class="db-card">
+      <h3 class="db-card-title">🔒 Account Security</h3>
+      <p class="db-desc">Update your credentials to keep your account safe</p>
+
+      <div *ngIf="passwordSuccess" class="db-alert success">{{ passwordSuccess }}</div>
+      <div *ngIf="passwordError" class="db-alert error">{{ passwordError }}</div>
+
+      <form class="db-form" (ngSubmit)="updatePassword()">
+        <div class="db-form-group">
+          <label>Old Password</label>
+          <input type="password" [(ngModel)]="passwords.old" name="oldPass" class="db-input" placeholder="••••••••" />
+        </div>
+        <div class="db-form-group">
+          <label>New Password</label>
+          <input type="password" [(ngModel)]="passwords.new" name="newPass" class="db-input" placeholder="••••••••" />
+        </div>
+        <div class="db-form-group">
+          <label>Confirm Password</label>
+          <input type="password" [(ngModel)]="passwords.confirm" name="confPass" class="db-input" placeholder="••••••••" />
+        </div>
+        <button type="submit" class="db-btn-secondary" [disabled]="!passwords.old || !passwords.new || !passwords.confirm">
+          Update Password
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

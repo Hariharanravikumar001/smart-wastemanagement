@@ -1,0 +1,43 @@
+<div class="db-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="db-sidebar">
+    <div class="db-sidebar-header">
+      <h2 *ngIf="!sidebarCollapsed">SmartWaste</h2>
+      <button (click)="toggleSidebar()">Toggle</button>
+    </div>
+
+    <nav class="db-nav">
+      <button (click)="setTab('overview')">Overview</button>
+
+      <ng-container *ngIf="currentUser?.role === 'User' || currentUser?.role === 'Citizen'">
+        <button (click)="setTab('schedule')">Schedule Pickup</button>
+        <button (click)="setTab('pickups')">Pickup Status</button>
+        <button (click)="setTab('messages')">Messages</button>
+        <button (click)="setTab('statistics')">Statistics</button>
+      </ng-container>
+
+      <ng-container *ngIf="currentUser?.role === 'Volunteer'">
+        <button (click)="setTab('opportunities')">Opportunities</button>
+        <button (click)="setTab('assignments')">Assignments</button>
+        <button (click)="setTab('messages')">Messages</button>
+      </ng-container>
+
+      <button (click)="setTab('profile')">Profile</button>
+      <button (click)="logout()">Sign Out</button>
+    </nav>
+  </aside>
+
+  <main class="db-content">
+    <app-citizen-dashboard 
+      *ngIf="currentUser?.role === 'User' || currentUser?.role === 'Citizen'"
+      [currentUser]="currentUser"
+      [activeTab]="activeTab"
+      (setTab)="setTab($event)">
+    </app-citizen-dashboard>
+
+    <app-volunteer-dashboard
+      *ngIf="currentUser?.role === 'Volunteer'"
+      [currentUser]="currentUser"
+      [activeTab]="activeTab">
+    </app-volunteer-dashboard>
+  </main>
+</div>

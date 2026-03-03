@@ -1,0 +1,53 @@
+<div class="db-body">
+  <h1 class="db-page-title">📅 Schedule Pickup</h1>
+  <p class="db-page-sub">Request a waste collection from your preferred location</p>
+
+  <div *ngIf="submitSuccess" class="db-alert success db-success-anim">
+    ✅ Pickup request submitted successfully! Redirecting to dashboard...
+  </div>
+
+  <div class="db-card db-schedule-card">
+    <h3 class="db-card-title">🗑️ New Pickup Details</h3>
+
+    <div class="db-form-group">
+      <label class="db-form-label">Select Waste Category</label>
+      <div class="db-category-grid">
+        <button *ngFor="let cat of categories"
+                class="db-category-btn"
+                [class.selected]="newRequest.wasteCategory === cat"
+                (click)="newRequest.wasteCategory = cat"
+                type="button">
+          <span class="db-cat-icon">{{ getCategoryIcon(cat) }}</span>
+          <span class="db-cat-name">{{ cat }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="db-grid-inputs">
+      <div class="db-form-group">
+        <label class="db-form-label">Pickup Location</label>
+        <div class="db-input-wrap">
+          <span class="db-input-icon">📍</span>
+          <input type="text" class="db-input db-input-with-icon" 
+                 [(ngModel)]="newRequest.location" 
+                 placeholder="Enter your pickup address" />
+        </div>
+      </div>
+
+      <div class="db-form-group">
+        <label class="db-form-label">Description / Details</label>
+        <textarea class="db-input db-textarea" 
+                  [(ngModel)]="newRequest.description" rows="4"
+                  placeholder="E.g., 3 bags of plastic bottles, old keyboard, etc."></textarea>
+      </div>
+    </div>
+
+    <div class="db-form-actions">
+      <button class="db-action-btn db-submit-btn" 
+              (click)="onSubmitPickup()"
+              [disabled]="!newRequest.description || !newRequest.location">
+        🚛 Submit Pickup Request
+      </button>
+    </div>
+  </div>
+</div>

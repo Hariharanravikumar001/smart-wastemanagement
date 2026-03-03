@@ -1,0 +1,146 @@
+node.exe : - 
+Building...
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (- Building...   
+ :String) [], Remot    
+eException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+
+Browser bundles        
+Initial chunk files     | Names               |  Raw size | Estimated transfer size
+main-IPCWY3PG.js        | main                | 474.22 kB |               106.71 kB
+styles-HR6D4WJL.css     | styles              | 308.33 kB |                32.18 kB
+scripts-SQ7W6IC7.js     | scripts             |  78.53 kB |                21.12 kB
+polyfills-FFHMD2TL.js   | polyfills           |  33.71 kB |                11.02 kB
+
+                        | Initial total       | 894.79 kB |               171.02 kB
+
+
+Server bundles         
+Initial chunk files     | Names               |  Raw size
+server.mjs              | server              |   1.06 MB |                        
+chunk-VR7ZMOEI.mjs      | -                   | 580.64 kB |                        
+polyfills.server.mjs    | polyfills.server    | 262.30 kB |                        
+chunk-NBNPEUB3.mjs      | -                   | 213.91 kB |                        
+chunk-VVCT4QZE.mjs      | -                   |   2.48 kB |                        
+render-utils.server.mjs | render-utils.server |   1.44 kB |                        
+main.server.mjs         | main.server         | 149 bytes |                        
+
+Lazy chunk files        | Names               |  Raw size
+chunk-QZP2S7SI.mjs      | xhr2                |  11.79 kB |                        
+
+Prerendered 8 static routes.
+Application bundle generation failed. [27.570 seconds]
+
+??? [WARNING] bundle 
+initial exceeded 
+maximum budget. Budget 
+500.00 kB was not met 
+by 394.79 kB with a 
+total of 894.79 kB.
+
+
+??? [WARNING] src/app/p
+ages/opportunities/oppo
+rtunity-list/opportunit
+y-list.component.css 
+exceeded maximum 
+budget. Budget 2.00 kB 
+was not met by 3.69 kB 
+with a total of 5.69 
+kB.
+
+
+??? [WARNING] src/app/p
+ages/admin/admin.compon
+ent.css exceeded 
+maximum budget. Budget 
+2.00 kB was not met by 
+2.59 kB with a total 
+of 4.59 kB.
+
+
+??? [WARNING] src/app/p
+ages/dashboard/dashboar
+d.component.css 
+exceeded maximum 
+budget. Budget 2.00 kB 
+was not met by 18.33 
+kB with a total of 
+20.33 kB.
+
+
+??? [WARNING] src/app/p
+ages/opportunities/oppo
+rtunity-detail/opportun
+ity-detail.component.cs
+s exceeded maximum 
+budget. Budget 2.00 kB 
+was not met by 5.25 kB 
+with a total of 7.25 
+kB.
+
+
+??? [WARNING] 1 rules 
+skipped due to 
+selector errors:
+  
+.form-floating>~label 
+-> Did not expect 
+successive traversals.
+
+
+X [ERROR] src/app/pages
+/opportunities/opportun
+ity-list/opportunity-li
+st.component.css 
+exceeded maximum 
+budget. Budget 4.00 kB 
+was not met by 1.69 kB 
+with a total of 5.69 
+kB.
+
+
+X [ERROR] src/app/pages
+/admin/admin.component.
+css exceeded maximum 
+budget. Budget 4.00 kB 
+was not met by 605 
+bytes with a total of 
+4.59 kB.
+
+
+X [ERROR] src/app/pages
+/dashboard/dashboard.co
+mponent.css exceeded 
+maximum budget. Budget 
+4.00 kB was not met by 
+16.33 kB with a total 
+of 20.33 kB.
+
+
+X [ERROR] src/app/pages
+/opportunities/opportun
+ity-detail/opportunity-
+detail.component.css 
+exceeded maximum 
+budget. Budget 4.00 kB 
+was not met by 3.25 kB 
+with a total of 7.25 
+kB.
+
+

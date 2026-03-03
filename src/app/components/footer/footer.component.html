@@ -1,0 +1,49 @@
+<footer class="bg-dark text-light py-5 mt-auto">
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-lg-4 col-md-6">
+        <h5 class="fw-bold mb-3"><i class="bi bi-recycle text-success me-2"></i>WasteZero</h5>
+        <p class="text-secondary small pe-lg-4">Your digital platform for smart waste pickup scheduling and intelligent recycling management. Join us in making the world cleaner, one pickup at a time.</p>
+        <div class="d-flex gap-3 mt-3">
+          <a href="#" class="text-light text-decoration-none"><i class="bi bi-facebook fs-5"></i></a>
+          <a href="#" class="text-light text-decoration-none"><i class="bi bi-twitter-x fs-5"></i></a>
+          <a href="#" class="text-light text-decoration-none"><i class="bi bi-instagram fs-5"></i></a>
+          <a href="#" class="text-light text-decoration-none"><i class="bi bi-linkedin fs-5"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-6">
+        <h6 class="text-uppercase fw-bold mb-3">Links</h6>
+        <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+          <li><a routerLink="/" class="text-secondary text-decoration-none hover-white">Home</a></li>
+          <li><a href="#" class="text-secondary text-decoration-none hover-white" (click)="$event.preventDefault()">About Us</a></li>
+          <li><a href="#" class="text-secondary text-decoration-none hover-white" (click)="$event.preventDefault()">Services</a></li>
+          <li><a href="#" class="text-secondary text-decoration-none hover-white" (click)="$event.preventDefault()">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-2 col-md-6">
+        <h6 class="text-uppercase fw-bold mb-3">Legal</h6>
+        <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+          <li><a href="#" class="text-secondary text-decoration-none hover-white" (click)="$event.preventDefault()">Terms of Service</a></li>
+          <li><a href="#" class="text-secondary text-decoration-none hover-white" (click)="$event.preventDefault()">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <h6 class="text-uppercase fw-bold mb-3">Subscribe to Newsletter</h6>
+        <p class="text-secondary small mb-3">Get the latest updates on waste management and our platform.</p>
+        <form (submit)="$event.preventDefault()" class="d-flex w-100 gap-2">
+          <label for="newsletter1" class="visually-hidden">Email address</label>
+          <input id="newsletter1" type="text" class="form-control bg-dark border-secondary text-light" placeholder="Email address">
+          <button class="btn btn-success" type="button">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top border-secondary">
+      <p class="mb-0 text-secondary small">&copy; 2026 WasteZero, Inc. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .hover-white { transition: color 0.2s; }
+  .hover-white:hover { color: white !important; }
+</style>

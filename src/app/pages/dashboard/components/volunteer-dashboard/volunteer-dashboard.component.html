@@ -1,0 +1,41 @@
+<!-- Volunteer Dashboard UI -->
+
+<!-- ===== OPPORTUNITIES TAB ===== -->
+<div *ngIf="activeTab === 'opportunities'" class="db-body">
+  <h1 class="db-page-title">🌱 Matched Opportunities</h1>
+  <p class="db-page-sub">Based on your location and interests</p>
+
+  <div *ngIf="(matchedOpportunities$ | async) as opps">
+    <div *ngIf="opps.length === 0" class="db-empty">
+      No matched opportunities. Check the <a routerLink="/opportunities">full list</a>.
+    </div>
+    <div *ngFor="let opp of opps" class="db-card db-opp-card" [routerLink]="['/opportunities', opp.id]">
+      <h3 class="db-card-title">{{ opp.title }}</h3>
+      <p class="db-desc">{{ opp.description }}</p>
+      <div class="db-opp-tags">
+        <span class="db-tag">⏱ {{ opp.duration }}</span>
+        <span class="db-tag">♻️ {{ opp.wasteType }}</span>
+        <span class="db-tag">📍 {{ opp.location }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ASSIGNMENTS TAB ===== -->
+<div *ngIf="activeTab === 'assignments'" class="db-body">
+  <h1 class="db-page-title">✅ My Assignments</h1>
+  <p class="db-page-sub">Pickups you've accepted</p>
+  <div *ngIf="(assignments$ | async) as assigns">
+    <div *ngIf="assigns.length === 0" class="db-empty">No assignments yet.</div>
+    <div *ngFor="let req of assigns" class="db-card db-list-item">
+      <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
+      <div class="db-list-info">
+        <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
+        <div class="db-list-meta">{{ req.location }} · {{ req.citizenName }}</div>
+      </div>
+      <span class="db-status-chip" 
+            [class.completed]="req.status === 'Completed'" 
+            [class.scheduled]="req.status === 'Scheduled'">{{ req.status }}</span>
+    </div>
+  </div>
+</div>

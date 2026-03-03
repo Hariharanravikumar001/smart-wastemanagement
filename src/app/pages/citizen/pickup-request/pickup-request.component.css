@@ -1,0 +1,80 @@
+/* Pickup Request Specific Styles */
+.db-body { max-width: 900px; margin: 0 auto; padding: 40px 36px; }
+
+.db-schedule-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(99, 255, 180, 0.08);
+  border-radius: 24px;
+  padding: 32px;
+}
+
+.db-form-group { margin-bottom: 24px; }
+.db-form-label {
+  display: block; font-size: 13px; font-weight: 700; color: rgba(180,200,235,0.45);
+  margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+.db-category-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px; margin-bottom: 10px;
+}
+
+.db-category-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px; padding: 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; transition: all .25s cubic-bezier(.4, 0, .2, 1);
+  color: rgba(180, 200, 235, 0.6);
+}
+.db-category-btn:hover { background: rgba(99, 255, 180, 0.06); border-color: rgba(99, 255, 180, 0.2); transform: translateY(-2px); }
+.db-category-btn.selected {
+  background: rgba(99, 255, 180, 0.1); border-color: #63ffb4; color: #63ffb4;
+  box-shadow: 0 0 20px rgba(99, 255, 180, 0.1);
+}
+.db-cat-icon { font-size: 24px; }
+.db-cat-name { font-size: 13px; font-weight: 600; }
+
+.db-input-wrap { position: relative; }
+.db-input-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 16px; color: rgba(180, 200, 235, 0.4);
+}
+.db-input-with-icon { padding-left: 42px !important; }
+
+.db-input {
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(99, 255, 180, 0.1);
+  color: #f0f4ff; padding: 14px 18px; border-radius: 12px; font-size: 14px;
+  width: 100%; box-sizing: border-box; outline: none; transition: all .2s;
+  font-family: inherit;
+}
+.db-input:focus { border-color: #63ffb4; background: rgba(255, 255, 255, 0.06); }
+
+.db-textarea { resize: vertical; min-height: 120px; }
+
+.db-form-actions { margin-top: 32px; display: flex; justify-content: flex-end; }
+
+.db-submit-btn {
+  padding: 16px 40px; font-size: 16px; border-radius: 14px;
+  background: linear-gradient(135deg, #63ffb4, #00c8ff);
+  color: #0a0d14; border: none; font-weight: 800; cursor: pointer;
+  transition: all .25s ease;
+}
+.db-submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 255, 180, 0.25); }
+.db-submit-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.db-alert { padding: 14px 20px; border-radius: 12px; font-size: 14px; margin-bottom: 24px; background: rgba(99, 255, 180, 0.1); color: #63ffb4; border: 1px solid rgba(99, 255, 180, 0.2); }
+
+@media (max-width: 600px) {
+  .db-category-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Light Mode Overrides */
+:host-context(body:not(.dark-mode)) .db-schedule-card { background: white; border-color: rgba(0,0,0,0.06); box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
+:host-context(body:not(.dark-mode)) .db-input { background: #f8fafb; border-color: rgba(0,0,0,0.1); color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-form-label { color: rgba(0,0,0,0.6); }
+:host-context(body:not(.dark-mode)) .db-input-icon { color: rgba(0,0,0,0.4); }
+:host-context(body:not(.dark-mode)) .db-category-btn { background: #f8fafb; border-color: rgba(0,0,0,0.05); color: #333; }
+:host-context(body:not(.dark-mode)) .db-category-btn.selected { border-color: #10b981; background: rgba(16, 185, 129, 0.08); color: #059669; }
+:host-context(body:not(.dark-mode)) .db-page-title { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-page-sub { color: rgba(0,0,0,0.5); }

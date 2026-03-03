@@ -1,0 +1,82 @@
+/* Profile Specific Styles — Volunteer Theme */
+.db-body { max-width: 1000px; margin: 0 auto; padding: 40px 36px; }
+
+.db-grid-two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; align-items: start; }
+
+.db-card {
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 24px; padding: 30px;
+}
+
+.db-profile-content { padding: 10px 5px; }
+
+.db-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+
+.db-edit-toggle {
+  background: rgba(0, 200, 255, 0.08); border: 1px solid rgba(0, 200, 255, 0.2);
+  color: #00c8ff; padding: 6px 14px; border-radius: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 600; transition: all .2s;
+}
+.db-edit-toggle:hover { background: rgba(0, 200, 255, 0.15); transform: translateY(-1px); }
+
+.db-profile-avatar-large {
+  width: 90px; height: 90px; border-radius: 24px;
+  background: linear-gradient(135deg, #00c8ff, #a78bfa);
+  color: #0a0d14; font-size: 36px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0, 200, 255, 0.2);
+}
+
+.db-detail-list { display: flex; flex-direction: column; gap: 16px; }
+.db-detail-item { display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.db-label { font-size: 12px; color: rgba(180,200,235,0.4); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+.db-value { font-size: 15px; color: #f0f4ff; font-weight: 500; }
+
+/* Form Styles */
+.db-form { display: flex; flex-direction: column; gap: 18px; }
+.db-form-group { display: flex; flex-direction: column; gap: 8px; }
+.db-form-group label { font-size: 12px; color: rgba(180,200,235,0.45); font-weight: 600; }
+
+.db-input {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(0, 200, 255, 0.1);
+  color: #f0f4ff; padding: 12px 16px; border-radius: 12px; font-size: 14px;
+  outline: none; transition: all .2s; width: 100%; box-sizing: border-box;
+}
+.db-input:focus { border-color: #00c8ff; background: rgba(255,255,255,0.05); }
+
+.db-btn-primary {
+  background: linear-gradient(135deg, #00c8ff, #a78bfa); color: #0a0d14;
+  border: none; padding: 14px; border-radius: 12px; font-weight: 700;
+  cursor: pointer; transition: all .25s ease; margin-top: 10px;
+}
+.db-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 200, 255, 0.3); }
+
+.db-btn-secondary {
+  background: rgba(255,255,255,0.05); color: #e0e8ff;
+  border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px;
+  font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.db-btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,0.08); border-color: #00c8ff; color: #00c8ff; }
+.db-btn-secondary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.db-alert { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; font-weight: 600; }
+.db-alert.success { background: rgba(99,255,180,0.1); color: #63ffb4; border: 1px solid rgba(99,255,180,0.2); }
+.db-alert.error { background: rgba(255,107,107,0.1); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.2); }
+
+@media (max-width: 900px) {
+  .db-grid-two-col { grid-template-columns: 1fr; }
+}
+
+/* Light Mode */
+:host-context(body:not(.dark-mode)) .db-card { background: white; border-color: rgba(0,0,0,0.06); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+:host-context(body:not(.dark-mode)) .db-page-title { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-page-sub { color: rgba(0,0,0,0.5); }
+:host-context(body:not(.dark-mode)) .db-card-title { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-value { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-label,
+:host-context(body:not(.dark-mode)) .db-form-group label { color: rgba(0,0,0,0.6); }
+:host-context(body:not(.dark-mode)) .db-input { background: #f8fafb; border-color: rgba(0,0,0,0.1); color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-detail-item { border-bottom-color: rgba(0,0,0,0.05); }
+:host-context(body:not(.dark-mode)) .db-btn-secondary { background: #f8fafb; color: #333; border-color: rgba(0,0,0,0.1); }
+:host-context(body:not(.dark-mode)) .db-alert.success { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+:host-context(body:not(.dark-mode)) .db-alert.error { background: #fef2f2; color: #991b1b; border-color: #fecaca; }

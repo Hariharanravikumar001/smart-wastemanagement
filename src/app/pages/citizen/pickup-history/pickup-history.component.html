@@ -1,0 +1,73 @@
+<div class="db-body">
+  <h1 class="db-page-title">🚛 Pickup Tracking</h1>
+  <p class="db-page-sub">Manage your active requests and view your history of waste collections</p>
+
+  <div class="db-tabs-internal">
+    <!-- Active Requests Section -->
+    <div class="db-section">
+      <h3 class="db-sub-title">📡 Active Requests</h3>
+      <div *ngIf="(activeRequests$ | async) as actives">
+        <div *ngIf="actives.length === 0" class="db-empty">
+          No current active requests. 
+          <a routerLink="/citizen/pickup-request" class="db-link">Schedule one now →</a>
+        </div>
+        
+        <div *ngFor="let req of actives" class="db-card db-pickup-card">
+          <div class="db-pickup-header">
+            <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
+            <div class="db-list-info">
+              <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
+              <div class="db-list-meta">📍 {{ req.location }}</div>
+              <div class="db-list-meta" *ngIf="req.volunteerName">👤 Volunteer: {{ req.volunteerName }}</div>
+            </div>
+            <span class="db-status-chip" [ngClass]="getStatusClass(req.status)">
+              {{ req.status }}
+            </span>
+          </div>
+
+          <!-- Progress Timeline -->
+          <div class="db-timeline">
+            <div class="db-timeline-step" [class.done]="true">
+              <div class="db-timeline-dot"></div>
+              <span>Requested</span>
+            </div>
+            <div class="db-timeline-line" [class.done]="req.status !== 'Pending'"></div>
+            <div class="db-timeline-step" [class.done]="req.status === 'Scheduled' || req.status === 'In Progress'">
+              <div class="db-timeline-dot"></div>
+              <span>Scheduled</span>
+            </div>
+            <div class="db-timeline-line" [class.done]="req.status === 'In Progress'"></div>
+            <div class="db-timeline-step" [class.done]="req.status === 'In Progress'">
+              <div class="db-timeline-dot"></div>
+              <span>In Progress</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Section -->
+    <div class="db-section mt-40">
+      <h3 class="db-sub-title">🧾 Pickup History</h3>
+      <div *ngIf="(historyRequests$ | async) as history">
+        <div *ngIf="history.length === 0" class="db-empty">You haven't completed any pickups yet.</div>
+        
+        <div class="db-history-list">
+          <div *ngFor="let req of history" class="db-card db-list-item">
+            <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
+            <div class="db-list-info">
+              <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
+              <div class="db-list-meta">
+                📍 {{ req.location }} · {{ (req.scheduledDate | date:'mediumDate') || 'N/A' }} 
+                <span *ngIf="req.weight">· ⚖️ {{ req.weight }}kg</span>
+              </div>
+            </div>
+            <span class="db-status-chip" [ngClass]="getStatusClass(req.status)">
+              {{ req.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

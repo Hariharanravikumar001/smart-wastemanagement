@@ -1,0 +1,43 @@
+<div class="of-layout">
+  <div class="of-body">
+    <a class="of-back-link" routerLink="/opportunities">← Back to Opportunities</a>
+    <h1 class="of-title">{{ isEditMode ? '✏️ Edit Opportunity' : '🌱 Create Opportunity' }}</h1>
+
+    <form class="of-form" (ngSubmit)="onSubmit()">
+      <div class="of-field">
+        <label class="of-label">Title</label>
+        <input class="of-input" type="text" [(ngModel)]="form.title" name="title" required placeholder="e.g. Beach Cleanup Drive" />
+      </div>
+
+      <div class="of-field">
+        <label class="of-label">Description</label>
+        <textarea class="of-textarea" [(ngModel)]="form.description" name="description" required rows="4" placeholder="Describe the opportunity..."></textarea>
+      </div>
+
+      <div class="of-row">
+        <div class="of-field">
+          <label class="of-label">Waste Type</label>
+          <select class="of-input" [(ngModel)]="form.wasteType" name="wasteType">
+            <option *ngFor="let type of wasteTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        <div class="of-field">
+          <label class="of-label">Duration</label>
+          <input class="of-input" type="text" [(ngModel)]="form.duration" name="duration" placeholder="e.g. 4 hours" />
+        </div>
+      </div>
+
+      <div class="of-field">
+        <label class="of-label">Location</label>
+        <input class="of-input" type="text" [(ngModel)]="form.location" name="location" required placeholder="e.g. California, USA" />
+      </div>
+
+      <div class="of-field">
+        <label class="of-label">Required Skills (comma-separated)</label>
+        <input class="of-input" type="text" [(ngModel)]="form.skillsRequired" name="skillsRequired" placeholder="e.g. Physical Fitness, Teamwork" />
+      </div>
+
+      <button type="submit" class="of-submit-btn">{{ isEditMode ? 'Update Opportunity' : 'Create Opportunity' }}</button>
+    </form>
+  </div>
+</div>

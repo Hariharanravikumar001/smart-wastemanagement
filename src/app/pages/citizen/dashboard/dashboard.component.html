@@ -1,0 +1,70 @@
+<div class="db-body">
+  <h1 class="db-page-title">Welcome back, {{ currentUser?.name }} 👋</h1>
+  <p class="db-page-sub">Here's your environmental impact overview</p>
+
+  <div class="db-stats-row">
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap green">🌿</div>
+      <div>
+        <div class="db-stat-value">{{ (totalWeight$ | async) || 0 }} kg</div>
+        <div class="db-stat-label">Waste Recycled</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap blue">⚡</div>
+      <div>
+        <div class="db-stat-value">{{ (impactScore$ | async) || 0 }}</div>
+        <div class="db-stat-label">Impact Score</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap purple">🏆</div>
+      <div>
+        <div class="db-stat-value">{{ (completedCount$ | async) || 0 }}</div>
+        <div class="db-stat-label">Completed Pickups</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="db-grid-two-col">
+    <!-- Next Pickup Summary -->
+    <div class="db-card" *ngIf="(activeRequests$ | async) as actives">
+      <h3 class="db-card-title">🚀 Next Scheduled Pickup</h3>
+      <div *ngIf="actives.length > 0; else noActive">
+        <div class="db-list-item">
+          <div class="db-list-icon">{{ getCategoryIcon(actives[0].wasteCategory) }}</div>
+          <div class="db-list-info">
+            <div class="db-list-title">{{ actives[0].wasteCategory }} — {{ actives[0].description }}</div>
+            <div class="db-list-meta">Scheduled for: {{ (actives[0].scheduledDate | date:'medium') || 'Awaiting Schedule' }}</div>
+          </div>
+          <span class="db-status-chip" [class.scheduled]="actives[0].status === 'Scheduled'">{{ actives[0].status }}</span>
+        </div>
+
+      </div>
+      <ng-template #noActive>
+        <div class="db-empty">
+          No active pickups. 
+          <button class="db-link-btn" routerLink="/citizen/pickup-request">Schedule one now →</button>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Category Breakdown -->
+    <div class="db-card">
+      <h3 class="db-card-title">📊 Category Breakdown</h3>
+      <div *ngIf="(wasteStats$ | async) as stats">
+        <div *ngIf="stats.length === 0" class="db-empty">No completed pickups yet. Statistics will appear after your first completed collection.</div>
+        <div *ngFor="let stat of stats" class="db-stat-bar-row">
+          <div class="db-stat-bar-label">
+            <span class="db-stat-bar-icon">{{ getCategoryIcon(stat.category) }}</span>
+            <span>{{ stat.category }}</span>
+          </div>
+          <div class="db-stat-bar-track">
+            <div class="db-stat-bar-fill" [style.width.%]="stat.percentage" [style.background]="getCategoryColor(stat.category)"></div>
+          </div>
+          <div class="db-stat-bar-value">{{ stat.weight }} kg</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

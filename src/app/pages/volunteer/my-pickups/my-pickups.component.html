@@ -1,0 +1,82 @@
+<div class="db-body">
+  <h1 class="db-page-title">🚛 My Pickup Operations</h1>
+  <p class="db-page-sub">Manage your assigned collections and report completion data</p>
+
+  <!-- Active Assignments List -->
+  <div class="db-section">
+    <h3 class="db-sub-title">📡 Current Operations</h3>
+    <div *ngIf="(activePickups$ | async) as actives">
+      <div *ngIf="actives.length === 0" class="db-empty">
+        You have no active assignments. 
+        <a routerLink="/volunteer/opportunities" class="db-link">Accept available tasks →</a>
+      </div>
+      
+      <div *ngFor="let req of actives" class="db-card db-pickup-item" [class.highlight]="completingRequestId === req.id">
+        <div class="db-pickup-core">
+          <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
+          <div class="db-list-info">
+            <div class="db-list-title">{{ req.wasteCategory }} — {{ req.citizenName }}</div>
+            <div class="db-list-meta">📍 {{ req.location }}</div>
+            <div class="db-list-meta">🕒 Scheduled: {{ req.scheduledDate | date:'shortTime' }}</div>
+          </div>
+          <div class="db-status-wrap">
+            <span class="db-status-chip" 
+                  [class.scheduled]="req.status === 'Scheduled'"
+                  [class.inprogress]="req.status === 'In Progress'">{{ req.status }}</span>
+          </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="db-pickup-actions" *ngIf="completingRequestId !== req.id">
+          <button *ngIf="req.status === 'Scheduled'" 
+                  class="db-action-btn primary" 
+                  (click)="updateStatus(req.id, 'In Progress')">
+            ▶️ Start Pickup
+          </button>
+          <button *ngIf="req.status === 'In Progress'" 
+                  class="db-action-btn success" 
+                  (click)="startCompletion(req.id)">
+            ✅ Mark Completed
+          </button>
+        </div>
+
+        <!-- Completion Form Overlay-ish -->
+        <div class="db-completion-form" *ngIf="completingRequestId === req.id">
+          <div class="db-form-inline">
+            <label>Weight Collected (kg):</label>
+            <input type="number" [(ngModel)]="weightInput" class="db-input-small" placeholder="0.0" />
+            <div class="db-inline-btns">
+              <button class="db-btn-save" (click)="completePickup()" [disabled]="weightInput <= 0">Confirm</button>
+              <button class="db-btn-cancel" (click)="cancelCompletion()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent History List -->
+  <div class="db-section mt-50">
+    <h3 class="db-sub-title">🏁 Recently Completed</h3>
+    <div *ngIf="(completedPickups$ | async) as completed">
+      <div *ngIf="completed.length === 0" class="db-empty">No completed collections yet in this session.</div>
+      
+      <div class="db-history-grid">
+        <div *ngFor="let req of completed" class="db-card db-history-card">
+          <div class="db-hist-header">
+            <span class="db-hist-icon">{{ getCategoryIcon(req.wasteCategory) }}</span>
+            <div class="db-hist-info">
+              <div class="db-hist-title">{{ req.wasteCategory }}</div>
+              <div class="db-hist-meta">{{ req.citizenName }}</div>
+            </div>
+            <div class="db-hist-weight">{{ req.weight }} kg</div>
+          </div>
+          <div class="db-hist-footer">
+            <span>✅ Success</span>
+            <span>{{ req.scheduledDate | date:'shortDate' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

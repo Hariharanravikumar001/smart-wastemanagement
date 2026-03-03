@@ -1,0 +1,49 @@
+.h-80vh {
+  height: 80vh;
+}
+
+.chat-messages {
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
+
+.max-w-75 {
+  max-width: 75%;
+}
+
+.message-bubble {
+  position: relative;
+  word-wrap: break-word;
+  transition: transform 0.2s ease;
+}
+
+.message-bubble:hover {
+  transform: scale(1.02);
+}
+
+.bg-success {
+  border-bottom-right-radius: 4px !important;
+}
+
+.bg-light {
+  border-bottom-left-radius: 4px !important;
+}
+
+/* Custom Scrollbar */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.2);
+}

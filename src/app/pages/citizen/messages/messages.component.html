@@ -1,0 +1,43 @@
+<div class="db-body">
+  <h1 class="db-page-title">💬 Messages</h1>
+  <p class="db-page-sub">Communicate with volunteers regarding your pickups</p>
+
+  <div class="db-card db-chat-card">
+    <div class="db-chat-header">
+      <div class="db-chat-user">
+        <div class="db-status-dot online"></div>
+        <div>
+          <div class="db-chat-user-name">Volunteer Support</div>
+          <div class="db-chat-user-status">Online</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="db-chat-messages" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+      <div *ngIf="(messages$ | async) as msgs">
+        <div *ngIf="msgs.length === 0" class="db-chat-empty">
+          <div class="db-empty-icon">💬</div>
+          <p>No messages yet. Send a message to start a conversation with a volunteer.</p>
+        </div>
+
+        <div *ngFor="let msg of msgs" class="db-chat-bubble-wrap" [class.sent]="msg.senderId === currentUser?.id">
+          <div class="db-chat-bubble">
+            <div class="db-chat-text">{{ msg.content }}</div>
+            <div class="db-chat-time">{{ msg.timestamp | date:'shortTime' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="db-chat-input-area">
+      <input type="text" 
+             class="db-chat-input" 
+             [(ngModel)]="newMessage" 
+             (keyup.enter)="sendMessage()"
+             placeholder="Type your message here..." />
+      <button class="db-send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+        🚀
+      </button>
+    </div>
+  </div>
+</div>

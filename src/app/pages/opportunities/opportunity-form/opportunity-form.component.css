@@ -1,0 +1,25 @@
+:host { display: block; min-height: 100vh; background: #0a0d14; }
+.of-layout { min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; font-family: 'Inter', 'Segoe UI', sans-serif; color: #c8d4e8; }
+.of-body { max-width: 680px; width: 100%; }
+.of-back-link { display: inline-flex; align-items: center; gap: 6px; color: rgba(180,200,235,0.5); text-decoration: none; font-size: 13px; font-weight: 500; margin-bottom: 24px; transition: color .2s; }
+.of-back-link:hover { color: #63ffb4; }
+.of-title { font-size: 26px; font-weight: 800; color: #f0f4ff; margin: 0 0 32px; }
+.of-form { display: flex; flex-direction: column; gap: 20px; }
+.of-field { display: flex; flex-direction: column; gap: 6px; }
+.of-label { font-size: 12px; font-weight: 600; color: rgba(180,200,235,0.4); text-transform: uppercase; letter-spacing: 0.05em; }
+.of-input, .of-textarea {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(99,255,180,0.1);
+  color: #f0f4ff; padding: 12px 16px; border-radius: 12px; font-size: 14px;
+  outline: none; transition: border-color .2s; font-family: inherit;
+}
+.of-input:focus, .of-textarea:focus { border-color: #63ffb4; }
+.of-input::placeholder, .of-textarea::placeholder { color: rgba(180,200,235,0.25); }
+.of-textarea { resize: vertical; min-height: 100px; }
+.of-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.of-submit-btn {
+  background: linear-gradient(135deg, #63ffb4, #00c8ff); color: #0a0d14;
+  border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .25s ease; margin-top: 8px; font-family: inherit;
+}
+.of-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(99,255,180,0.25); }
+select.of-input { appearance: none; cursor: pointer; }

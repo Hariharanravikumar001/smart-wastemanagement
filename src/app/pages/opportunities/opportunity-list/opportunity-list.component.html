@@ -1,0 +1,81 @@
+<div class="ol-layout" [class.sidebar-collapsed]="!sidebarOpen">
+  <!-- SIDEBAR -->
+  <aside class="ol-sidebar">
+    <div class="ol-sidebar-glow"></div>
+    <div class="ol-sidebar-header">
+      <div class="ol-brand">
+        <span class="ol-brand-icon-wrap">♻️</span>
+        <span class="ol-brand-name" *ngIf="sidebarOpen">SmartWaste</span>
+      </div>
+      <button class="ol-toggle-btn" (click)="toggleSidebar()">{{ sidebarOpen ? '◀' : '▶' }}</button>
+    </div>
+
+    <div class="ol-user-block" *ngIf="currentUser && sidebarOpen">
+      <div class="ol-avatar">{{ currentUser.name.charAt(0).toUpperCase() }}</div>
+      <div>
+        <div class="ol-user-name">{{ currentUser.name }}</div>
+        <span class="ol-role-chip">🎯 {{ currentUser.role }}</span>
+      </div>
+    </div>
+
+    <nav class="ol-nav">
+      <span class="ol-nav-section" *ngIf="sidebarOpen">NAVIGATION</span>
+      <a class="ol-nav-item active" routerLink="/opportunities">
+        <span class="ol-nav-icon">🌱</span>
+        <span class="ol-nav-label" *ngIf="sidebarOpen">All Opportunities</span>
+      </a>
+      <a class="ol-nav-item" [routerLink]="getDashboardLink()">
+        <span class="ol-nav-icon">📊</span>
+        <span class="ol-nav-label" *ngIf="sidebarOpen">My Dashboard</span>
+      </a>
+    </nav>
+
+    <div class="ol-sidebar-footer">
+      <a class="ol-nav-item" routerLink="/">
+        <span class="ol-nav-icon">🏠</span>
+        <span class="ol-nav-label" *ngIf="sidebarOpen" style="color: #63ffb4;">Home</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="ol-content">
+    <div class="ol-body">
+      <div class="ol-header-row">
+        <div>
+          <h1 class="ol-page-title">🌱 All Opportunities</h1>
+          <p class="ol-page-sub">Browse and discover volunteer opportunities</p>
+        </div>
+        <a *ngIf="isAdmin" routerLink="/opportunities/new" class="ol-action-btn">+ Create New</a>
+      </div>
+
+      <div class="ol-search-wrap">
+        <input class="ol-search" type="text" placeholder="Search by title, location, or waste type..." [(ngModel)]="searchQuery" (input)="filterOpportunities()" />
+      </div>
+
+      <div *ngIf="filteredOpportunities.length === 0" class="ol-empty">No opportunities found.</div>
+
+      <div class="ol-grid">
+        <div *ngFor="let opp of filteredOpportunities" class="ol-card" [routerLink]="['/opportunities', opp.id]">
+          <div class="ol-card-header">
+            <h3 class="ol-card-title">{{ opp.title }}</h3>
+            <span class="ol-card-org">{{ opp.organizationName }}</span>
+          </div>
+          <p class="ol-card-desc">{{ opp.description }}</p>
+          <div class="ol-card-tags">
+            <span class="ol-tag">⏱ {{ opp.duration }}</span>
+            <span class="ol-tag">♻️ {{ opp.wasteType }}</span>
+            <span class="ol-tag">📍 {{ opp.location }}</span>
+          </div>
+          <div class="ol-card-skills">
+            <span *ngFor="let skill of opp.skillsRequired" class="ol-skill">{{ skill }}</span>
+          </div>
+          <div class="ol-card-footer" *ngIf="isAdmin">
+            <a [routerLink]="['/opportunities/edit', opp.id]" class="ol-btn-edit" (click)="$event.stopPropagation()">Edit</a>
+            <button class="ol-btn-delete" (click)="$event.stopPropagation(); deleteOpportunity(opp.id)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

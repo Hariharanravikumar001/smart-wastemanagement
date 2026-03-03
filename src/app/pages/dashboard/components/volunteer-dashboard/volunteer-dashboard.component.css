@@ -1,0 +1,18 @@
+/* Volunteer Dashboard Specific Styles */
+
+/* Cards/List Items (shared classes from dashboard.component.css) */
+
+/* Opportunity Cards */
+.db-opp-card { cursor: pointer; transition: all .3s ease; }
+.db-opp-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.25); border-color: rgba(99,255,180,0.15); }
+.db-opp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.db-tag {
+  font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 22px;
+  background: rgba(99,255,180,0.08); color: #63ffb4; border: 1px solid rgba(99,255,180,0.15);
+}
+
+/* Light Mode Overrides */
+:host-context(body:not(.dark-mode)) .db-opp-card:hover { border-color: rgba(16,185,129,0.12); }
+:host-context(body:not(.dark-mode)) .db-tag {
+  background: rgba(16,185,129,0.08); color: #059669; border-color: rgba(16,185,129,0.15);
+}

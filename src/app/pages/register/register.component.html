@@ -1,0 +1,98 @@
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <div class="bg-success bg-opacity-10 text-success mx-auto rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                <i class="bi bi-person-plus-fill fs-2"></i>
+              </div>
+              <h2 class="fw-bold mb-1">Create Account</h2>
+              <p class="text-muted">Join WasteZero today</p>
+            </div>
+
+            <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+              <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                {{ errorMessage }}
+              </div>
+              <div class="mb-3">
+                <label for="name" class="form-label fw-semibold">Full Name</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                  <input type="text" class="form-control border-start-0 ps-0 bg-light" id="name" name="name" [(ngModel)]="name" required placeholder="John Doe">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="username" class="form-label fw-semibold">Username</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-person-badge text-muted"></i></span>
+                  <input type="text" class="form-control border-start-0 ps-0 bg-light" id="username" name="username" [(ngModel)]="username" required placeholder="johndoe123">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label fw-semibold">Email address</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                  <input type="email" class="form-control border-start-0 ps-0 bg-light" id="email" name="email" [(ngModel)]="email" required placeholder="name@example.com">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="role" class="form-label fw-semibold">Role</label>
+                <select class="form-select form-select-lg bg-light" id="role" name="role" [(ngModel)]="role" required>
+                  <option value="" disabled selected>Select an account type</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Volunteer">Volunteer</option>
+                  <option value="Citizen">Citizen</option>
+                </select>
+              </div>
+              
+              <div class="mb-3">
+                <label for="location" class="form-label fw-semibold">Location</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+                  <input type="text" class="form-control border-start-0 ps-0 bg-light" id="location" name="location" [(ngModel)]="location" required placeholder="City, Country">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label fw-semibold">Password</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                  <input type="password" class="form-control border-start-0 ps-0 bg-light" id="password" name="password" [(ngModel)]="password" required placeholder="Create a password">
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock-fill text-muted"></i></span>
+                  <input type="password" class="form-control border-start-0 ps-0 bg-light" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required placeholder="Confirm your password" [class.is-invalid]="passwordMismatch">
+                </div>
+                <div class="invalid-feedback" *ngIf="passwordMismatch">
+                  Passwords do not match.
+                </div>
+              </div>
+
+              <div class="mb-4 form-check">
+                <input type="checkbox" class="form-check-input" id="terms" name="terms" [(ngModel)]="termsAccepted" required>
+                <label class="form-check-label text-muted small" for="terms">I agree to the <a href="#" class="text-success text-decoration-none">Terms of Service</a> and <a href="#" class="text-success text-decoration-none">Privacy Policy</a></label>
+              </div>
+
+              <button type="submit" class="btn btn-success w-100 btn-lg rounded-pill fw-bold shadow-sm" [disabled]="!registerForm.valid || password !== confirmPassword || !termsAccepted">
+                Create Account
+              </button>
+            </form>
+
+            <div class="text-center mt-4">
+              <p class="text-muted mb-0">Already have an account? <a routerLink="/login" class="text-success fw-bold text-decoration-none">Sign in</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

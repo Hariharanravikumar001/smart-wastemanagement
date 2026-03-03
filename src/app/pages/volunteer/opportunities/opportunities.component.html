@@ -1,0 +1,37 @@
+<div class="db-body">
+  <h1 class="db-page-title">🛰️ Available Pickup Opportunities</h1>
+  <p class="db-page-sub">Browse and accept waste collection requests from citizens in your area</p>
+
+  <div class="db-card-grid">
+    <div *ngIf="(opportunities$ | async) as opportunities">
+      <div *ngIf="opportunities.length === 0" class="db-empty">
+        <div class="db-empty-icon">🛰️</div>
+        <p>No available pickup requests at the moment. All set!</p>
+      </div>
+
+      <div class="db-opportunity-grid">
+        <div *ngFor="let opp of opportunities" class="db-card db-opp-card">
+          <div class="db-opp-header">
+            <div class="db-opp-icon">{{ getCategoryIcon(opp.wasteCategory) }}</div>
+            <div class="db-opp-type">{{ opp.wasteCategory }}</div>
+            <span class="db-status-chip pending">New</span>
+          </div>
+
+          <div class="db-opp-body">
+            <h3 class="db-opp-citizen">From: {{ opp.citizenName }}</h3>
+            <p class="db-opp-desc">{{ opp.description }}</p>
+            <div class="db-opp-meta">
+              <span class="db-meta-item">📍 {{ opp.location }}</span>
+            </div>
+          </div>
+
+          <div class="db-opp-footer">
+            <button class="db-btn-accept" (click)="acceptPickup(opp)">
+              Accept Assignment 🚛
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

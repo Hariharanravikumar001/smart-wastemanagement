@@ -1,0 +1,65 @@
+<div class="container-fluid bg-light min-vh-100 py-5">
+  <div class="container max-w-600px">
+    <!-- Header -->
+    <div class="mb-4 d-flex align-items-center">
+      <a routerLink="/dashboard" class="btn btn-light btn-sm rounded-circle me-3 shadow-sm">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <h2 class="fw-bold mb-0">Schedule Waste Pickup</h2>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-5">
+          <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex p-4 mb-3">
+            <i class="bi bi-truck fs-1"></i>
+          </div>
+          <h4 class="fw-bold">Request a Pickup</h4>
+          <p class="text-muted">Help us keep the environment clean by scheduling a regular waste collection.</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" #pickupForm="ngForm">
+          <!-- Waste Category -->
+          <div class="mb-4">
+            <label class="form-label fw-bold text-muted text-uppercase small ls-1">Waste Category</label>
+            <div class="row g-2">
+              <div class="col-6 col-md-4" *ngFor="let cat of categories">
+                <input type="radio" class="btn-check" name="category" [id]="cat" [value]="cat" [(ngModel)]="request.wasteCategory">
+                <label class="btn btn-outline-success w-100 rounded-pill py-2" [for]="cat">
+                  {{ cat }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="mb-4">
+            <label for="location" class="form-label fw-bold text-muted text-uppercase small ls-1">Pickup Location</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-0"><i class="bi bi-geo-alt"></i></span>
+              <input type="text" id="location" name="location" class="form-control form-control-lg bg-light border-0" 
+                     [(ngModel)]="request.location" required placeholder="Enter pickup address">
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-4">
+            <label for="description" class="form-label fw-bold text-muted text-uppercase small ls-1">Description / Details</label>
+            <textarea id="description" name="description" class="form-control bg-light border-0 p-3" 
+                      rows="4" [(ngModel)]="request.description" required
+                      placeholder="E.g., 3 bags of plastic bottles, old keyboard, etc."></textarea>
+          </div>
+
+          <!-- Submit -->
+          <div class="d-grid mt-5">
+            <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold shadow-sm py-3" 
+                    [disabled]="!pickupForm.form.valid">
+              Submit Pickup Request
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

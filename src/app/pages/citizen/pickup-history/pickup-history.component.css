@@ -1,0 +1,74 @@
+/* Pickup History Specific Styles */
+.db-body { max-width: 1000px; margin: 0 auto; padding: 40px 36px; }
+
+.mt-40 { margin-top: 50px; }
+
+.db-sub-title { font-size: 16px; font-weight: 700; color: #f0f4ff; margin-bottom: 20px; border-left: 3px solid #63ffb4; padding-left: 12px; }
+
+.db-pickup-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(99, 255, 180, 0.08);
+  border-radius: 20px; padding: 24px; margin-bottom: 20px;
+}
+
+.db-pickup-header { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
+
+.db-list-icon { 
+  width: 48px; height: 48px; min-width: 48px; border-radius: 14px; 
+  background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.db-list-info { flex: 1; }
+.db-list-title { font-size: 15px; font-weight: 700; color: #f0f4ff; }
+.db-list-meta { font-size: 13px; color: rgba(180, 200, 235, 0.45); margin-top: 4px; }
+
+.db-status-chip {
+  font-size: 11px; font-weight: 800; padding: 5px 14px; border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06); color: rgba(180, 200, 235, 0.5);
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+.db-status-chip.pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.db-status-chip.scheduled { background: rgba(0, 200, 255, 0.1); color: #00c8ff; }
+.db-status-chip.inprogress { background: rgba(167, 139, 250, 0.1); color: #a78bfa; }
+.db-status-chip.completed { background: rgba(99, 255, 180, 0.1); color: #63ffb4; }
+.db-status-chip.cancelled { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* Timeline */
+.db-timeline { display: flex; align-items: center; justify-content: space-between; padding: 0 10px; }
+.db-timeline-step { display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; }
+.db-timeline-step span { font-size: 12px; font-weight: 600; color: rgba(180, 200, 235, 0.3); }
+.db-timeline-step.done span { color: #63ffb4; }
+
+.db-timeline-dot { width: 14px; height: 14px; border-radius: 50%; background: #222; border: 3px solid #333; transition: all .4s; z-index: 1; }
+.db-timeline-step.done .db-timeline-dot { background: #63ffb4; border-color: rgba(99, 255, 180, 0.3); box-shadow: 0 0 12px rgba(99, 255, 180, 0.4); }
+
+.db-timeline-line { flex: 1; height: 3px; background: #222; margin: 0 -5px; transform: translateY(-11px); }
+.db-timeline-line.done { background: linear-gradient(90deg, #63ffb4, #00c8ff); }
+
+/* History List */
+.db-history-list { display: flex; flex-direction: column; gap: 12px; }
+.db-list-item { 
+  display: flex; align-items: center; gap: 16px; 
+  padding: 16px 20px; background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px;
+}
+
+.db-empty { text-align: center; padding: 40px; color: rgba(180, 200, 235, 0.35); font-size: 13px; }
+.db-link { color: #63ffb4; text-decoration: underline; font-weight: 600; }
+
+@media (max-width: 600px) {
+  .db-timeline { flex-wrap: wrap; justify-content: center; gap: 20px; }
+  .db-timeline-line { display: none; }
+}
+
+/* Light Mode Overrides */
+:host-context(body:not(.dark-mode)) .db-sub-title { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-pickup-card,
+:host-context(body:not(.dark-mode)) .db-list-item { background: white; border-color: rgba(0,0,0,0.06); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+:host-context(body:not(.dark-mode)) .db-list-title { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-list-meta { color: rgba(0,0,0,0.5); }
+:host-context(body:not(.dark-mode)) .db-page-title { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-page-sub { color: rgba(0,0,0,0.5); }
+:host-context(body:not(.dark-mode)) .db-timeline-step span { color: rgba(0,0,0,0.4); }
+:host-context(body:not(.dark-mode)) .db-timeline-dot { background: #eee; border-color: #ddd; }
+:host-context(body:not(.dark-mode)) .db-timeline-line { background: #eee; }
+:host-context(body:not(.dark-mode)) .db-empty { color: rgba(0,0,0,0.4); }

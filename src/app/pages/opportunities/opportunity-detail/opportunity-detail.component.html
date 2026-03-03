@@ -1,0 +1,116 @@
+<div class="od-layout" [class.sidebar-collapsed]="!sidebarOpen">
+  <!-- SIDEBAR -->
+  <aside class="od-sidebar">
+    <div class="od-sidebar-header">
+      <div class="od-brand">
+        <span class="od-brand-icon">♻️</span>
+        <span class="od-brand-name" *ngIf="sidebarOpen">SmartWaste</span>
+      </div>
+      <button class="od-toggle-btn" (click)="toggleSidebar()">{{ sidebarOpen ? '◀' : '▶' }}</button>
+    </div>
+
+    <div class="od-user-block" *ngIf="currentUser && sidebarOpen">
+      <div class="od-avatar">{{ currentUser.name.charAt(0).toUpperCase() }}</div>
+      <div>
+        <div class="od-user-name">{{ currentUser.name }}</div>
+        <span class="od-role-chip">🎯 {{ currentUser.role }}</span>
+      </div>
+    </div>
+    <div class="od-avatar-mini" *ngIf="!sidebarOpen && currentUser">{{ currentUser.name.charAt(0).toUpperCase() }}</div>
+
+    <nav class="od-nav">
+      <span class="od-nav-section" *ngIf="sidebarOpen">OPPORTUNITIES</span>
+      <a class="od-nav-item" routerLink="/opportunities">
+        <span class="od-nav-icon">🌱</span>
+        <span class="od-nav-label" *ngIf="sidebarOpen">All Opportunities</span>
+      </a>
+      <a class="od-nav-item" [routerLink]="getDashboardLink()">
+        <span class="od-nav-icon">📊</span>
+        <span class="od-nav-label" *ngIf="sidebarOpen">My Dashboard</span>
+      </a>
+    </nav>
+
+    <div class="od-sidebar-footer">
+      <a class="od-nav-item" routerLink="/">
+        <span class="od-nav-icon">🏠</span>
+        <span class="od-nav-label" *ngIf="sidebarOpen" style="color: #63ffb4;">Home</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="od-content" *ngIf="opportunity">
+    <div class="od-body">
+      <a class="od-back-link" routerLink="/opportunities">← Back to Opportunities</a>
+
+      <div class="od-page-header">
+        <div class="od-page-header-text">
+          <div class="od-opp-tags">
+            <span class="od-tag-duration">⏱ {{ opportunity.duration }}</span>
+            <span class="od-tag-waste">♻️ {{ opportunity.wasteType }}</span>
+            <span class="od-tag-location">📍 {{ opportunity.location }}</span>
+          </div>
+          <h1 class="od-title">{{ opportunity.title }}</h1>
+          <p class="od-posted">Posted {{ opportunity.createdAt | date:'mediumDate' }}</p>
+        </div>
+        <div class="od-admin-actions" *ngIf="isAdmin">
+          <a [routerLink]="['/opportunities/edit', opportunity.id]" class="od-btn-edit">✏️ Edit</a>
+          <button class="od-btn-delete" (click)="deleteOpportunity()">🗑 Delete</button>
+        </div>
+      </div>
+
+      <div class="od-two-col">
+        <div class="od-main-col">
+          <div class="od-card">
+            <h3 class="od-card-title">📄 Description</h3>
+            <p class="od-desc">{{ opportunity.description }}</p>
+          </div>
+          <div class="od-card">
+            <h3 class="od-card-title">🌿 Required Skills</h3>
+            <div class="od-skills-list">
+              <span *ngFor="let skill of opportunity.skillsRequired" class="od-skill-chip">{{ skill }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="od-side-col">
+          <div class="od-card od-details-card">
+            <h3 class="od-card-title">📋 Event Details</h3>
+            <div class="od-detail-row">
+              <div class="od-detail-icon du">⏱</div>
+              <div>
+                <div class="od-detail-label">DURATION</div>
+                <div class="od-detail-value">{{ opportunity.duration }}</div>
+              </div>
+            </div>
+            <div class="od-detail-row">
+              <div class="od-detail-icon wt">♻️</div>
+              <div>
+                <div class="od-detail-label">WASTE TYPE</div>
+                <div class="od-detail-value">{{ opportunity.wasteType }}</div>
+              </div>
+            </div>
+            <div class="od-detail-row">
+              <div class="od-detail-icon lo">📍</div>
+              <div>
+                <div class="od-detail-label">LOCATION</div>
+                <div class="od-detail-value">{{ opportunity.location }}</div>
+              </div>
+            </div>
+            <div class="od-detail-row">
+              <div class="od-detail-icon da">📅</div>
+              <div>
+                <div class="od-detail-label">POSTED ON</div>
+                <div class="od-detail-value">{{ opportunity.createdAt | date:'mediumDate' }}</div>
+              </div>
+            </div>
+            <div class="od-cta" *ngIf="!isAdmin">
+              <button class="od-apply-btn">☑️ Apply to Volunteer</button>
+              <button class="od-chat-btn">💬 Message Organization</button>
+              <p class="od-cta-note">📋 Joining will notify the organizer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

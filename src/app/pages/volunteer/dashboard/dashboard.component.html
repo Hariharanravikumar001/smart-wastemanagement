@@ -1,0 +1,69 @@
+<div class="db-body">
+  <h1 class="db-page-title">Welcome back, Volunteer Agent {{ currentUser?.name }} 🚚</h1>
+  <p class="db-page-sub">Operational overview of your waste collection tasks</p>
+
+  <div class="db-stats-row">
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap blue">📡</div>
+      <div>
+        <div class="db-stat-value">{{ (availablePickups$ | async)?.length || 0 }}</div>
+        <div class="db-stat-label">Available Tasks Near You</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap purple">🚛</div>
+      <div>
+        <div class="db-stat-value">{{ (assignments$ | async)?.length || 0 }}</div>
+        <div class="db-stat-label">Active Assignments</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap green">🏆</div>
+      <div>
+        <div class="db-stat-value">{{ (completedCount$ | async) || 0 }}</div>
+        <div class="db-stat-label">Total Completed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="db-grid-content">
+    <!-- Active Assignments Glance -->
+    <div class="db-card">
+      <h3 class="db-card-title">🕒 Current Assignments</h3>
+      <div *ngIf="(assignments$ | async) as assignments">
+        <div *ngIf="assignments.length === 0" class="db-empty">
+          You have no active assignments. 
+          <a routerLink="/volunteer/opportunities" class="db-link">Accept new tasks →</a>
+        </div>
+        
+        <div *ngFor="let req of assignments" class="db-list-item">
+          <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
+          <div class="db-list-info">
+            <div class="db-list-title">{{ req.wasteCategory }} — {{ req.citizenName }}</div>
+            <div class="db-list-meta">📍 {{ req.location }}</div>
+          </div>
+          <span class="db-status-chip" 
+                [class.pending]="req.status === 'Pending'"
+                [class.scheduled]="req.status === 'Scheduled'"
+                [class.inprogress]="req.status === 'In Progress'">{{ req.status }}</span>
+        </div>
+      </div>
+      <div class="db-footer-link" *ngIf="(assignments$ | async)?.length">
+        <a routerLink="/volunteer/my-pickups">Manage all assignments →</a>
+      </div>
+    </div>
+
+    <!-- Impact/Efficiency Summary -->
+    <div class="db-card impact-card">
+      <h3 class="db-card-title">📉 Recycling Contribution</h3>
+      <div class="db-impact-stat">
+        <div class="db-impact-value">{{ (totalWeight$ | async) || 0 }} kg</div>
+        <div class="db-impact-label">Total Waste Collected & Processed</div>
+      </div>
+      <div class="db-impact-bar">
+        <div class="db-impact-fill" [style.width.%]="85"></div>
+      </div>
+      <p class="db-desc">Efficiency: 85% of assigned tasks completed within 24 hours.</p>
+    </div>
+  </div>
+</div>

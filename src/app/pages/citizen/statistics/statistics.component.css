@@ -1,0 +1,66 @@
+/* Statistics Specific Styles */
+.db-body { max-width: 1100px; margin: 0 auto; padding: 40px 36px; }
+
+.db-stats-row { 
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+  gap: 20px; margin-bottom: 32px; 
+}
+
+.db-stat-card {
+  background: rgba(255,255,255,0.025); border: 1px solid rgba(99,255,180,0.06);
+  border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 20px;
+}
+
+.db-stat-icon-wrap {
+  width: 56px; height: 56px; border-radius: 16px; font-size: 26px;
+  display: flex; align-items: center; justify-content: center;
+}
+.db-stat-icon-wrap.green { background: rgba(99,255,180,0.1); color: #63ffb4; }
+.db-stat-icon-wrap.blue { background: rgba(0,200,255,0.1); color: #00c8ff; }
+.db-stat-icon-wrap.purple { background: rgba(167,139,250,0.1); color: #a78bfa; }
+
+.db-stat-value { font-size: 24px; font-weight: 800; color: #f0f4ff; }
+.db-stat-label { font-size: 13px; color: rgba(180,200,235,0.4); margin-top: 2px; }
+
+.db-grid-content { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.db-card {
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 24px; padding: 30px;
+}
+.db-card-title { font-size: 17px; font-weight: 700; color: #f0f4ff; margin-bottom: 24px; }
+
+/* Progress Rows */
+.db-stat-row-large { margin-bottom: 28px; }
+.db-stat-row-large:last-child { margin-bottom: 0; }
+
+.db-stat-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.db-stat-row-label { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: #f0f4ff; }
+.db-stat-icon { font-size: 18px; }
+.db-stat-row-value { font-size: 13px; color: rgba(180,200,235,0.45); font-weight: 600; }
+
+.db-progress-track { height: 8px; background: rgba(255,255,255,0.04); border-radius: 4px; overflow: hidden; }
+.db-progress-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.4, 0, .2, 1); }
+
+/* Tips Section */
+.db-tip-list { display: flex; flex-direction: column; gap: 20px; }
+.db-tip-item { display: flex; gap: 16px; align-items: flex-start; }
+.db-tip-icon { font-size: 24px; flex-shrink: 0; }
+.db-tip-item p { font-size: 14px; line-height: 1.6; color: rgba(180,200,235,0.6); margin: 0; }
+
+.db-empty { text-align: center; padding: 60px 20px; color: rgba(180,200,235,0.3); font-size: 14px; }
+
+@media (max-width: 900px) {
+  .db-grid-content { grid-template-columns: 1fr; }
+}
+
+/* Light Mode Overrides */
+:host-context(body:not(.dark-mode)) .db-stat-card,
+:host-context(body:not(.dark-mode)) .db-card { background: white; border-color: rgba(0,0,0,0.06); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+:host-context(body:not(.dark-mode)) .db-stat-value { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-stat-label { color: rgba(0,0,0,0.5); }
+:host-context(body:not(.dark-mode)) .db-stat-row-label { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-stat-row-value { color: rgba(0,0,0,0.5); }
+:host-context(body:not(.dark-mode)) .db-card-title { color: #1a1a2e; }
+:host-context(body:not(.dark-mode)) .db-tip-item p { color: #555; }
+:host-context(body:not(.dark-mode)) .db-empty { color: rgba(0,0,0,0.4); }

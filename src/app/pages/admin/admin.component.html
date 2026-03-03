@@ -1,0 +1,434 @@
+<div class="admin-wrapper" [class.sidebar-collapsed]="isSidebarCollapsed" *ngIf="currentUser as user">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar shadow">
+    <div class="sidebar-header d-flex align-items-center px-4 py-3">
+      <i class="bi bi-recycle text-success fs-3 me-2"></i>
+      <span class="fs-4 fw-bold logo-text">WasteZero</span>
+    </div>
+
+    <div class="sidebar-user p-4 mb-2 text-center border-bottom border-light border-opacity-10">
+      <div class="avatar shadow-sm mb-3 mx-auto">
+        {{ user.name.charAt(0).toUpperCase() }}
+      </div>
+      <div class="user-info">
+        <h6 class="fw-bold mb-0 text-truncate">{{ user.name }}</h6>
+        <span class="badge bg-success bg-opacity-25 text-success small border border-success border-opacity-25">Admin</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav flex-grow-1 py-3 px-2">
+      <div class="nav-label px-3 mb-2 text-muted small text-uppercase fw-bold">Main Menu</div>
+      <ul class="list-unstyled">
+        <li *ngFor="let item of menuItems">
+          <a (click)="setActiveMenu(item.id)" 
+             class="nav-link d-flex align-items-center rounded-3 mb-1 px-3 py-2 transition-all cursor-pointer"
+             [class.active]="activeMenu === item.id">
+            <i class="bi {{ item.icon }} me-3 fs-5"></i>
+            <span class="nav-text">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer p-3 mt-auto">
+      <button class="btn w-100 theme-toggle-btn rounded-pill mb-3 d-flex align-items-center justify-content-center gap-2" (click)="toggleTheme()">
+        <i class="bi" [class.bi-moon-stars-fill]="!isDarkMode" [class.bi-sun-fill]="isDarkMode"></i>
+        <span>{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
+      </button>
+      <button class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center gap-2" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="admin-content-area">
+    <header class="content-header p-4 d-flex justify-content-between align-items-center sticky-top bg-white shadow-sm border-bottom">
+      <div class="header-left d-flex align-items-center">
+        <button class="btn btn-light rounded-circle me-3" (click)="toggleSidebar()">
+          <i class="bi bi-list fs-5"></i>
+        </button>
+        <h4 class="fw-bold mb-0 text-capitalize">{{ activeMenu.replace('-', ' ') }}</h4>
+      </div>
+      <div class="header-right d-flex align-items-center gap-3">
+        <div class="search-box d-none d-md-flex">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control bg-light border-0" placeholder="Search...">
+          </div>
+        </div>
+        <button class="btn btn-light rounded-circle position-relative">
+          <i class="bi bi-bell"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white p-1">
+            <span class="visually-hidden">unread notifications</span>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-body p-4">
+      <!-- Dashboard Overview (shown when activeMenu is 'dashboard') -->
+      <div *ngIf="activeMenu === 'dashboard'">
+        <div class="row g-4 mb-4">
+          <div class="col-md-3">
+            <div class="stat-card p-4 rounded-4 shadow-sm h-100 bg-white border">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fw-bold small text-uppercase">Active Users</span>
+                <div class="stat-icon bg-blue-light text-blue rounded p-2"><i class="bi bi-people"></i></div>
+              </div>
+              <h2 class="fw-bold mb-1">{{ stats.activeUsers | number }}</h2>
+              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.activeUsersChange }}</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card p-4 rounded-4 shadow-sm h-100 bg-white border">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fw-bold small text-uppercase">Total Volunteers</span>
+                <div class="stat-icon bg-green-light text-green rounded p-2"><i class="bi bi-heart"></i></div>
+              </div>
+              <h2 class="fw-bold mb-1">{{ stats.totalVolunteers | number }}</h2>
+              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.totalVolunteersChange }}</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card p-4 rounded-4 shadow-sm h-100 bg-white border">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fw-bold small text-uppercase">Completed Pickups</span>
+                <div class="stat-icon bg-orange-light text-orange rounded p-2"><i class="bi bi-truck"></i></div>
+              </div>
+              <h2 class="fw-bold mb-1">{{ stats.completedPickups | number }}</h2>
+              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.completedPickupsChange }}</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card p-4 rounded-4 shadow-sm h-100 bg-white border">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fw-bold small text-uppercase">System Health</span>
+                <div class="stat-icon bg-purple-light text-purple rounded p-2"><i class="bi bi-activity"></i></div>
+              </div>
+              <h2 class="fw-bold mb-1">{{ stats.systemHealth }}</h2>
+              <div class="small text-muted">{{ stats.systemHealthStatus }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden bg-white">
+              <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">Pickup Requests Trends</h5>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Last 7 Days</button>
+                </div>
+              </div>
+              <div class="card-body p-4">
+                <div class="bg-light rounded-4 d-flex align-items-center justify-content-center" style="height: 300px;">
+                  <div class="text-center">
+                    <i class="bi bi-bar-chart-line fs-1 text-muted opacity-25"></i>
+                    <p class="text-muted mt-2">Chart Visualization Area</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+              <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h5 class="fw-bold mb-0">Recent Activity</h5>
+              </div>
+              <div class="card-body p-4">
+                <div class="activity-timeline">
+                  <div class="activity-item d-flex gap-3 mb-4">
+                    <div class="activity-icon bg-success bg-opacity-10 text-success rounded-circle p-2" style="width: 40px; height: 40px;">
+                      <i class="bi bi-check2"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-bold">Pickup Completed</h6>
+                      <p class="small text-muted mb-0">Region: North | 12kg Plastic</p>
+                      <span class="text-muted x-small">2 mins ago</span>
+                    </div>
+                  </div>
+                  <div class="activity-item d-flex gap-3 mb-4">
+                    <div class="activity-icon bg-primary bg-opacity-10 text-primary rounded-circle p-2" style="width: 40px; height: 40px;">
+                      <i class="bi bi-person-plus"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-bold">New Volunteer Joined</h6>
+                      <p class="small text-muted mb-0">Welcome, Sarah Jenkins!</p>
+                      <span class="text-muted x-small">1 hour ago</span>
+                    </div>
+                  </div>
+                  <div class="activity-item d-flex gap-3">
+                    <div class="activity-icon bg-warning bg-opacity-10 text-warning rounded-circle p-2" style="width: 40px; height: 40px;">
+                      <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-1 fw-bold">System Maintenance</h6>
+                      <p class="small text-muted mb-0">Scheduled for tonight at 2 AM</p>
+                      <span class="text-muted x-small">5 hours ago</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile View -->
+      <div *ngIf="activeMenu === 'profile'" class="profile-view animate-fade-in">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white">
+              <div class="avatar-large shadow-sm mb-4 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold" style="width: 100px; height: 100px; font-size: 2.5rem; border-radius: 50%;">
+                {{ user.name.charAt(0).toUpperCase() }}
+              </div>
+              <h4 class="fw-bold mb-1">{{ user.name }}</h4>
+              <p class="text-muted small mb-3">System Administrator</p>
+              
+              <div class="d-flex justify-content-center gap-2 mb-4">
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 border border-success border-opacity-10">Verified</span>
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">Root</span>
+              </div>
+
+              <div class="d-grid gap-2 mb-4">
+                <button (click)="toggleEditProfile()" class="btn rounded-pill fw-bold" [class.btn-outline-primary]="!isEditingProfile" [class.btn-secondary]="isEditingProfile">
+                  {{ isEditingProfile ? 'Cancel Editing' : 'Edit Profile' }}
+                </button>
+              </div>
+
+              <hr class="my-4 opacity-5">
+              
+              <div class="row g-2 text-center">
+                <div class="col-4">
+                  <h6 class="fw-bold mb-0 small">{{ stats.activeUsers }}</h6>
+                  <p class="text-muted extra-small">Users</p>
+                </div>
+                <div class="col-4">
+                  <h6 class="fw-bold mb-0 small">99.9%</h6>
+                  <p class="text-muted extra-small">Uptime</p>
+                </div>
+                <div class="col-4">
+                  <h6 class="fw-bold mb-0 small">24/7</h6>
+                  <p class="text-muted extra-small">Support</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-8">
+            <!-- Personal Details Card -->
+            <div class="card border-0 shadow-sm rounded-4 bg-white mb-4 p-4">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Personal Details</h5>
+                <span *ngIf="profileDetailsForm.message && !isEditingProfile" class="badge bg-success animate-fade-in">{{ profileDetailsForm.message }}</span>
+              </div>
+
+              <div *ngIf="!isEditingProfile" class="row g-3">
+                <div class="col-md-6">
+                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Full Name</label>
+                  <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ user.name }}</p>
+                </div>
+                <div class="col-md-6">
+                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Username</label>
+                  <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ "@" }}{{ user.username }}</p>
+                </div>
+                <div class="col-md-6">
+                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Email Address</label>
+                  <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ user.email }}</p>
+                </div>
+                <div class="col-md-6">
+                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Location</label>
+                  <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ user.location || 'Not Specified' }}</p>
+                </div>
+                <div class="col-12 mt-3">
+                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Administrative Skills</label>
+                  <div class="d-flex flex-wrap gap-2 pt-1">
+                    <span *ngFor="let skill of user.skills" class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2">
+                      {{ skill }}
+                    </span>
+                    <span *ngIf="!user.skills || user.skills.length === 0" class="text-muted small italic bg-light p-2 rounded-3 w-100">No technical skills documented</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Edit Form -->
+              <form (ngSubmit)="saveProfileDetails()" *ngIf="isEditingProfile" class="row g-3">
+                <div *ngIf="profileDetailsForm.message" class="col-12 alert mb-3 py-2 small" [class.alert-danger]="profileDetailsForm.isError" [class.alert-success]="!profileDetailsForm.isError">
+                  {{ profileDetailsForm.message }}
+                </div>
+                
+                <div class="col-md-6">
+                  <label class="small fw-bold text-muted mb-1">Full Name</label>
+                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.name" name="name" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="small fw-bold text-muted mb-1">Username</label>
+                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.username" name="username" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="small fw-bold text-muted mb-1">Email Address</label>
+                  <input type="email" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.email" name="email" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="small fw-bold text-muted mb-1">Location</label>
+                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.location" name="location">
+                </div>
+                <div class="col-12">
+                  <label class="small fw-bold text-muted mb-1">Skills (comma separated)</label>
+                  <textarea class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.skills" name="skills" rows="2" placeholder="Management, Database, Security..."></textarea>
+                </div>
+                <div class="col-12 mt-4 text-end">
+                  <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold py-2 shadow-sm">Save Profile</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Security Section -->
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+              <h5 class="fw-bold mb-4">Security & Access</h5>
+              
+              <div *ngIf="profileForm.message" class="alert mb-4 py-2 small" [class.alert-danger]="profileForm.isError" [class.alert-success]="!profileForm.isError">
+                {{ profileForm.message }}
+              </div>
+
+              <form (ngSubmit)="updatePassword()" class="row g-3">
+                <div class="col-md-4">
+                  <label class="small fw-bold text-muted mb-1">Old Password</label>
+                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileForm.oldPassword" name="oldPassword" required placeholder="••••••••">
+                </div>
+                <div class="col-md-4">
+                  <label class="small fw-bold text-muted mb-1">New Password</label>
+                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileForm.newPassword" name="newPassword" required placeholder="••••••••">
+                </div>
+                <div class="col-md-4">
+                  <label class="small fw-bold text-muted mb-1">Confirm New</label>
+                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileForm.confirmPassword" name="confirmPassword" required placeholder="••••••••">
+                </div>
+                <div class="col-12 mt-4">
+                  <button type="submit" class="btn btn-dark rounded-pill px-4 fw-bold py-2">
+                    <i class="bi bi-shield-check me-2"></i>Update Credentials
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- All Opportunities Management -->
+      <div *ngIf="activeMenu === 'all-opportunities'">
+        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+          <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Global Opportunity Oversight</h5>
+            <span class="badge bg-primary rounded-pill px-3">{{ allOpportunities.length }} Total</span>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="px-4 py-3 border-0">Opportunity</th>
+                    <th class="py-3 border-0">Organization</th>
+                    <th class="py-3 border-0">Waste Type</th>
+                    <th class="py-3 border-0">Location</th>
+                    <th class="px-4 py-3 border-0 text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let opp of allOpportunities">
+                    <td class="px-4 py-3">
+                      <div class="fw-bold text-dark">{{ opp.title }}</div>
+                      <div class="small text-muted text-truncate" style="max-width: 250px;">{{ opp.description }}</div>
+                    </td>
+                    <td><span class="fw-semibold">{{ opp.organizationName }}</span></td>
+                    <td><span class="badge bg-primary bg-opacity-10 text-primary">{{ opp.wasteType }}</span></td>
+                    <td><span class="small"><i class="bi bi-geo-alt me-1"></i>{{ opp.location }}</span></td>
+                    <td class="px-4 text-end">
+                      <button class="btn btn-sm btn-outline-danger rounded-circle" (click)="deleteOpportunityByAdmin(opp.id)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reports & Analytics -->
+      <div *ngIf="activeMenu === 'reports'">
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
+              <h5 class="fw-bold mb-4">Engagement Analytics</h5>
+              <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                  <div class="p-3 bg-light rounded-4">
+                    <small class="text-muted d-block mb-1">Total Impact</small>
+                    <h4 class="fw-bold mb-0">1,240kg</h4>
+                    <small class="text-success">+12% from last month</small>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="p-3 bg-light rounded-4">
+                    <small class="text-muted d-block mb-1">Volunteer Response Rate</small>
+                    <h4 class="fw-bold mb-0">84%</h4>
+                    <small class="text-success">+5% improvement</small>
+                  </div>
+                </div>
+              </div>
+              <div class="flex-grow-1 bg-light rounded-4 d-flex align-items-center justify-content-center border border-dashed py-5">
+                <div class="text-center opacity-50">
+                  <i class="bi bi-graph-up display-4 d-block mb-2"></i>
+                  <p class="mb-0">Interactive Charts Loading...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
+              <h5 class="fw-bold mb-4">Data Export</h5>
+              <p class="text-muted small mb-4">Generate and download comprehensive platform data in CSV format for offline analysis.</p>
+              
+              <div class="d-grid gap-3">
+                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all" (click)="downloadUserReport()">
+                  <div class="d-flex align-items-center">
+                    <div class="bg-blue-light text-blue rounded-circle p-3 me-3">
+                      <i class="bi bi-people-fill fs-4"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-bold mb-1">User Activity Report</h6>
+                      <small class="text-muted">Status, roles, and engagement metrics</small>
+                    </div>
+                  </div>
+                </button>
+
+                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all" (click)="downloadOpportunityReport()">
+                  <div class="d-flex align-items-center">
+                    <div class="bg-green-light text-green rounded-circle p-3 me-3">
+                      <i class="bi bi-briefcase-fill fs-4"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-bold mb-1">Opportunity Performance</h6>
+                      <small class="text-muted">Posted listings and participation data</small>
+                    </div>
+                  </div>
+                </button>
+
+                <div class="alert bg-warning bg-opacity-10 border-warning border-opacity-25 mt-3">
+                  <i class="bi bi-info-circle-fill me-2 text-warning"></i>
+                  <small>Reports are generated in real-time from the current database state.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>

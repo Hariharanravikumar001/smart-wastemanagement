@@ -1,0 +1,74 @@
+<div class="db-body">
+  <h1 class="db-page-title">📈 Waste Statistics</h1>
+  <p class="db-page-sub">Visualize your contribution to a cleaner environment</p>
+
+  <div class="db-stats-row">
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap green">🌿</div>
+      <div>
+        <div class="db-stat-value">{{ (totalWeight$ | async) || 0 }} kg</div>
+        <div class="db-stat-label">Total Recycled</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap blue">⚡</div>
+      <div>
+        <div class="db-stat-value">{{ (impactScore$ | async) || 0 }}</div>
+        <div class="db-stat-label">Environmental Impact</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap purple">🏆</div>
+      <div>
+        <div class="db-stat-value">{{ (completedCount$ | async) || 0 }}</div>
+        <div class="db-stat-label">Completed Collections</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="db-grid-content">
+    <!-- Category Breakdown Card -->
+    <div class="db-card">
+      <h3 class="db-card-title">📊 Category Distribution</h3>
+      <div *ngIf="(wasteStats$ | async) as stats">
+        <div *ngIf="stats.length === 0" class="db-empty">
+          No recycling data available yet. Start your journey by scheduling your first pickup!
+        </div>
+        
+        <div *ngFor="let stat of stats" class="db-stat-row-large">
+          <div class="db-stat-row-header">
+            <div class="db-stat-row-label">
+              <span class="db-stat-icon">{{ getCategoryIcon(stat.category) }}</span>
+              {{ stat.category }}
+            </div>
+            <div class="db-stat-row-value">{{ stat.weight }} kg ({{ stat.percentage }}%)</div>
+          </div>
+          <div class="db-progress-track">
+            <div class="db-progress-fill" 
+                 [style.width.%]="stat.percentage" 
+                 [style.background]="getCategoryColor(stat.category)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact Tips -->
+    <div class="db-card impact-card">
+      <h3 class="db-card-title">💡 Did you know?</h3>
+      <div class="db-tip-list">
+        <div class="db-tip-item">
+          <span class="db-tip-icon">🚰</span>
+          <p>Recycling one plastic bottle saves enough energy to power a 60-watt light bulb for 3 hours.</p>
+        </div>
+        <div class="db-tip-item">
+          <span class="db-tip-icon">💻</span>
+          <p>E-waste represents only 2% of America's trash in landfills, but it equals 70% of overall toxic waste.</p>
+        </div>
+        <div class="db-tip-item">
+          <span class="db-tip-icon">🌍</span>
+          <p>By recycling your organic waste, you've prevented approximately {{ ((totalWeight$ | async) || 0) * 0.5 | number:'1.0-1' }} kg of methane emissions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

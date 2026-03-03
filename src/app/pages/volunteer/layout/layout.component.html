@@ -1,0 +1,86 @@
+<div class="db-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+  <!-- SIDEBAR -->
+  <aside class="db-sidebar">
+    <div class="db-sidebar-glow"></div>
+    
+    <div class="db-sidebar-header">
+      <div class="db-brand">
+        <div class="db-brand-icon-wrap">🚚</div>
+        <span class="db-brand-name" *ngIf="!sidebarCollapsed">WasteZero</span>
+      </div>
+      <button class="db-toggle-btn" (click)="toggleSidebar()">
+        {{ sidebarCollapsed ? '→' : '←' }}
+      </button>
+    </div>
+
+    <!-- User Profile Summary -->
+    <div class="db-user-block" *ngIf="!sidebarCollapsed">
+      <div class="db-avatar">
+        {{ currentUser?.name?.charAt(0) || 'V' }}
+      </div>
+      <div class="db-user-info">
+        <div class="db-user-name">{{ currentUser?.name }}</div>
+        <div class="db-role-chip">
+          <span>🛡️</span> Volunteer
+        </div>
+      </div>
+    </div>
+    <div class="db-avatar-mini" *ngIf="sidebarCollapsed">
+      {{ currentUser?.name?.charAt(0) || 'V' }}
+    </div>
+
+    <!-- Navigation -->
+    <nav class="db-nav">
+      <div class="db-nav-section" *ngIf="!sidebarCollapsed">Agent Dashboard</div>
+      
+      <a routerLink="/volunteer/dashboard" routerLinkActive="active" class="db-nav-item">
+        <span class="db-nav-icon">🏠</span>
+        <span class="db-nav-label" *ngIf="!sidebarCollapsed">Overview</span>
+      </a>
+
+      <a routerLink="/volunteer/opportunities" routerLinkActive="active" class="db-nav-item">
+        <span class="db-nav-icon">🛰️</span>
+        <span class="db-nav-label" *ngIf="!sidebarCollapsed">Available Tasks</span>
+      </a>
+
+      <a routerLink="/volunteer/my-pickups" routerLinkActive="active" class="db-nav-item">
+        <span class="db-nav-icon">🚛</span>
+        <span class="db-nav-label" *ngIf="!sidebarCollapsed">My Pickups</span>
+      </a>
+
+      <div class="db-nav-divider"></div>
+      <div class="db-nav-section" *ngIf="!sidebarCollapsed">Account</div>
+
+      <a routerLink="/volunteer/messages" routerLinkActive="active" class="db-nav-item">
+        <span class="db-nav-icon">💬</span>
+        <span class="db-nav-label" *ngIf="!sidebarCollapsed">Messages</span>
+        <span class="db-badge" *ngIf="!sidebarCollapsed">5</span>
+      </a>
+
+      <a routerLink="/volunteer/profile" routerLinkActive="active" class="db-nav-item">
+        <span class="db-nav-icon">👤</span>
+        <span class="db-nav-label" *ngIf="!sidebarCollapsed">Profile</span>
+      </a>
+    </nav>
+
+    <!-- Footer -->
+    <div class="db-sidebar-footer">
+      <button class="db-theme-toggle" (click)="toggleTheme()">
+        <span class="db-nav-icon">{{ (isDarkMode$ | async) ? '☀️' : '🌙' }}</span>
+        <span class="db-nav-label" *ngIf="!sidebarCollapsed">
+          {{ (isDarkMode$ | async) ? 'Light Mode' : 'Dark Mode' }}
+        </span>
+      </button>
+      
+      <button class="db-nav-item" (click)="logout()">
+        <span class="db-nav-icon">🚪</span>
+        <span class="db-nav-label" *ngIf="!sidebarCollapsed">Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="db-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

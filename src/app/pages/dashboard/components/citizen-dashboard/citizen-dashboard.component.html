@@ -1,0 +1,204 @@
+<!-- Citizen Dashboard UI -->
+
+<!-- ===== OVERVIEW TAB ===== -->
+<div *ngIf="activeTab === 'overview'" class="db-body">
+  <h1 class="db-page-title">Welcome back, {{ currentUser?.name }} 👋</h1>
+  <p class="db-page-sub">Here's your impact overview</p>
+
+  <div class="db-stats-row">
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap green">🌿</div>
+      <div>
+        <div class="db-stat-value">{{ (totalWeight$ | async) || 0 }} kg</div>
+        <div class="db-stat-label">Waste Recycled</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap blue">⚡</div>
+      <div>
+        <div class="db-stat-value">{{ (impactScore$ | async) || 0 }}</div>
+        <div class="db-stat-label">Impact Score</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap purple">🏆</div>
+      <div>
+        <div class="db-stat-value">{{ (completedCount$ | async) || 0 }}</div>
+        <div class="db-stat-label">Completed Pickups</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Pickup Summary -->
+  <div class="db-card next-summary" *ngIf="(activeRequests$ | async) as actives">
+    <div *ngIf="actives.length > 0; else noActive">
+      <h3 class="db-card-title">🚀 Next Scheduled Pickup</h3>
+      <div class="db-list-item">
+        <div class="db-list-icon">{{ getCategoryIcon(actives[0].wasteCategory) }}</div>
+        <div class="db-list-info">
+          <div class="db-list-title">{{ actives[0].wasteCategory }} — {{ actives[0].description }}</div>
+          <div class="db-list-meta">Scheduled for: {{ (actives[0].scheduledDate | date:'medium') || 'Awaiting Schedule' }}</div>
+        </div>
+        <span class="db-status-chip scheduled">{{ actives[0].status }}</span>
+      </div>
+    </div>
+    <ng-template #noActive>
+      <div class="db-empty">
+        No active pickups. 
+        <button class="db-link-btn" (click)="setTab.emit('schedule')">Schedule one now →</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<!-- ===== SCHEDULE PICKUP TAB ===== -->
+<div *ngIf="activeTab === 'schedule'" class="db-body">
+  <h1 class="db-page-title">📅 Schedule Pickup</h1>
+  <p class="db-page-sub">Request a waste collection from your location</p>
+
+  <div *ngIf="submitSuccess" class="db-alert success db-success-anim">
+    ✅ Pickup request submitted successfully! A volunteer will be assigned soon.
+  </div>
+
+  <div class="db-card db-schedule-card">
+    <h3 class="db-card-title">🗑️ New Pickup Request</h3>
+
+    <div class="db-form-group">
+      <label class="db-form-label">Waste Category</label>
+      <div class="db-category-grid">
+        <button *ngFor="let cat of categories"
+                class="db-category-btn"
+                [class.selected]="newRequest.wasteCategory === cat"
+                (click)="newRequest.wasteCategory = cat"
+                type="button">
+          <span class="db-cat-icon">{{ getCategoryIcon(cat) }}</span>
+          <span class="db-cat-name">{{ cat }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="db-form-group">
+      <label class="db-form-label">Pickup Location</label>
+      <div class="db-input-wrap">
+        <span class="db-input-icon">📍</span>
+        <input type="text" class="db-input db-input-with-icon" [(ngModel)]="newRequest.location" placeholder="Enter your pickup address" />
+      </div>
+    </div>
+
+    <div class="db-form-group">
+      <label class="db-form-label">Description / Details</label>
+      <textarea class="db-input db-textarea" [(ngModel)]="newRequest.description" rows="4"
+                placeholder="E.g., 3 bags of plastic bottles, old keyboard, etc."></textarea>
+    </div>
+
+    <button class="db-action-btn db-submit-btn" (click)="onSubmitPickup()"
+            [disabled]="!newRequest.description || !newRequest.location">
+      🚛 Submit Pickup Request
+    </button>
+  </div>
+</div>
+
+<!-- ===== PICKUP STATUS TAB ===== -->
+<div *ngIf="activeTab === 'pickups'" class="db-body">
+  <h1 class="db-page-title">🚛 Pickup Tracking</h1>
+  <p class="db-page-sub">Manage your active and past waste collections</p>
+  
+  <div class="db-tabs-internal">
+    <h3 class="db-sub-title">📡 Active Requests</h3>
+    <div *ngIf="(activeRequests$ | async) as actives">
+      <div *ngIf="actives.length === 0" class="db-empty">No active pickups.</div>
+      <div *ngFor="let req of actives" class="db-card db-pickup-card">
+        <div class="db-pickup-row">
+          <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
+          <div class="db-list-info">
+            <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
+            <div class="db-list-meta">📍 {{ req.location }}</div>
+            <div class="db-list-meta" *ngIf="req.volunteerName">👤 Volunteer: {{ req.volunteerName }}</div>
+          </div>
+          <span class="db-status-chip"
+                [class.pending]="req.status === 'Pending'"
+                [class.scheduled]="req.status === 'Scheduled'"
+                [class.inprogress]="req.status === 'In Progress'">{{ req.status }}</span>
+        </div>
+        <div class="db-pickup-timeline">
+          <div class="db-timeline-step" [class.done]="true">
+            <div class="db-timeline-dot"></div>
+            <span>Requested</span>
+          </div>
+          <div class="db-timeline-line" [class.done]="req.status !== 'Pending'"></div>
+          <div class="db-timeline-step" [class.done]="req.status === 'Scheduled' || req.status === 'In Progress'">
+            <div class="db-timeline-dot"></div>
+            <span>Scheduled</span>
+          </div>
+          <div class="db-timeline-line" [class.done]="req.status === 'In Progress'"></div>
+          <div class="db-timeline-step" [class.done]="req.status === 'In Progress'">
+            <div class="db-timeline-dot"></div>
+            <span>In Progress</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="db-sub-title">🧾 Pickup History</h3>
+    <div *ngIf="(historyRequests$ | async) as history">
+      <div *ngIf="history.length === 0" class="db-empty">No past pickups found.</div>
+      <div *ngFor="let req of history" class="db-card db-list-item">
+        <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
+        <div class="db-list-info">
+          <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
+          <div class="db-list-meta">📍 {{ req.location }} · {{ req.scheduledDate | date:'mediumDate' }}</div>
+        </div>
+        <span class="db-status-chip" 
+              [class.completed]="req.status === 'Completed'"
+              [class.cancelled]="req.status === 'Cancelled'">{{ req.status }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WASTE STATISTICS TAB ===== -->
+<div *ngIf="activeTab === 'statistics'" class="db-body">
+  <h1 class="db-page-title">📈 Waste Statistics</h1>
+  <p class="db-page-sub">Your personal waste recycling breakdown</p>
+
+  <div class="db-stats-row">
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap green">🌿</div>
+      <div>
+        <div class="db-stat-value">{{ (totalWeight$ | async) || 0 }} kg</div>
+        <div class="db-stat-label">Total Recycled</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap blue">⚡</div>
+      <div>
+        <div class="db-stat-value">{{ (impactScore$ | async) || 0 }}</div>
+        <div class="db-stat-label">Impact Score</div>
+      </div>
+    </div>
+    <div class="db-stat-card">
+      <div class="db-stat-icon-wrap purple">🏆</div>
+      <div>
+        <div class="db-stat-value">{{ (completedCount$ | async) || 0 }}</div>
+        <div class="db-stat-label">Completed Pickups</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="db-card">
+    <h3 class="db-card-title">📊 Category Breakdown</h3>
+    <div *ngIf="(wasteStats$ | async) as stats">
+      <div *ngIf="stats.length === 0" class="db-empty">No completed pickups yet. Statistics will appear after your first completed collection.</div>
+      <div *ngFor="let stat of stats" class="db-stat-bar-row">
+        <div class="db-stat-bar-label">
+          <span class="db-stat-bar-icon">{{ getCategoryIcon(stat.category) }}</span>
+          <span>{{ stat.category }}</span>
+        </div>
+        <div class="db-stat-bar-track">
+          <div class="db-stat-bar-fill" [style.width.%]="stat.percentage" [style.background]="getCategoryColor(stat.category)"></div>
+        </div>
+        <div class="db-stat-bar-value">{{ stat.weight }} kg ({{ stat.percentage }}%)</div>
+      </div>
+    </div>
+  </div>
+</div>

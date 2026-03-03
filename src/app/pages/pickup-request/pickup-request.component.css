@@ -1,0 +1,29 @@
+.max-w-600px {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ls-1 {
+  letter-spacing: 1px;
+}
+
+.card {
+  transition: transform 0.3s ease;
+}
+
+.btn-check:checked + .btn-outline-success {
+  background-color: #198754;
+  color: white;
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2);
+}
+
+.form-control:focus {
+  background-color: #fff !important;
+  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.1);
+  border-color: #198754;
+}
+
+textarea {
+  resize: none;
+}
