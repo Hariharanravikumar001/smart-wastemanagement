@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService, User } from '../../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -24,7 +25,10 @@ export class ProfileComponent implements OnInit {
   passwordSuccess = '';
   passwordError = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
@@ -50,7 +54,14 @@ export class ProfileComponent implements OnInit {
       next: (result) => {
         this.profileSuccess = result.message;
         this.isEditMode = false;
-        setTimeout(() => this.profileSuccess = '', 3000);
+        
+        // Navigate to dashboard or refresh the profile view
+        setTimeout(() => {
+          this.profileSuccess = '';
+          this.router.navigate(['/citizen/profile']).then(() => {
+            window.scrollTo(0, 0);
+          });
+        }, 1500); // Short delay so they see the success message
       },
       error: (err) => {
         this.profileError = err.error?.message || 'Failed to update profile';

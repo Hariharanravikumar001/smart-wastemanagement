@@ -60,17 +60,17 @@ export class CitizenDashboardComponent implements OnInit {
       ...this.newRequest,
       citizenId: this.currentUser.id,
       citizenName: this.currentUser.name
+    }).subscribe(() => {
+      this.submitSuccess = true;
+      this.newRequest = {
+        wasteCategory: 'Plastic',
+        description: '',
+        location: this.currentUser?.location || ''
+      };
+      
+      this.recalcStats();
+      setTimeout(() => this.submitSuccess = false, 4000);
     });
-    
-    this.submitSuccess = true;
-    this.newRequest = {
-      wasteCategory: 'Plastic',
-      description: '',
-      location: this.currentUser.location || ''
-    };
-    
-    this.recalcStats();
-    setTimeout(() => this.submitSuccess = false, 4000);
   }
 
   private recalcStats() {

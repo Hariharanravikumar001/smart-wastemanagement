@@ -5,8 +5,10 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password?: string;
-  role: 'user' | 'volunteer' | 'admin' | 'citizen';
+  role: 'user' | 'volunteer' | 'admin' | 'citizen' | 'ngo';
   location?: string;
+  skills?: string[];
+  bio?: string;
   created_at: Date;
 }
 
@@ -18,10 +20,12 @@ const UserSchema: Schema = new Schema({
   role: { 
     type: String, 
     required: true, 
-    enum: ['user', 'volunteer', 'admin', 'citizen'],
+    enum: ['user', 'volunteer', 'admin', 'citizen', 'ngo'],
     default: 'user' 
   },
   location: { type: String },
+  skills: { type: [String], default: [] },
+  bio: { type: String },
   created_at: { type: Date, default: Date.now }
 });
 

@@ -50,10 +50,14 @@ export class AuthService {
       .pipe(
         tap(response => {
            if (response && response.token) {
-             const user: User = { ...response, id: response.token }; // basic mock of user mapping
-             user.role = this.mapRole(response.role);
-             user.email = userCredentials.email;
-             user.username = response.name;
+             const user: User = { 
+               ...response, 
+               id: response.token,
+               role: this.mapRole(response.role),
+               email: response.email || userCredentials.email,
+               username: response.username || response.name,
+               location: response.location
+             }; 
 
              if (typeof localStorage !== 'undefined') {
                 localStorage.setItem('wastezero_user', JSON.stringify(user));
@@ -197,6 +201,9 @@ export class AuthService {
             const currentUser = this.currentUserValue;
             if (currentUser) {
               const updatedUser = { ...currentUser, ...response.user };
+              if (response.user.role) {
+                updatedUser.role = this.mapRole(response.user.role);
+              }
               if (typeof localStorage !== 'undefined') {
                 localStorage.setItem('wastezero_user', JSON.stringify(updatedUser));
               }

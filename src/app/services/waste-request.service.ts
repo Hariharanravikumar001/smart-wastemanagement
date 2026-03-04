@@ -1,150 +1,86 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { WasteRequest } from '../models/waste-request.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WasteRequestService {
+  private apiUrl = 'http://localhost:4001/api/waste-requests';
+
+  // We keep the subject if any components bind to it directly with async pipe
   private requestsSubject = new BehaviorSubject<WasteRequest[]>([]);
   public requests$ = this.requestsSubject.asObservable();
 
-  constructor() {
-    this.loadInitialData();
+  constructor(private http: HttpClient) {
+    // Optionally fetch all requests on init
+    this.refreshAllRequests();
   }
 
-  private loadInitialData() {
-    if (typeof localStorage !== 'undefined') {
-      const savedRequests = localStorage.getItem('wastezero_pickups');
-      if (savedRequests) {
-        const parsed = JSON.parse(savedRequests).map((r: any) => ({
-          ...r,
-          createdAt: new Date(r.createdAt),
-          scheduledDate: r.scheduledDate ? new Date(r.scheduledDate) : undefined
-        }));
-        this.requestsSubject.next(parsed);
-      } else {
-        // Initial mock data
-        const mockRequests: WasteRequest[] = [
-          {
-            id: 'req1',
-            citizenId: 'user1',
-            citizenName: 'John Doe',
-            location: '123 Green St, NY',
-            wasteCategory: 'E-Waste',
-            description: 'Old laptop and cables',
-            status: 'Scheduled',
-            createdAt: new Date('2026-10-20'),
-            scheduledDate: new Date('2026-10-24'),
-            volunteerId: 'vol1',
-            volunteerName: 'Agent Smith'
-          },
-          {
-            id: 'req2',
-            citizenId: 'user1',
-            citizenName: 'John Doe',
-            location: '123 Green St, NY',
-            wasteCategory: 'Plastic',
-            description: 'Water bottles and containers',
-            status: 'Completed',
-            createdAt: new Date('2026-10-15'),
-            weight: 5.2,
-            volunteerId: 'vol1',
-            volunteerName: 'Agent Smith'
-          },
-          {
-            id: 'req3',
-            citizenId: 'user2',
-            citizenName: 'Jane Birkin',
-            location: '456 Blue Ave, SF',
-            wasteCategory: 'Organic',
-            description: 'Kitchen waste',
-            status: 'Pending',
-            createdAt: new Date(),
-          }
-        ];
-        this.saveRequests(mockRequests);
-      }
-    }
-  }
-
-  private saveRequests(requests: WasteRequest[]) {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('wastezero_pickups', JSON.stringify(requests));
-    }
-    this.requestsSubject.next(requests);
+  // Helper to update the BehaviorSubject
+  private refreshAllRequests() {
+    this.http.get<WasteRequest[]>(this.apiUrl).subscribe({
+      next: (data) => this.requestsSubject.next(data),
+      error: (err) => console.error('Error fetching global requests', err)
+    });
   }
 
   getRequestsByCitizen(citizenId: string): Observable<WasteRequest[]> {
-    return of(this.requestsSubject.value.filter(r => r.citizenId === citizenId));
+    return this.http.get<WasteRequest[]>(`${this.apiUrl}/citizen/${citizenId}`);
   }
 
   getRequestsByVolunteer(volunteerId: string): Observable<WasteRequest[]> {
-    return of(this.requestsSubject.value.filter(r => r.volunteerId === volunteerId));
+    return this.http.get<WasteRequest[]>(`${this.apiUrl}/volunteer/${volunteerId}`);
   }
 
   getAllRequests(): Observable<WasteRequest[]> {
-    return this.requests$;
+    return this.http.get<WasteRequest[]>(this.apiUrl).pipe(
+      tap(data => this.requestsSubject.next(data))
+    );
   }
 
   getAvailableRequests(): Observable<WasteRequest[]> {
-    return of(this.requestsSubject.value.filter(r => r.status === 'Pending'));
+    return this.http.get<WasteRequest[]>(`${this.apiUrl}/available`);
   }
 
-  assignVolunteer(requestId: string, volunteerId: string, volunteerName: string): void {
-    const current = this.requestsSubject.value;
-    const index = current.findIndex(r => r.id === requestId);
-    if (index !== -1) {
-      current[index] = { 
-        ...current[index], 
-        volunteerId, 
-        volunteerName,
-        status: 'Scheduled',
-        scheduledDate: new Date() // Default to now if assigned
-      };
-      this.saveRequests([...current]);
+  assignVolunteer(requestId: string, volunteerId: string, volunteerName: string): Observable<WasteRequest> {
+    const updateData = {
+      volunteerId,
+      volunteerName,
+      status: 'Scheduled',
+      scheduledDate: new Date()
+    };
+    return this.http.patch<WasteRequest>(`${this.apiUrl}/${requestId}/status`, updateData).pipe(
+      tap(() => this.refreshAllRequests())
+    );
+  }
+
+  acceptPickup(requestId: string, volunteerId: string, volunteerName: string): Observable<WasteRequest> {
+    return this.assignVolunteer(requestId, volunteerId, volunteerName);
+  }
+
+  createRequest(requestData: Partial<WasteRequest>): Observable<WasteRequest> {
+    return this.http.post<WasteRequest>(this.apiUrl, requestData).pipe(
+      tap(() => this.refreshAllRequests())
+    );
+  }
+
+  updateRequest(id: string, data: Partial<WasteRequest>): Observable<WasteRequest> {
+    // We didn't add a specific full-update route, but patch /status covers anything sent
+    return this.http.patch<WasteRequest>(`${this.apiUrl}/${id}/status`, data).pipe(
+      tap(() => this.refreshAllRequests())
+    );
+  }
+
+  updateRequestStatus(id: string, status: WasteRequest['status'], weight?: number): Observable<WasteRequest> {
+    const data: any = { status };
+    if (weight !== undefined) {
+      data.weight = weight;
     }
-  }
-
-  acceptPickup(requestId: string, volunteerId: string, volunteerName: string): void {
-    this.assignVolunteer(requestId, volunteerId, volunteerName);
-  }
-
-  createRequest(requestData: Partial<WasteRequest>): void {
-    const current = this.requestsSubject.value;
-    const newRequest: WasteRequest = {
-      id: Math.random().toString(36).substring(2, 11),
-      citizenId: requestData.citizenId || '',
-      citizenName: requestData.citizenName || '',
-      location: requestData.location || '',
-      wasteCategory: requestData.wasteCategory || 'Other',
-      description: requestData.description || '',
-      status: 'Pending',
-      createdAt: new Date(),
-      ...requestData
-    } as WasteRequest;
-    
-    this.saveRequests([...current, newRequest]);
-  }
-
-  updateRequest(id: string, data: Partial<WasteRequest>): void {
-    const current = this.requestsSubject.value;
-    const index = current.findIndex(r => r.id === id);
-    if (index !== -1) {
-      current[index] = { ...current[index], ...data };
-      this.saveRequests([...current]);
-    }
-  }
-
-  updateRequestStatus(id: string, status: WasteRequest['status'], weight?: number): void {
-    const current = this.requestsSubject.value;
-    const index = current.findIndex(r => r.id === id);
-    if (index !== -1) {
-      current[index] = { ...current[index], status };
-      if (weight !== undefined) {
-        current[index].weight = weight;
-      }
-      this.saveRequests([...current]);
-    }
+    return this.http.patch<WasteRequest>(`${this.apiUrl}/${id}/status`, data).pipe(
+      tap(() => this.refreshAllRequests())
+    );
   }
 }

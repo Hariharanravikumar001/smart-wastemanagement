@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import authRoutes from './src/routes/authRoutes';
+import wasteRequestRoutes from './src/routes/wasteRequestRoutes';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api', authRoutes);
+app.use('/api/waste-requests', wasteRequestRoutes);
 
 // Database connection
 const mongoUri = process.env['MONGODB_URI'];

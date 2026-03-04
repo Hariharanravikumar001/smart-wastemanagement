@@ -39,7 +39,7 @@ export class OpportunitiesComponent implements OnInit {
       volunteerId: this.currentUser.id,
       volunteerName: this.currentUser.name,
       scheduledDate: new Date()
-    });
+    }).subscribe();
   }
 
   getCategoryIcon(cat: string): string {

@@ -47,7 +47,7 @@ export class MyPickupsComponent implements OnInit {
   }
 
   updateStatus(requestId: string, status: WasteRequest['status']) {
-    this.wasteService.updateRequest(requestId, { status });
+    this.wasteService.updateRequest(requestId, { status }).subscribe();
   }
 
   startCompletion(requestId: string) {
@@ -64,7 +64,7 @@ export class MyPickupsComponent implements OnInit {
       this.wasteService.updateRequest(this.completingRequestId, {
         status: 'Completed',
         weight: this.weightInput
-      });
+      }).subscribe();
       this.completingRequestId = null;
     }
   }

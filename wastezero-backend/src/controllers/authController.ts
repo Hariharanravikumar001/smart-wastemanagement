@@ -70,7 +70,14 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: '5h' },
       (err, token) => {
         if (err) throw err;
-        res.json({ token, role: user.role, name: user.name });
+        res.json({ 
+          token, 
+          role: user.role, 
+          name: user.name,
+          username: user.username,
+          location: user.location,
+          email: user.email
+        });
       }
     );
   } catch (err: any) {

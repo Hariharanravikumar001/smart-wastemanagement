@@ -50,21 +50,21 @@ export class PickupRequestComponent implements OnInit {
       ...this.newRequest,
       citizenId: this.currentUser.id,
       citizenName: this.currentUser.name
+    }).subscribe(() => {
+      this.submitSuccess = true;
+      
+      // Reset form
+      this.newRequest = {
+        wasteCategory: 'Plastic',
+        description: '',
+        location: this.currentUser?.location || ''
+      };
+
+      setTimeout(() => {
+        this.submitSuccess = false;
+        this.router.navigate(['/citizen/dashboard']);
+      }, 2000);
     });
-
-    this.submitSuccess = true;
-    
-    // Reset form
-    this.newRequest = {
-      wasteCategory: 'Plastic',
-      description: '',
-      location: this.currentUser.location || ''
-    };
-
-    setTimeout(() => {
-      this.submitSuccess = false;
-      this.router.navigate(['/citizen/dashboard']);
-    }, 2000);
   }
 
   getCategoryIcon(cat: string): string {

@@ -44,8 +44,9 @@ export class PickupRequestComponent implements OnInit {
         ...this.request,
         citizenId: this.currentUser.id,
         citizenName: this.currentUser.name
+      }).subscribe(() => {
+        this.router.navigate(['/dashboard']);
       });
-      this.router.navigate(['/dashboard']);
     }
   }
 }
