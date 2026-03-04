@@ -1,0 +1,6 @@
+@echo off
+echo Starting WasteZero Backend...
+start "WasteZero Backend" cmd /k "cd wastezero-backend && npm run dev"
+
+echo Starting WasteZero Frontend...
+start "WasteZero Frontend" cmd /k "ng serve"
