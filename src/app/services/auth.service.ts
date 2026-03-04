@@ -189,6 +189,21 @@ export class AuthService {
       );
   }
 
+  // Request OTP for Forgotten Password
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  // Verify the OTP sent to email
+  verifyOtp(email: string, otp: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/verify-otp`, { email, otp });
+  }
+
+  // Reset the password with verified OTP
+  resetPassword(email: string, otp: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/reset-password`, { email, otp, newPassword });
+  }
+
   // Update User Details
   updateUserDetails(email: string, details: Partial<User>): Observable<any> {
     const token = localStorage.getItem('wastezero_token');

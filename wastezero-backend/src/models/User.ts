@@ -9,6 +9,8 @@ export interface IUser extends Document {
   location?: string;
   skills?: string[];
   bio?: string;
+  resetPasswordOtp?: string;
+  resetPasswordExpires?: Date;
   created_at: Date;
 }
 
@@ -26,6 +28,8 @@ const UserSchema: Schema = new Schema({
   location: { type: String },
   skills: { type: [String], default: [] },
   bio: { type: String },
+  resetPasswordOtp: { type: String },
+  resetPasswordExpires: { type: Date },
   created_at: { type: Date, default: Date.now }
 });
 

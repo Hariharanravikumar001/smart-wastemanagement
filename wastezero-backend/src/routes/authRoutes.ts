@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, updateProfile, changePassword } from '../controllers/authController';
+import { registerUser, loginUser, updateProfile, changePassword, forgotPassword, verifyOtp, resetPassword } from '../controllers/authController';
 import { authProtect } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -23,5 +23,20 @@ router.put('/profile', authProtect, updateProfile);
 // @desc    Change user password
 // @access  Private
 router.put('/change-password', authProtect, changePassword);
+
+// @route   POST api/forgot-password
+// @desc    Send password reset OTP
+// @access  Public
+router.post('/forgot-password', forgotPassword);
+
+// @route   POST api/verify-otp
+// @desc    Verify password reset OTP
+// @access  Public
+router.post('/verify-otp', verifyOtp);
+
+// @route   POST api/reset-password
+// @desc    Reset password using OTP
+// @access  Public
+router.post('/reset-password', resetPassword);
 
 export default router;
