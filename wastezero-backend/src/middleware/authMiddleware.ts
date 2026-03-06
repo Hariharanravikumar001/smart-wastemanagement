@@ -22,7 +22,8 @@ export const authProtect = (req: AuthRequest, res: Response, next: NextFunction)
     
     req.user = (decoded as any).user;
     next();
-  } catch (err) {
+  } catch (err: any) {
+    console.error('JWT Verification Error:', err.message);
     res.status(401).json({ message: 'Token is not valid' });
   }
 };

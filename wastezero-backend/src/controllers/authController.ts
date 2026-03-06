@@ -35,8 +35,12 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Registration Error:', err.message);
+    if (err.message.includes('buffering timed out') || err.name === 'MongooseServerSelectionError' || err.message.includes('topology was destroyed') || err.message.includes('bufferCommands = false')) {
+      res.status(503).json({ message: 'Database connection failed. Please check your network or database whitelist.' });
+    } else {
+      res.status(500).json({ message: 'Server error during registration' });
+    }
   }
 };
 
@@ -82,8 +86,12 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       }
     );
   } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Login Error:', err.message);
+    if (err.message.includes('buffering timed out') || err.name === 'MongooseServerSelectionError' || err.message.includes('topology was destroyed') || err.message.includes('bufferCommands = false')) {
+      res.status(503).json({ message: 'Database connection failed. Please check your network or database whitelist.' });
+    } else {
+      res.status(500).json({ message: 'Server error during login' });
+    }
   }
 };
 
@@ -125,8 +133,12 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       location: user.location
     }});
   } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Profile Update Error:', err.message);
+    if (err.message.includes('buffering timed out') || err.name === 'MongooseServerSelectionError' || err.message.includes('topology was destroyed') || err.message.includes('bufferCommands = false')) {
+      res.status(503).json({ message: 'Database connection failed. Please check your network or database whitelist.' });
+    } else {
+      res.status(500).json({ message: 'Server error during profile update' });
+    }
   }
 };
 
@@ -158,8 +170,12 @@ export const changePassword = async (req: AuthRequest, res: Response): Promise<v
     await user.save();
     res.json({ message: 'Password changed successfully' });
   } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Password Change Error:', err.message);
+    if (err.message.includes('buffering timed out') || err.name === 'MongooseServerSelectionError' || err.message.includes('topology was destroyed') || err.message.includes('bufferCommands = false')) {
+      res.status(503).json({ message: 'Database connection failed. Please check your network or database whitelist.' });
+    } else {
+      res.status(500).json({ message: 'Server error during password change' });
+    }
   }
 };
 

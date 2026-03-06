@@ -1,18 +1,103 @@
-/* Volunteer Dashboard Specific Styles */
+/* Volunteer Dashboard Specific Styles (Bootstrap 5 Compatible) */
 
-/* Cards/List Items (shared classes from dashboard.component.css) */
-
-/* Opportunity Cards */
-.db-opp-card { cursor: pointer; transition: all .3s ease; }
-.db-opp-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.25); border-color: rgba(99,255,180,0.15); }
-.db-opp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.db-tag {
-  font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 22px;
-  background: rgba(99,255,180,0.08); color: #63ffb4; border: 1px solid rgba(99,255,180,0.15);
+:host {
+  display: block;
+  min-height: 100vh;
 }
 
-/* Light Mode Overrides */
-:host-context(body:not(.dark-mode)) .db-opp-card:hover { border-color: rgba(16,185,129,0.12); }
-:host-context(body:not(.dark-mode)) .db-tag {
-  background: rgba(16,185,129,0.08); color: #059669; border-color: rgba(16,185,129,0.15);
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.fade-in-section {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Base Utilities matching Admin CSS */
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.hover-lift-row {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.hover-lift-row:hover {
+  background-color: rgba(16, 185, 129, 0.05) !important;
+  transform: translateX(4px);
+}
+
+.ls-wide {
+  letter-spacing: 0.05em;
+}
+
+/* Dark Mode Overrides (Admin dark mode classes) */
+:host-context(body.dark-mode) .card,
+:host-context(body.dark-mode) .card-header,
+:host-context(body.dark-mode) .bg-white {
+  background-color: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
+}
+
+:host-context(body.dark-mode) .text-dark {
+  color: #f1f5f9 !important;
+}
+
+:host-context(body.dark-mode) .text-muted {
+  color: #94a3b8 !important;
+}
+
+:host-context(body.dark-mode) .bg-light {
+  background-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+:host-context(body.dark-mode) .table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+:host-context(body.dark-mode) .table td {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+:host-context(body.dark-mode) .border-light {
+  border-color: rgba(255, 255, 255, 0.05) !important;
 }

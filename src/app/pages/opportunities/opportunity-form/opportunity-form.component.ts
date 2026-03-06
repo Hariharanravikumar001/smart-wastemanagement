@@ -35,25 +35,26 @@ export class OpportunityFormComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.opportunityId = this.route.snapshot.paramMap.get('id');
     if (this.opportunityId) {
       this.isEditMode = true;
-      const opp = this.opportunityService.getOpportunityById(this.opportunityId);
-      if (opp) {
-        this.form = {
-          title: opp.title,
-          description: opp.description,
-          wasteType: opp.wasteType,
-          location: opp.location,
-          skillsRequired: opp.skillsRequired.join(', '),
-          duration: opp.duration,
-          organizationId: opp.organizationId,
-          organizationName: opp.organizationName
-        };
-      }
+      this.opportunityService.getOpportunityById(this.opportunityId).subscribe(opp => {
+        if (opp) {
+          this.form = {
+            title: opp.title,
+            description: opp.description,
+            wasteType: opp.wasteType || 'Plastic',
+            location: opp.location,
+            skillsRequired: (opp.skills || opp.skillsRequired || []).join(', '),
+            duration: opp.duration,
+            organizationId: opp.ngo_id?._id || opp.ngo_id || opp.organizationId || '',
+            organizationName: opp.organizationName || ''
+          };
+        }
+      });
     } else {
       const user = this.authService.currentUserValue;
       if (user) {
@@ -64,22 +65,27 @@ export class OpportunityFormComponent implements OnInit {
   }
 
   onSubmit() {
-    const data: Omit<Opportunity, 'id' | 'createdAt'> = {
+    const data: any = {
       title: this.form.title,
       description: this.form.description,
       wasteType: this.form.wasteType,
       location: this.form.location,
-      skillsRequired: this.form.skillsRequired.split(',').map(s => s.trim()).filter(s => s),
+      skills: this.form.skillsRequired.split(',').map(s => s.trim()).filter(s => s),
       duration: this.form.duration,
-      organizationId: this.form.organizationId,
+      ngo_id: this.form.organizationId,
       organizationName: this.form.organizationName
     };
 
     if (this.isEditMode && this.opportunityId) {
-      this.opportunityService.updateOpportunity(this.opportunityId, data);
+      this.opportunityService.updateOpportunity(this.opportunityId, data).subscribe({
+        next: () => this.router.navigate(['/opportunities']),
+        error: (err) => alert('Error updating opportunity')
+      });
     } else {
-      this.opportunityService.createOpportunity(data);
+      this.opportunityService.createOpportunity(data).subscribe({
+        next: () => this.router.navigate(['/opportunities']),
+        error: (err) => alert('Error creating opportunity')
+      });
     }
-    this.router.navigate(['/opportunities']);
   }
 }

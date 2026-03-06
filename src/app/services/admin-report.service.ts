@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthService, User } from './auth.service';
 import { OpportunityService } from './opportunity.service';
 import { Opportunity } from '../models/opportunity.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -25,53 +26,60 @@ export class AdminReportService {
   }
 
   getOpportunityStats() {
-    const opportunities = this.opportunityService.getOpportunities();
-    const statsByType: { [key: string]: number } = {};
-    
-    opportunities.forEach(opp => {
-      statsByType[opp.wasteType] = (statsByType[opp.wasteType] || 0) + 1;
-    });
+    return this.opportunityService.getOpportunities().pipe(
+      map(res => {
+        const opportunities = res.opportunities || res;
+        const statsByType: { [key: string]: number } = {};
 
-    return {
-      total: opportunities.length,
-      byType: statsByType,
-      recent: opportunities.filter(o => {
-        const diff = new Date().getTime() - new Date(o.createdAt).getTime();
-        return diff < (7 * 24 * 60 * 60 * 1000); // Last 7 days
-      }).length
-    };
+        opportunities.forEach((opp: any) => {
+          statsByType[opp.wasteType || 'Other'] = (statsByType[opp.wasteType || 'Other'] || 0) + 1;
+        });
+
+        return {
+          total: opportunities.length,
+          byType: statsByType,
+          recent: opportunities.filter((o: any) => {
+            if (!o.createdAt) return false;
+            const diff = new Date().getTime() - new Date(o.createdAt).getTime();
+            return diff < (7 * 24 * 60 * 60 * 1000); // Last 7 days
+          }).length
+        };
+      })
+    );
   }
 
   exportUsersToCSV(): void {
     const users = this.authService.getAllUsers();
     const headers = ['ID', 'Name', 'Username', 'Email', 'Role', 'Location', 'Status'];
     const rows = users.map(u => [
-      u.id, 
-      u.name, 
-      u.username, 
-      u.email, 
-      u.role, 
-      u.location || '', 
+      u.id,
+      u.name,
+      u.username,
+      u.email,
+      u.role,
+      u.location || '',
       u.suspended ? 'Suspended' : 'Active'
     ]);
-    
+
     this.downloadCSV(headers, rows, 'wastezero_users_report.csv');
   }
 
   exportOpportunitiesToCSV(): void {
-    const opportunities = this.opportunityService.getOpportunities();
-    const headers = ['ID', 'Title', 'Waste Type', 'Location', 'Duration', 'Organization', 'Posted Date'];
-    const rows = opportunities.map(o => [
-      o.id,
-      o.title,
-      o.wasteType,
-      o.location,
-      o.duration,
-      o.organizationName,
-      o.createdAt.toLocaleDateString()
-    ]);
+    this.opportunityService.getOpportunities().subscribe(res => {
+      const opportunities = res.opportunities || res;
+      const headers = ['ID', 'Title', 'Waste Type', 'Location', 'Duration', 'Organization', 'Posted Date'];
+      const rows = opportunities.map((o: any) => [
+        o._id || o.id,
+        o.title,
+        o.wasteType || 'Other',
+        o.location || '',
+        o.duration || '',
+        o.organizationName || '',
+        o.createdAt ? new Date(o.createdAt).toLocaleDateString() : ''
+      ]);
 
-    this.downloadCSV(headers, rows, 'wastezero_opportunities_report.csv');
+      this.downloadCSV(headers, rows, 'wastezero_opportunities_report.csv');
+    });
   }
 
   private downloadCSV(headers: string[], rows: any[][], filename: string): void {

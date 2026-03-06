@@ -1,43 +1,218 @@
-<div class="db-layout" [class.sidebar-collapsed]="sidebarCollapsed">
-  <aside class="db-sidebar">
+<!-- Main Layout Wrapper -->
+<div class="db-wrapper" [class.dark-mode]="(isDarkMode$ | async) === true">
+
+  <!-- === SIDEBAR === -->
+  <aside class="db-sidebar" [class.collapsed]="sidebarCollapsed">
+    <!-- Brand Header -->
     <div class="db-sidebar-header">
-      <h2 *ngIf="!sidebarCollapsed">SmartWaste</h2>
-      <button (click)="toggleSidebar()">Toggle</button>
+      <div class="db-brand" *ngIf="!sidebarCollapsed">
+        <span class="db-brand-icon">♻️</span>
+        <span class="db-brand-text">WasteZero</span>
+      </div>
+      <button (click)="toggleSidebar()" class="db-toggle-btn">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
     </div>
 
-    <nav class="db-nav">
-      <button (click)="setTab('overview')">Overview</button>
+    <!-- User Snippet -->
+    <div class="db-user-snippet" [class.centered]="sidebarCollapsed">
+      <div class="db-user-avatar">
+        {{ currentUser?.name?.charAt(0) || 'U' }}
+      </div>
+      <div class="db-user-info" *ngIf="!sidebarCollapsed">
+        <span class="db-user-name">{{ currentUser?.name }}</span>
+        <span class="db-user-role">{{ currentUser?.role }}</span>
+      </div>
+    </div>
 
+    <!-- Navigation Menu -->
+    <nav class="db-nav-menu">
+
+      <!-- MAIN MENU section -->
+      <div class="db-nav-section" *ngIf="!sidebarCollapsed">MAIN MENU</div>
+
+      <!-- Dashboard -->
+      <button (click)="setTab('overview')" class="db-nav-item" [class.active]="activeTab === 'overview'">
+        <i class="bi bi-grid-1x2"></i>
+        <span *ngIf="!sidebarCollapsed">Dashboard</span>
+      </button>
+
+      <!-- Roles specific section -->
       <ng-container *ngIf="currentUser?.role === 'User' || currentUser?.role === 'Citizen'">
-        <button (click)="setTab('schedule')">Schedule Pickup</button>
-        <button (click)="setTab('pickups')">Pickup Status</button>
-        <button (click)="setTab('messages')">Messages</button>
-        <button (click)="setTab('statistics')">Statistics</button>
+        <button (click)="setTab('schedule')" class="db-nav-item" [class.active]="activeTab === 'schedule'">
+          <i class="bi bi-calendar-plus"></i>
+          <span *ngIf="!sidebarCollapsed">Schedule Pickup</span>
+        </button>
+        <button (click)="setTab('pickups')" class="db-nav-item" [class.active]="activeTab === 'pickups'">
+          <i class="bi bi-truck"></i>
+          <span *ngIf="!sidebarCollapsed">Pickup Status</span>
+        </button>
       </ng-container>
 
       <ng-container *ngIf="currentUser?.role === 'Volunteer'">
-        <button (click)="setTab('opportunities')">Opportunities</button>
-        <button (click)="setTab('assignments')">Assignments</button>
-        <button (click)="setTab('messages')">Messages</button>
+        <button (click)="setTab('opportunities')" class="db-nav-item" [class.active]="activeTab === 'opportunities'">
+          <i class="bi bi-briefcase"></i>
+          <span *ngIf="!sidebarCollapsed">Opportunities</span>
+        </button>
+        <button (click)="setTab('assignments')" class="db-nav-item" [class.active]="activeTab === 'assignments'">
+          <i class="bi bi-clipboard-check"></i>
+          <span *ngIf="!sidebarCollapsed">Assignments</span>
+        </button>
       </ng-container>
 
-      <button (click)="setTab('profile')">Profile</button>
-      <button (click)="logout()">Sign Out</button>
+      <button (click)="setTab('messages')" class="db-nav-item" [class.active]="activeTab === 'messages'">
+        <i class="bi bi-chat-dots"></i>
+        <span *ngIf="!sidebarCollapsed">Messages</span>
+      </button>
+
+      <button (click)="setTab('statistics')" *ngIf="currentUser?.role === 'User' || currentUser?.role === 'Citizen'"
+        class="db-nav-item" [class.active]="activeTab === 'statistics'">
+        <i class="bi bi-graph-up"></i>
+        <span *ngIf="!sidebarCollapsed">My Impact</span>
+      </button>
+
+      <!-- SETTINGS section -->
+      <div class="db-nav-section mt-4" *ngIf="!sidebarCollapsed">SETTINGS</div>
+
+      <button (click)="setTab('profile'); editUser = currentUser; isEditMode = false;" class="db-nav-item"
+        [class.active]="activeTab === 'profile'">
+        <i class="bi bi-person"></i>
+        <span *ngIf="!sidebarCollapsed">My Profile</span>
+      </button>
+      <button class="db-nav-item">
+        <i class="bi bi-gear"></i>
+        <span *ngIf="!sidebarCollapsed">Settings</span>
+      </button>
+      <button class="db-nav-item">
+        <i class="bi bi-question-circle"></i>
+        <span *ngIf="!sidebarCollapsed">Help & Support</span>
+      </button>
+
     </nav>
+
+    <!-- Footer Settings -->
+    <div class="db-sidebar-footer">
+      <div class="db-theme-switch" *ngIf="!sidebarCollapsed">
+        <span>Dark Mode</span>
+        <button (click)="toggleTheme()" class="db-switch-btn" [class.on]="(isDarkMode$ | async)">
+          <div class="db-switch-knob"></div>
+        </button>
+      </div>
+      <button (click)="logout()" class="db-logout-btn">
+        <i class="bi bi-box-arrow-right"></i>
+        <span *ngIf="!sidebarCollapsed">Sign Out</span>
+      </button>
+    </div>
   </aside>
 
-  <main class="db-content">
-    <app-citizen-dashboard 
-      *ngIf="currentUser?.role === 'User' || currentUser?.role === 'Citizen'"
-      [currentUser]="currentUser"
-      [activeTab]="activeTab"
-      (setTab)="setTab($event)">
-    </app-citizen-dashboard>
+  <!-- === MAIN CONTENT AREA === -->
+  <main class="db-main-content">
 
-    <app-volunteer-dashboard
-      *ngIf="currentUser?.role === 'Volunteer'"
-      [currentUser]="currentUser"
-      [activeTab]="activeTab">
-    </app-volunteer-dashboard>
+    <!-- Top Bar (Search) -->
+    <header class="db-topbar">
+      <div class="db-search">
+        <i class="bi bi-search db-search-icon"></i>
+        <input type="text" placeholder="Search pickups, opportunities..." class="db-search-input">
+      </div>
+    </header>
+
+    <!-- Scrollable Content View -->
+    <div class="db-content-scroll">
+      <app-citizen-dashboard *ngIf="currentUser?.role === 'User' || currentUser?.role === 'Citizen'"
+        [hidden]="activeTab === 'profile'" [currentUser]="currentUser" [activeTab]="activeTab"
+        (setTab)="setTab($event)">
+      </app-citizen-dashboard>
+
+      <app-volunteer-dashboard *ngIf="currentUser?.role === 'Volunteer'" [hidden]="activeTab === 'profile'"
+        [currentUser]="currentUser" [activeTab]="activeTab" (setTab)="setTab($event)">
+      </app-volunteer-dashboard>
+
+      <!-- Profile View Container -->
+      <div *ngIf="activeTab === 'profile'" class="db-profile-container animate-fade-in">
+
+        <!-- Header Text -->
+        <h1 class="db-page-title">My Profile</h1>
+        <p class="db-page-subtitle">Manage your account information and settings</p>
+
+        <!-- Profile Tabs Segmentation -->
+        <div class="db-segment-tabs mt-4 mb-4">
+          <button (click)="isEditMode = false" class="db-segment-btn" [class.active]="!isEditMode">
+            Profile
+          </button>
+          <button (click)="isEditMode = true" class="db-segment-btn" [class.active]="isEditMode">
+            Password
+          </button>
+        </div>
+
+        <!-- 1) Profile Form -->
+        <div *ngIf="!isEditMode">
+          <h2 class="db-section-title">Profile Details</h2>
+          <p class="db-section-desc">Update your personal information to keep your account secure.</p>
+
+          <div *ngIf="profileSuccess" class="db-alert db-alert-success mt-3 mb-3">
+            <i class="bi bi-check-circle"></i> {{ profileSuccess }}
+          </div>
+          <div *ngIf="profileError" class="db-alert db-alert-error mt-3 mb-3">
+            <i class="bi bi-exclamation-circle"></i> {{ profileError }}
+          </div>
+
+          <div class="db-form-group-wrap">
+            <div class="db-form-group">
+              <label>Full Name</label>
+              <input type="text" [(ngModel)]="editUser.name" class="db-input">
+            </div>
+            <div class="db-form-group">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="editUser.email" class="db-input db-input-disabled" disabled>
+            </div>
+            <div class="db-form-group">
+              <label>Location</label>
+              <input type="text" [(ngModel)]="editUser.location" class="db-input">
+            </div>
+            <button (click)="updateProfile()" class="db-btn db-btn-primary mt-3">
+              Save Profile
+            </button>
+          </div>
+        </div>
+
+        <!-- 2) Password Form -->
+        <div *ngIf="isEditMode">
+          <h2 class="db-section-title">Change Password</h2>
+          <p class="db-section-desc">Update your password to secure your account</p>
+
+          <div *ngIf="passwordSuccess" class="db-alert db-alert-success mt-3 mb-3">
+            <i class="bi bi-check-circle"></i> {{ passwordSuccess }}
+          </div>
+          <div *ngIf="passwordError" class="db-alert db-alert-error mt-3 mb-3">
+            <i class="bi bi-exclamation-circle"></i> {{ passwordError }}
+          </div>
+
+          <div class="db-form-group-wrap">
+            <div class="db-form-group">
+              <label>Current Password</label>
+              <input type="password" [(ngModel)]="passwords.old" class="db-input">
+            </div>
+
+            <hr class="db-divider">
+
+            <div class="db-form-group">
+              <label>New Password</label>
+              <input type="password" [(ngModel)]="passwords.new" class="db-input">
+              <span class="db-input-hint">Password must be at least 6 characters long.</span>
+            </div>
+            <div class="db-form-group">
+              <label>Confirm New Password</label>
+              <input type="password" [(ngModel)]="passwords.confirm" class="db-input">
+            </div>
+          </div>
+
+          <button (click)="updatePassword()" class="db-btn db-btn-primary mt-3">
+            Change Password
+          </button>
+        </div>
+      </div>
+    </div>
   </main>
 </div>

@@ -1,101 +1,66 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { Opportunity } from '../models/opportunity.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OpportunityService {
-  private opportunitiesSubject = new BehaviorSubject<Opportunity[]>([]);
-  public opportunities$: Observable<Opportunity[]> = this.opportunitiesSubject.asObservable();
-  private readonly STORAGE_KEY = 'wastezero_opportunities';
+  private apiUrl = 'http://localhost:5000/api/opportunities';
 
-  constructor() {
-    this.loadInitialData();
+  constructor(private http: HttpClient, private authService: AuthService) { }
+
+  private getHeaders(): HttpHeaders {
+    let token = '';
+    if (typeof localStorage !== 'undefined') {
+      token = localStorage.getItem('wastezero_token') || '';
+    }
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
-  private loadInitialData(): void {
-    if (typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored) {
-        // Hydrate dates properly
-        const parsed: Opportunity[] = JSON.parse(stored).map((opp: any) => ({
-          ...opp,
-          organizationId: opp.organizationId || 'admin1',
-          organizationName: opp.organizationName || 'Admin Organization',
-          createdAt: opp.createdAt ? new Date(opp.createdAt) : new Date()
+  getOpportunities(filters?: { location?: string, skill?: string, page?: number, limit?: number }): Observable<any> {
+    let params = new HttpParams();
+    if (filters) {
+      if (filters.location) params = params.set('location', filters.location);
+      if (filters.skill) params = params.set('skill', filters.skill);
+      if (filters.page) params = params.set('page', filters.page.toString());
+      if (filters.limit) params = params.set('limit', filters.limit.toString());
+    }
+    return this.http.get<any>(this.apiUrl, { headers: this.getHeaders(), params }).pipe(
+      map(res => {
+        let data = res.opportunities || res;
+        data = data.map((o: any) => ({
+          ...o,
+          id: o._id || o.id,
+          organizationId: o.ngo_id?._id || o.organizationId || o.ngo_id,
+          organizationName: o.ngo_id?.name || o.organizationName || 'Unknown NGO',
+          skillsRequired: o.skills || o.skillsRequired || [],
+          createdAt: o.createdAt ? new Date(o.createdAt) : new Date(o.updatedAt || Date.now())
         }));
-        this.opportunitiesSubject.next(parsed);
-      } else {
-        // Load mock data if empty
-        const mockData: Opportunity[] = [
-            {
-              id: 'opp1',
-              title: 'Beach Cleanup Drive',
-              description: 'Join us for a weekend beach cleanup at the North Shore. We will provide all necessary equipment.',
-              wasteType: 'Plastic',
-              location: 'California, USA',
-              skillsRequired: ['Physical Fitness', 'Teamwork'],
-              duration: '4 hours',
-              organizationId: 'ngo_eco_warriors',
-              organizationName: 'Eco Warriors',
-              createdAt: new Date()
-            },
-            {
-              id: 'opp2',
-              title: 'E-Waste Sorting Workshop',
-              description: 'Help us sort through collected electronic waste and categorize it for proper recycling.',
-              wasteType: 'E-Waste',
-              location: 'London, UK',
-              skillsRequired: ['Attention to Detail', 'Basic Electronics Knowledge'],
-              duration: '2 hours',
-              organizationId: 'ngo_green_tech',
-              organizationName: 'Green Tech NGO',
-              createdAt: new Date()
-            }
-        ];
-        this.saveOpportunities(mockData);
-      }
-    }
+        if (res.opportunities) {
+          res.opportunities = data;
+          return res;
+        }
+        return data;
+      })
+    );
   }
 
-  private saveOpportunities(opportunities: Opportunity[]): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(opportunities));
-      this.opportunitiesSubject.next(opportunities);
-    }
+  getOpportunityById(id: string): Observable<Opportunity> {
+    return this.http.get<Opportunity>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
-  getOpportunities(): Opportunity[] {
-    return this.opportunitiesSubject.value;
+  createOpportunity(data: Partial<Opportunity>): Observable<Opportunity> {
+    return this.http.post<Opportunity>(this.apiUrl, data, { headers: this.getHeaders() });
   }
 
-  getOpportunityById(id: string): Opportunity | undefined {
-    return this.getOpportunities().find(opp => opp.id === id);
+  updateOpportunity(id: string, data: Partial<Opportunity>): Observable<Opportunity> {
+    return this.http.put<Opportunity>(`${this.apiUrl}/${id}`, data, { headers: this.getHeaders() });
   }
 
-  createOpportunity(data: Omit<Opportunity, 'id' | 'createdAt'>): Opportunity {
-    const newOpportunity: Opportunity = {
-      ...data,
-      id: Math.random().toString(36).substring(2, 11),
-      createdAt: new Date()
-    };
-    const current = this.getOpportunities();
-    this.saveOpportunities([...current, newOpportunity]);
-    return newOpportunity;
-  }
-
-  updateOpportunity(id: string, data: Partial<Opportunity>): void {
-    const current = this.getOpportunities();
-    const index = current.findIndex(opp => opp.id === id);
-    if (index !== -1) {
-      current[index] = { ...current[index], ...data };
-      this.saveOpportunities([...current]);
-    }
-  }
-
-  deleteOpportunity(id: string): void {
-    const current = this.getOpportunities().filter(opp => opp.id !== id);
-    this.saveOpportunities(current);
+  deleteOpportunity(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 }

@@ -14,9 +14,12 @@ import { Opportunity } from '../../models/opportunity.model';
 export class LandingComponent implements OnInit {
   featuredOpportunities: Opportunity[] = [];
 
-  constructor(private opportunityService: OpportunityService) {}
+  constructor(private opportunityService: OpportunityService) { }
 
   ngOnInit(): void {
-    this.featuredOpportunities = this.opportunityService.getOpportunities().slice(0, 3);
+    this.opportunityService.getOpportunities().subscribe(res => {
+      const opps = res.opportunities || res;
+      this.featuredOpportunities = opps.slice(0, 3);
+    });
   }
 }

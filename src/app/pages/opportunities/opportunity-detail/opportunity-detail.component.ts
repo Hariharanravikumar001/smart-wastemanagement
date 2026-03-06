@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { OpportunityService } from '../../../services/opportunity.service';
+import { ApplicationService } from '../../../services/application.service';
 import { AuthService, User } from '../../../services/auth.service';
 import { Opportunity } from '../../../models/opportunity.model';
 
@@ -19,12 +20,16 @@ export class OpportunityDetailComponent implements OnInit {
   isVolunteer = false;
   sidebarOpen = true;
 
+  hasApplied = false;
+  applicationStatus = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private opportunityService: OpportunityService,
+    private applicationService: ApplicationService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
@@ -32,16 +37,58 @@ export class OpportunityDetailComponent implements OnInit {
       this.isAdmin = user?.role === 'Admin';
       this.isVolunteer = user?.role === 'Volunteer';
     });
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.opportunity = this.opportunityService.getOpportunityById(id);
+      this.opportunityService.getOpportunityById(id).subscribe({
+        next: (opp) => {
+          this.opportunity = opp;
+          this.checkApplicationStatus(id);
+        },
+        error: (err) => console.log('Error fetching opportunity:', err)
+      });
     }
+  }
+
+  checkApplicationStatus(oppId: string) {
+    if (this.isVolunteer) {
+      this.applicationService.getVolunteerApplications().subscribe({
+        next: (apps) => {
+          const application = apps.find(a => {
+            const aId = a.opportunity_id?._id || a.opportunity_id;
+            return aId === oppId;
+          });
+          if (application) {
+            this.hasApplied = true;
+            this.applicationStatus = application.status;
+          }
+        }
+      });
+    }
+  }
+
+  applyForOpportunity() {
+    if (!this.opportunity || !this.isVolunteer) return;
+    const oppId = this.opportunity._id || this.opportunity.id;
+    if (!oppId) return;
+
+    this.applicationService.applyForOpportunity(oppId).subscribe({
+      next: (app) => {
+        this.hasApplied = true;
+        this.applicationStatus = app.status;
+        alert('Successfully applied for this opportunity!');
+      },
+      error: (err) => alert(err.error?.message || 'Error applying for opportunity')
+    });
   }
 
   deleteOpportunity() {
     if (this.opportunity) {
-      this.opportunityService.deleteOpportunity(this.opportunity.id);
-      this.router.navigate(['/opportunities']);
+      const oppId = this.opportunity._id || this.opportunity.id;
+      if (!oppId) return;
+      this.opportunityService.deleteOpportunity(oppId).subscribe(() => {
+        this.router.navigate(['/opportunities']);
+      });
     }
   }
 

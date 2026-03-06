@@ -1,22 +1,35 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IApplication extends Document {
-  opportunity_id: Types.ObjectId;
-  volunteer_id: Types.ObjectId;
-  status: 'pending' | 'accepted' | 'rejected';
-  created_at: Date;
+    opportunity_id: mongoose.Types.ObjectId;
+    volunteer_id: mongoose.Types.ObjectId;
+    status: 'pending' | 'accepted' | 'rejected';
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const ApplicationSchema: Schema = new Schema({
-  opportunity_id: { type: Schema.Types.ObjectId, ref: 'Opportunity', required: true },
-  volunteer_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  status: { 
-    type: String, 
-    required: true, 
-    enum: ['pending', 'accepted', 'rejected'],
-    default: 'pending' 
-  },
-  created_at: { type: Date, default: Date.now }
+    opportunity_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'Opportunity',
+        required: true
+    },
+    volunteer_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'accepted', 'rejected'],
+        default: 'pending'
+    }
+}, {
+    timestamps: true
 });
+
+// Compound index to prevent duplicate applications for the same opportunity
+ApplicationSchema.index({ opportunity_id: 1, volunteer_id: 1 }, { unique: true });
+ApplicationSchema.index({ volunteer_id: 1 });
 
 export default mongoose.model<IApplication>('Application', ApplicationSchema);

@@ -1,12 +1,17 @@
 export interface Opportunity {
-  id: string;
+  _id?: string;
+  id?: string;
   title: string;
   description: string;
-  wasteType: string; // e.g., 'Plastic', 'E-Waste', 'Organic'
+  wasteType?: string; // Kept for UI backward compatibility if needed
   location: string;
-  skillsRequired: string[];
+  skills: string[];
+  skillsRequired?: string[]; // Alias for backward compatibility
   duration: string;
-  organizationId: string;
-  organizationName: string;
-  createdAt: Date;
+  status?: string;
+  ngo_id?: any; // populated object or string
+  organizationId?: string; // Alias
+  organizationName?: string; // Alias
+  createdAt?: Date;
+  updatedAt?: Date;
 }

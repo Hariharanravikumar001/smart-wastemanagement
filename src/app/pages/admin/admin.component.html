@@ -12,7 +12,8 @@
       </div>
       <div class="user-info">
         <h6 class="fw-bold mb-0 text-truncate">{{ user.name }}</h6>
-        <span class="badge bg-success bg-opacity-25 text-success small border border-success border-opacity-25">Admin</span>
+        <span
+          class="badge bg-success bg-opacity-25 text-success small border border-success border-opacity-25">Admin</span>
       </div>
     </div>
 
@@ -20,9 +21,9 @@
       <div class="nav-label px-3 mb-2 text-muted small text-uppercase fw-bold">Main Menu</div>
       <ul class="list-unstyled">
         <li *ngFor="let item of menuItems">
-          <a (click)="setActiveMenu(item.id)" 
-             class="nav-link d-flex align-items-center rounded-3 mb-1 px-3 py-2 transition-all cursor-pointer"
-             [class.active]="activeMenu === item.id">
+          <a (click)="setActiveMenu(item.id)"
+            class="nav-link d-flex align-items-center rounded-3 mb-1 px-3 py-2 transition-all cursor-pointer"
+            [class.active]="activeMenu === item.id">
             <i class="bi {{ item.icon }} me-3 fs-5"></i>
             <span class="nav-text">{{ item.label }}</span>
           </a>
@@ -31,11 +32,14 @@
     </nav>
 
     <div class="sidebar-footer p-3 mt-auto">
-      <button class="btn w-100 theme-toggle-btn rounded-pill mb-3 d-flex align-items-center justify-content-center gap-2" (click)="toggleTheme()">
+      <button
+        class="btn w-100 theme-toggle-btn rounded-pill mb-3 d-flex align-items-center justify-content-center gap-2"
+        (click)="toggleTheme()">
         <i class="bi" [class.bi-moon-stars-fill]="!isDarkMode" [class.bi-sun-fill]="isDarkMode"></i>
         <span>{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
       </button>
-      <button class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center gap-2" (click)="logout()">
+      <button class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center gap-2"
+        (click)="logout()">
         <i class="bi bi-box-arrow-right"></i>
         <span>Logout</span>
       </button>
@@ -44,7 +48,8 @@
 
   <!-- Main Content Area -->
   <main class="admin-content-area">
-    <header class="content-header p-4 d-flex justify-content-between align-items-center sticky-top bg-white shadow-sm border-bottom">
+    <header
+      class="content-header p-4 d-flex justify-content-between align-items-center sticky-top bg-white shadow-sm border-bottom">
       <div class="header-left d-flex align-items-center">
         <button class="btn btn-light rounded-circle me-3" (click)="toggleSidebar()">
           <i class="bi bi-list fs-5"></i>
@@ -60,7 +65,8 @@
         </div>
         <button class="btn btn-light rounded-circle position-relative">
           <i class="bi bi-bell"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white p-1">
+          <span
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white p-1">
             <span class="visually-hidden">unread notifications</span>
           </span>
         </button>
@@ -88,7 +94,8 @@
                 <div class="stat-icon bg-green-light text-green rounded p-2"><i class="bi bi-heart"></i></div>
               </div>
               <h2 class="fw-bold mb-1">{{ stats.totalVolunteers | number }}</h2>
-              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.totalVolunteersChange }}</div>
+              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.totalVolunteersChange }}
+              </div>
             </div>
           </div>
           <div class="col-md-3">
@@ -98,7 +105,8 @@
                 <div class="stat-icon bg-orange-light text-orange rounded p-2"><i class="bi bi-truck"></i></div>
               </div>
               <h2 class="fw-bold mb-1">{{ stats.completedPickups | number }}</h2>
-              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.completedPickupsChange }}</div>
+              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.completedPickupsChange }}
+              </div>
             </div>
           </div>
           <div class="col-md-3">
@@ -116,10 +124,12 @@
         <div class="row g-4">
           <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden bg-white">
-              <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+              <div
+                class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
                 <h5 class="fw-bold mb-0">Pickup Requests Trends</h5>
                 <div class="dropdown">
-                  <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Last 7 Days</button>
+                  <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Last 7
+                    Days</button>
                 </div>
               </div>
               <div class="card-body p-4">
@@ -140,7 +150,8 @@
               <div class="card-body p-4">
                 <div class="activity-timeline">
                   <div class="activity-item d-flex gap-3 mb-4">
-                    <div class="activity-icon bg-success bg-opacity-10 text-success rounded-circle p-2" style="width: 40px; height: 40px;">
+                    <div class="activity-icon bg-success bg-opacity-10 text-success rounded-circle p-2"
+                      style="width: 40px; height: 40px;">
                       <i class="bi bi-check2"></i>
                     </div>
                     <div>
@@ -150,7 +161,8 @@
                     </div>
                   </div>
                   <div class="activity-item d-flex gap-3 mb-4">
-                    <div class="activity-icon bg-primary bg-opacity-10 text-primary rounded-circle p-2" style="width: 40px; height: 40px;">
+                    <div class="activity-icon bg-primary bg-opacity-10 text-primary rounded-circle p-2"
+                      style="width: 40px; height: 40px;">
                       <i class="bi bi-person-plus"></i>
                     </div>
                     <div>
@@ -160,7 +172,8 @@
                     </div>
                   </div>
                   <div class="activity-item d-flex gap-3">
-                    <div class="activity-icon bg-warning bg-opacity-10 text-warning rounded-circle p-2" style="width: 40px; height: 40px;">
+                    <div class="activity-icon bg-warning bg-opacity-10 text-warning rounded-circle p-2"
+                      style="width: 40px; height: 40px;">
                       <i class="bi bi-exclamation-triangle"></i>
                     </div>
                     <div>
@@ -181,25 +194,30 @@
         <div class="row g-4">
           <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white">
-              <div class="avatar-large shadow-sm mb-4 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold" style="width: 100px; height: 100px; font-size: 2.5rem; border-radius: 50%;">
+              <div
+                class="avatar-large shadow-sm mb-4 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold"
+                style="width: 100px; height: 100px; font-size: 2.5rem; border-radius: 50%;">
                 {{ user.name.charAt(0).toUpperCase() }}
               </div>
               <h4 class="fw-bold mb-1">{{ user.name }}</h4>
               <p class="text-muted small mb-3">System Administrator</p>
-              
+
               <div class="d-flex justify-content-center gap-2 mb-4">
-                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 border border-success border-opacity-10">Verified</span>
-                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">Root</span>
+                <span
+                  class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 border border-success border-opacity-10">Verified</span>
+                <span
+                  class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">Root</span>
               </div>
 
               <div class="d-grid gap-2 mb-4">
-                <button (click)="toggleEditProfile()" class="btn rounded-pill fw-bold" [class.btn-outline-primary]="!isEditingProfile" [class.btn-secondary]="isEditingProfile">
+                <button (click)="toggleEditProfile()" class="btn rounded-pill fw-bold"
+                  [class.btn-outline-primary]="!isEditingProfile" [class.btn-secondary]="isEditingProfile">
                   {{ isEditingProfile ? 'Cancel Editing' : 'Edit Profile' }}
                 </button>
               </div>
 
               <hr class="my-4 opacity-5">
-              
+
               <div class="row g-2 text-center">
                 <div class="col-4">
                   <h6 class="fw-bold mb-0 small">{{ stats.activeUsers }}</h6>
@@ -216,13 +234,14 @@
               </div>
             </div>
           </div>
-          
+
           <div class="col-lg-8">
             <!-- Personal Details Card -->
             <div class="card border-0 shadow-sm rounded-4 bg-white mb-4 p-4">
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="fw-bold mb-0">Personal Details</h5>
-                <span *ngIf="profileDetailsForm.message && !isEditingProfile" class="badge bg-success animate-fade-in">{{ profileDetailsForm.message }}</span>
+                <span *ngIf="profileDetailsForm.message && !isEditingProfile"
+                  class="badge bg-success animate-fade-in">{{ profileDetailsForm.message }}</span>
               </div>
 
               <div *ngIf="!isEditingProfile" class="row g-3">
@@ -243,44 +262,54 @@
                   <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ user.location || 'Not Specified' }}</p>
                 </div>
                 <div class="col-12 mt-3">
-                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Administrative Skills</label>
+                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Administrative
+                    Skills</label>
                   <div class="d-flex flex-wrap gap-2 pt-1">
-                    <span *ngFor="let skill of user.skills" class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2">
+                    <span *ngFor="let skill of user.skills"
+                      class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2">
                       {{ skill }}
                     </span>
-                    <span *ngIf="!user.skills || user.skills.length === 0" class="text-muted small italic bg-light p-2 rounded-3 w-100">No technical skills documented</span>
+                    <span *ngIf="!user.skills || user.skills.length === 0"
+                      class="text-muted small italic bg-light p-2 rounded-3 w-100">No technical skills documented</span>
                   </div>
                 </div>
               </div>
 
               <!-- Edit Form -->
               <form (ngSubmit)="saveProfileDetails()" *ngIf="isEditingProfile" class="row g-3">
-                <div *ngIf="profileDetailsForm.message" class="col-12 alert mb-3 py-2 small" [class.alert-danger]="profileDetailsForm.isError" [class.alert-success]="!profileDetailsForm.isError">
+                <div *ngIf="profileDetailsForm.message" class="col-12 alert mb-3 py-2 small"
+                  [class.alert-danger]="profileDetailsForm.isError" [class.alert-success]="!profileDetailsForm.isError">
                   {{ profileDetailsForm.message }}
                 </div>
-                
+
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted mb-1">Full Name</label>
-                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.name" name="name" required>
+                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
+                    [(ngModel)]="profileDetailsForm.name" name="name" required>
                 </div>
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted mb-1">Username</label>
-                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.username" name="username" required>
+                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
+                    [(ngModel)]="profileDetailsForm.username" name="username" required>
                 </div>
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted mb-1">Email Address</label>
-                  <input type="email" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.email" name="email" required>
+                  <input type="email" class="form-control rounded-4 border-0 bg-light p-3"
+                    [(ngModel)]="profileDetailsForm.email" name="email" required>
                 </div>
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted mb-1">Location</label>
-                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.location" name="location">
+                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
+                    [(ngModel)]="profileDetailsForm.location" name="location">
                 </div>
                 <div class="col-12">
                   <label class="small fw-bold text-muted mb-1">Skills (comma separated)</label>
-                  <textarea class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.skills" name="skills" rows="2" placeholder="Management, Database, Security..."></textarea>
+                  <textarea class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.skills"
+                    name="skills" rows="2" placeholder="Management, Database, Security..."></textarea>
                 </div>
                 <div class="col-12 mt-4 text-end">
-                  <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold py-2 shadow-sm">Save Profile</button>
+                  <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold py-2 shadow-sm">Save
+                    Profile</button>
                 </div>
               </form>
             </div>
@@ -288,23 +317,27 @@
             <!-- Security Section -->
             <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
               <h5 class="fw-bold mb-4">Security & Access</h5>
-              
-              <div *ngIf="profileForm.message" class="alert mb-4 py-2 small" [class.alert-danger]="profileForm.isError" [class.alert-success]="!profileForm.isError">
+
+              <div *ngIf="profileForm.message" class="alert mb-4 py-2 small" [class.alert-danger]="profileForm.isError"
+                [class.alert-success]="!profileForm.isError">
                 {{ profileForm.message }}
               </div>
 
               <form (ngSubmit)="updatePassword()" class="row g-3">
                 <div class="col-md-4">
                   <label class="small fw-bold text-muted mb-1">Old Password</label>
-                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileForm.oldPassword" name="oldPassword" required placeholder="••••••••">
+                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3"
+                    [(ngModel)]="profileForm.oldPassword" name="oldPassword" required placeholder="••••••••">
                 </div>
                 <div class="col-md-4">
                   <label class="small fw-bold text-muted mb-1">New Password</label>
-                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileForm.newPassword" name="newPassword" required placeholder="••••••••">
+                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3"
+                    [(ngModel)]="profileForm.newPassword" name="newPassword" required placeholder="••••••••">
                 </div>
                 <div class="col-md-4">
                   <label class="small fw-bold text-muted mb-1">Confirm New</label>
-                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileForm.confirmPassword" name="confirmPassword" required placeholder="••••••••">
+                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3"
+                    [(ngModel)]="profileForm.confirmPassword" name="confirmPassword" required placeholder="••••••••">
                 </div>
                 <div class="col-12 mt-4">
                   <button type="submit" class="btn btn-dark rounded-pill px-4 fw-bold py-2">
@@ -320,10 +353,117 @@
 
       <!-- All Opportunities Management -->
       <div *ngIf="activeMenu === 'all-opportunities'">
-        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+
+        <!-- Opportunity Form View -->
+        <div *ngIf="showOpportunityForm" class="card border-0 shadow-sm rounded-4 bg-white mb-4">
+          <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">{{ editingOpportunityId ? 'Edit' : 'Create' }} Opportunity</h5>
+            <button class="btn btn-sm btn-light rounded-circle" (click)="closeOpportunityForm()">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <div class="card-body p-4 pt-0">
+            <form (submit)="saveOpportunity()" class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-bold text-muted">Title *</label>
+                <input type="text" class="form-control rounded-3" [(ngModel)]="opportunityForm.title" name="title"
+                  required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold text-muted">Duration *</label>
+                <input type="text" class="form-control rounded-3" [(ngModel)]="opportunityForm.duration" name="duration"
+                  placeholder="e.g. 2 hours" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold text-muted">Location *</label>
+                <input type="text" class="form-control rounded-3" [(ngModel)]="opportunityForm.location" name="location"
+                  required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold text-muted">Status</label>
+                <select class="form-select rounded-3" [(ngModel)]="opportunityForm.status" name="status">
+                  <option value="open">Open</option>
+                  <option value="closed">Closed</option>
+                  <option value="in-progress">In Progress</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-bold text-muted">Skills Required (comma separated)</label>
+                <input type="text" class="form-control rounded-3" [(ngModel)]="opportunityForm.skills" name="skills"
+                  placeholder="Teamwork, Heavy Lifting...">
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-bold text-muted">Description *</label>
+                <textarea class="form-control rounded-3" [(ngModel)]="opportunityForm.description" name="description"
+                  rows="3" required></textarea>
+              </div>
+              <div class="col-12 text-end mt-4">
+                <button type="button" class="btn btn-light me-2 rounded-pill px-4"
+                  (click)="closeOpportunityForm()">Cancel</button>
+                <button type="submit" class="btn btn-primary rounded-pill px-4">{{ editingOpportunityId ? 'Update' :
+                  'Create' }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Viewing Applications View -->
+        <div *ngIf="viewingApplicationsFor" class="card border-0 shadow-sm rounded-4 bg-white mb-4">
+          <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Applications for Opportunity</h5>
+            <button class="btn btn-sm btn-light rounded-circle" (click)="closeApplicationsView()">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="px-4 py-3 border-0">Volunteer</th>
+                    <th class="py-3 border-0">Status</th>
+                    <th class="py-3 border-0 text-end px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let app of getApplicationsForCurrentView()">
+                    <td class="px-4 py-3">
+                      <div class="fw-bold text-dark">{{ app.volunteer_id?.name || app.volunteer_id }}</div>
+                      <div class="small text-muted">{{ app.volunteer_id?.email }}</div>
+                    </td>
+                    <td>
+                      <span class="badge rounded-pill" [class.bg-warning]="app.status === 'pending'"
+                        [class.bg-success]="app.status === 'accepted'" [class.bg-danger]="app.status === 'rejected'">
+                        {{ app.status | titlecase }}
+                      </span>
+                    </td>
+                    <td class="px-4 text-end">
+                      <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-success rounded-pill me-2 px-3"
+                        (click)="updateApplicationStatus(app._id || app.id, 'accepted')">Accept</button>
+                      <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                        (click)="updateApplicationStatus(app._id || app.id, 'rejected')">Reject</button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="getApplicationsForCurrentView().length === 0">
+                    <td colspan="3" class="text-center py-5 text-muted">No applications found for this opportunity.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Opportunities List View -->
+        <div *ngIf="!showOpportunityForm && !viewingApplicationsFor"
+          class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
           <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
             <h5 class="fw-bold mb-0">Global Opportunity Oversight</h5>
-            <span class="badge bg-primary rounded-pill px-3">{{ allOpportunities.length }} Total</span>
+            <div>
+              <span class="badge bg-primary rounded-pill px-3 me-3">{{ allOpportunities.length }} Total</span>
+              <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" (click)="openCreateOpportunityForm()">
+                <i class="bi bi-plus-lg me-1"></i> New Opportunity
+              </button>
+            </div>
           </div>
           <div class="card-body p-0">
             <div class="table-responsive">
@@ -331,8 +471,7 @@
                 <thead class="bg-light">
                   <tr>
                     <th class="px-4 py-3 border-0">Opportunity</th>
-                    <th class="py-3 border-0">Organization</th>
-                    <th class="py-3 border-0">Waste Type</th>
+                    <th class="py-3 border-0">Status</th>
                     <th class="py-3 border-0">Location</th>
                     <th class="px-4 py-3 border-0 text-end">Actions</th>
                   </tr>
@@ -343,14 +482,36 @@
                       <div class="fw-bold text-dark">{{ opp.title }}</div>
                       <div class="small text-muted text-truncate" style="max-width: 250px;">{{ opp.description }}</div>
                     </td>
-                    <td><span class="fw-semibold">{{ opp.organizationName }}</span></td>
-                    <td><span class="badge bg-primary bg-opacity-10 text-primary">{{ opp.wasteType }}</span></td>
+                    <td>
+                      <span class="badge border bg-opacity-10 rounded-pill"
+                        [class.border-success]="opp.status === 'open'" [class.text-success]="opp.status === 'open'"
+                        [class.bg-success]="opp.status === 'open'" [class.border-warning]="opp.status === 'in-progress'"
+                        [class.text-warning]="opp.status === 'in-progress'"
+                        [class.bg-warning]="opp.status === 'in-progress'"
+                        [class.border-secondary]="opp.status === 'closed'"
+                        [class.text-secondary]="opp.status === 'closed'" [class.bg-secondary]="opp.status === 'closed'">
+                        {{ opp.status | titlecase }}
+                      </span>
+                    </td>
                     <td><span class="small"><i class="bi bi-geo-alt me-1"></i>{{ opp.location }}</span></td>
                     <td class="px-4 text-end">
-                      <button class="btn btn-sm btn-outline-danger rounded-circle" (click)="deleteOpportunityByAdmin(opp.id)">
+                      <button class="btn btn-sm btn-outline-primary rounded-circle me-2"
+                        (click)="viewApplicationsFor(opp._id || opp.id)" title="View Applications">
+                        <i class="bi bi-people"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-secondary rounded-circle me-2"
+                        (click)="openEditOpportunityForm(opp)" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger rounded-circle"
+                        (click)="deleteOpportunityByAdmin(opp._id || opp.id)" title="Delete">
                         <i class="bi bi-trash"></i>
                       </button>
                     </td>
+                  </tr>
+                  <tr *ngIf="allOpportunities.length === 0">
+                    <td colspan="4" class="text-center py-5 text-muted">No opportunities yet. Click 'New Opportunity' to
+                      create your first one.</td>
                   </tr>
                 </tbody>
               </table>
@@ -381,7 +542,8 @@
                   </div>
                 </div>
               </div>
-              <div class="flex-grow-1 bg-light rounded-4 d-flex align-items-center justify-content-center border border-dashed py-5">
+              <div
+                class="flex-grow-1 bg-light rounded-4 d-flex align-items-center justify-content-center border border-dashed py-5">
                 <div class="text-center opacity-50">
                   <i class="bi bi-graph-up display-4 d-block mb-2"></i>
                   <p class="mb-0">Interactive Charts Loading...</p>
@@ -392,10 +554,12 @@
           <div class="col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
               <h5 class="fw-bold mb-4">Data Export</h5>
-              <p class="text-muted small mb-4">Generate and download comprehensive platform data in CSV format for offline analysis.</p>
-              
+              <p class="text-muted small mb-4">Generate and download comprehensive platform data in CSV format for
+                offline analysis.</p>
+
               <div class="d-grid gap-3">
-                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all" (click)="downloadUserReport()">
+                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all"
+                  (click)="downloadUserReport()">
                   <div class="d-flex align-items-center">
                     <div class="bg-blue-light text-blue rounded-circle p-3 me-3">
                       <i class="bi bi-people-fill fs-4"></i>
@@ -407,7 +571,8 @@
                   </div>
                 </button>
 
-                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all" (click)="downloadOpportunityReport()">
+                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all"
+                  (click)="downloadOpportunityReport()">
                   <div class="d-flex align-items-center">
                     <div class="bg-green-light text-green rounded-circle p-3 me-3">
                       <i class="bi bi-briefcase-fill fs-4"></i>
