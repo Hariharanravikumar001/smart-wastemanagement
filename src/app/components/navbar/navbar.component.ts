@@ -16,6 +16,14 @@ export class NavbarComponent {
     });
   }
 
+  getDashboardLink(): string {
+    if (!this.currentUser) return '/';
+    if (this.currentUser.role === 'Admin') return '/admin';
+    if (this.currentUser.role === 'Volunteer') return '/volunteer/dashboard';
+    if (this.currentUser.role === 'Citizen' || this.currentUser.role === 'User') return '/citizen/dashboard';
+    return '/dashboard';
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/']);

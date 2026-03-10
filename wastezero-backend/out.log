@@ -1,0 +1,13 @@
+🧪 Starting API Verification Tests...
+
+✅ Health Check Endpoint
+Registration result: 400 - {"message":"Username already exists"}
+Login Status: 400
+Login Response Data: {"message":"Invalid Credentials"}
+❌ Authenticate Admin User
+   Error: Login failed: 400 {"message":"Invalid Credentials"}
+✅ Fetch Available Waste Requests
+❌ Fetch Open Opportunities
+   Error: Expected status 200 and array, got 401 {"message":"No token, authorization denied"}
+
+📊 Results: 2 Passed, 2 Failed

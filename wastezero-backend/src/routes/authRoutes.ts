@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, updateProfile, changePassword, forgotPassword, verifyOtp, resetPassword } from '../controllers/authController';
+import { registerUser, loginUser, updateProfile, changePassword, forgotPassword, verifyOtp, resetPassword, deleteAccount } from '../controllers/authController';
 import { authProtect } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -38,5 +38,10 @@ router.post('/verify-otp', verifyOtp);
 // @desc    Reset password using OTP
 // @access  Public
 router.post('/reset-password', resetPassword);
+
+// @route   DELETE api/profile
+// @desc    Delete user account and data
+// @access  Private
+router.delete('/profile', authProtect, deleteAccount);
 
 export default router;

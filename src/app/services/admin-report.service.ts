@@ -1,34 +1,50 @@
 import { Injectable } from '@angular/core';
-import { AuthService, User } from './auth.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from './auth.service';
 import { OpportunityService } from './opportunity.service';
-import { Opportunity } from '../models/opportunity.model';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminReportService {
+  private apiUrl = 'http://localhost:5000/api/admin';
 
   constructor(
+    private http: HttpClient,
     private authService: AuthService,
     private opportunityService: OpportunityService
   ) { }
+
+  private getHeaders(): HttpHeaders {
+    let token = '';
+    if (typeof localStorage !== 'undefined') {
+      token = localStorage.getItem('wastezero_token') || '';
+    }
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
+  getEngagementAnalytics(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/analytics`, { headers: this.getHeaders() });
+  }
+
 
   getUserStats() {
     const users = this.authService.getAllUsers();
     return {
       total: users.length,
-      volunteers: users.filter(u => u.role === 'Volunteer').length,
-      regularUsers: users.filter(u => u.role === 'User').length,
-      admins: users.filter(u => u.role === 'Admin').length,
-      suspended: users.filter(u => u.suspended).length
+      volunteers: users.filter((u: any) => u.role === 'Volunteer').length,
+      regularUsers: users.filter((u: any) => u.role === 'User').length,
+      admins: users.filter((u: any) => u.role === 'Admin').length,
+      suspended: users.filter((u: any) => u.suspended).length
     };
   }
 
   getOpportunityStats() {
     return this.opportunityService.getOpportunities().pipe(
-      map(res => {
+      map((res: any) => {
         const opportunities = res.opportunities || res;
+
         const statsByType: { [key: string]: number } = {};
 
         opportunities.forEach((opp: any) => {
@@ -51,7 +67,7 @@ export class AdminReportService {
   exportUsersToCSV(): void {
     const users = this.authService.getAllUsers();
     const headers = ['ID', 'Name', 'Username', 'Email', 'Role', 'Location', 'Status'];
-    const rows = users.map(u => [
+    const rows = users.map((u: any) => [
       u.id,
       u.name,
       u.username,
@@ -61,12 +77,14 @@ export class AdminReportService {
       u.suspended ? 'Suspended' : 'Active'
     ]);
 
+
     this.downloadCSV(headers, rows, 'wastezero_users_report.csv');
   }
 
   exportOpportunitiesToCSV(): void {
-    this.opportunityService.getOpportunities().subscribe(res => {
+    this.opportunityService.getOpportunities().subscribe((res: any) => {
       const opportunities = res.opportunities || res;
+
       const headers = ['ID', 'Title', 'Waste Type', 'Location', 'Duration', 'Organization', 'Posted Date'];
       const rows = opportunities.map((o: any) => [
         o._id || o.id,

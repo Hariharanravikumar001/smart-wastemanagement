@@ -15,32 +15,48 @@
       <div *ngIf="profileSuccess" class="db-alert success">{{ profileSuccess }}</div>
       <div *ngIf="profileError" class="db-alert error">{{ profileError }}</div>
 
-      <div class="db-profile-content" *ngIf="!isEditMode">
-        <div class="db-profile-avatar-large">
-          {{ currentUser?.name?.charAt(0) }}
+      <div class="db-profile-content" *ngIf="!isEditMode && currentUser as user">
+        <div class="db-profile-avatar-large shadow-sm position-relative">
+          <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
+          <span *ngIf="!user.profileImage">{{ user.name.charAt(0) }}</span>
+          <div class="avatar-edit-badge" (click)="toggleEditMode()">
+            <i class="bi bi-camera-fill"></i>
+          </div>
         </div>
         <div class="db-detail-list">
           <div class="db-detail-item">
             <span class="db-label">Full Name</span>
-            <span class="db-value">{{ currentUser?.name }}</span>
+            <span class="db-value">{{ user.name }}</span>
           </div>
           <div class="db-detail-item">
             <span class="db-label">Username</span>
-            <span class="db-value">{{ "@" }}{{ currentUser?.username }}</span>
+            <span class="db-value">{{ "@" }}{{ user.username }}</span>
           </div>
           <div class="db-detail-item">
             <span class="db-label">Email Address</span>
-            <span class="db-value">{{ currentUser?.email }}</span>
+            <span class="db-value">{{ user.email }}</span>
           </div>
           <div class="db-detail-item">
             <span class="db-label">Location</span>
-            <span class="db-value">{{ currentUser?.location }}</span>
+            <span class="db-value">{{ user.location || 'Not Specified' }}</span>
           </div>
         </div>
       </div>
 
       <!-- Edit Form -->
       <form class="db-form" *ngIf="isEditMode" (ngSubmit)="updateProfile()">
+        <div class="db-profile-content mb-4 d-flex align-items-center gap-4">
+          <div class="db-profile-avatar-large shadow-sm">
+            <img *ngIf="editUser.profileImage" [src]="editUser.profileImage" alt="Profile Preview" class="avatar-img" />
+            <span *ngIf="!editUser.profileImage">{{ editUser.name.charAt(0) }}</span>
+          </div>
+          <div class="flex-grow-1">
+            <label class="d-block mb-2 fw-medium">Profile Photo</label>
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="db-input file-input" />
+            <span class="db-desc mt-1">Recommended: Square image, max 2MB</span>
+          </div>
+        </div>
+
         <div class="db-form-group">
           <label>Full Name</label>
           <input type="text" [(ngModel)]="editUser.name" name="name" class="db-input" />
@@ -82,6 +98,12 @@
           Update Password
         </button>
       </form>
+
+      <div class="mt-4 pt-4 border-top border-secondary border-opacity-10 text-center">
+        <a href="javascript:void(0)" class="text-danger small fw-bold text-decoration-none" (click)="deleteAccount()">
+          🗑️ Delete My Account Permanently
+        </a>
+      </div>
     </div>
   </div>
 </div>

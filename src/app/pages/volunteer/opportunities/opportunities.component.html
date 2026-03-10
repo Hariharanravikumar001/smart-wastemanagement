@@ -2,36 +2,88 @@
   <h1 class="db-page-title">🛰️ Available Pickup Opportunities</h1>
   <p class="db-page-sub">Browse and accept waste collection requests from citizens in your area</p>
 
+  <div class="db-tabs mb-4">
+    <button class="db-tab-btn" [class.active]="activeTab === 'pickups'" (click)="setTab('pickups')">
+      📦 Pickup Requests
+    </button>
+    <button class="db-tab-btn" [class.active]="activeTab === 'projects'" (click)="setTab('projects')">
+      🌱 NGO Projects
+    </button>
+  </div>
+
   <div class="db-card-grid">
-    <div *ngIf="(opportunities$ | async) as opportunities">
-      <div *ngIf="opportunities.length === 0" class="db-empty">
-        <div class="db-empty-icon">🛰️</div>
-        <p>No available pickup requests at the moment. All set!</p>
-      </div>
+    <!-- Pickup Requests Tab -->
+    <div *ngIf="activeTab === 'pickups'">
+      <div *ngIf="(pickupOpportunities$ | async) as opportunities">
+        <div *ngIf="opportunities.length === 0" class="db-empty">
+          <div class="db-empty-icon">🛰️</div>
+          <p>No available pickup requests at the moment. All set!</p>
+        </div>
 
-      <div class="db-opportunity-grid">
-        <div *ngFor="let opp of opportunities" class="db-card db-opp-card">
-          <div class="db-opp-header">
-            <div class="db-opp-icon">{{ getCategoryIcon(opp.wasteCategory) }}</div>
-            <div class="db-opp-type">{{ opp.wasteCategory }}</div>
-            <span class="db-status-chip pending">New</span>
-          </div>
+        <div class="db-opportunity-grid">
+          <div *ngFor="let opp of opportunities" class="db-card db-opp-card">
+            <div class="db-opp-header">
+              <div class="db-opp-icon">{{ getCategoryIcon(opp.wasteCategory) || '📦' }}</div>
+              <div class="db-opp-type">{{ opp.wasteCategory }}</div>
+              <span class="db-status-chip pending">New</span>
+            </div>
 
-          <div class="db-opp-body">
-            <h3 class="db-opp-citizen">From: {{ opp.citizenName }}</h3>
-            <p class="db-opp-desc">{{ opp.description }}</p>
-            <div class="db-opp-meta">
-              <span class="db-meta-item">📍 {{ opp.location }}</span>
+            <div class="db-opp-body">
+              <h3 class="db-opp-citizen">From: {{ opp.citizenName }}</h3>
+              <p class="db-opp-desc">{{ opp.description }}</p>
+              <div class="db-opp-meta">
+                <span class="db-meta-item">📍 {{ opp.location }}</span>
+              </div>
+            </div>
+
+            <div class="db-opp-footer">
+              <button class="db-btn-accept" (click)="acceptPickup(opp)">
+                Accept Assignment 🚛
+              </button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <div class="db-opp-footer">
-            <button class="db-btn-accept" (click)="acceptPickup(opp)">
-              Accept Assignment 🚛
+    <!-- NGO Projects Tab -->
+    <div *ngIf="activeTab === 'projects'">
+      <div *ngIf="(ngoOpportunities$ | async) as projects">
+        <div *ngIf="projects.length === 0" class="db-empty">
+          <div class="db-empty-icon">🌱</div>
+          <p>No NGO projects available for application right now.</p>
+        </div>
+
+        <div class="db-opportunity-grid">
+          <div *ngFor="let project of projects" class="db-card db-opp-card ngo-project">
+            <div class="db-opp-header">
+              <div class="db-opp-icon">🏢</div>
+              <div class="db-opp-type">NGO Project</div>
+              <span class="db-status-chip active">Open</span>
+            </div>
+
+            <div class="db-opp-body">
+              <h3 class="db-opp-citizen">{{ project.title }}</h3>
+              <p class="db-opp-desc">{{ project.description }}</p>
+              <div class="db-opp-meta">
+                <span class="db-meta-item">📍 {{ project.location }}</span>
+                <span class="db-meta-item">⏱️ {{ project.duration }}</span>
+              </div>
+              <div class="db-skills-wrap mt-2">
+                <span *ngFor="let skill of project.skills" class="badge bg-light text-dark me-1">{{ skill }}</span>
+              </div>
+            </div>
+
+            <div class="ngo-project-footer">
+            <button class="db-btn-apply" 
+                    [disabled]="hasApplied(project._id || project.id)"
+                    (click)="applyForProject(project)">
+              {{ hasApplied(project._id || project.id) ? 'Applied' : 'Apply for Project' }}
             </button>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </div>

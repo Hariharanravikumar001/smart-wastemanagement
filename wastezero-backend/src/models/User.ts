@@ -12,6 +12,7 @@ export interface IUser extends Document {
   resetPasswordOtp?: string;
   resetPasswordExpires?: Date;
   created_at: Date;
+  profileImage?: string;
 }
 
 const UserSchema: Schema = new Schema({
@@ -30,7 +31,18 @@ const UserSchema: Schema = new Schema({
   bio: { type: String },
   resetPasswordOtp: { type: String },
   resetPasswordExpires: { type: Date },
-  created_at: { type: Date, default: Date.now }
+  created_at: { type: Date, default: Date.now },
+  profileImage: { type: String }
+}, {
+  toJSON: {
+    transform: (doc, ret: any) => {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      delete ret.password;
+      return ret;
+    }
+  }
 });
 
 export default mongoose.model<IUser>('User', UserSchema);

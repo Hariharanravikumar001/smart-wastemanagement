@@ -60,16 +60,22 @@ export class CitizenDashboardComponent implements OnInit {
       ...this.newRequest,
       citizenId: this.currentUser.id,
       citizenName: this.currentUser.name
-    }).subscribe(() => {
-      this.submitSuccess = true;
-      this.newRequest = {
-        wasteCategory: 'Plastic',
-        description: '',
-        location: this.currentUser?.location || ''
-      };
-      
-      this.recalcStats();
-      setTimeout(() => this.submitSuccess = false, 4000);
+    }).subscribe({
+      next: () => {
+        this.submitSuccess = true;
+        this.newRequest = {
+          wasteCategory: 'Plastic',
+          description: '',
+          location: this.currentUser?.location || ''
+        };
+        
+        this.recalcStats();
+        setTimeout(() => this.submitSuccess = false, 4000);
+      },
+      error: (err) => {
+         console.error('Submit pickup request failed:', err);
+         alert('Failed to submit pickup request. Please try again or check your connection.');
+      }
     });
   }
 

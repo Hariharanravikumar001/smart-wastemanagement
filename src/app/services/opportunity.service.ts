@@ -29,7 +29,8 @@ export class OpportunityService {
       if (filters.limit) params = params.set('limit', filters.limit.toString());
     }
     return this.http.get<any>(this.apiUrl, { headers: this.getHeaders(), params }).pipe(
-      map(res => {
+      map((res: any) => {
+
         let data = res.opportunities || res;
         data = data.map((o: any) => ({
           ...o,

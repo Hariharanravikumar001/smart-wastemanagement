@@ -38,8 +38,46 @@
 .db-empty { text-align: center; padding: 80px 20px; color: rgba(180, 200, 235, 0.3); }
 .db-empty-icon { font-size: 48px; margin-bottom: 16px; }
 
+/* Tabs */
+.db-tabs { display: flex; gap: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; }
+.db-tab-btn {
+  padding: 10px 20px; border-radius: 10px; background: transparent;
+  border: 1px solid transparent; color: rgba(180, 200, 235, 0.6);
+  font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.db-tab-btn:hover { background: rgba(255, 255, 255, 0.03); color: #f0f4ff; }
+.db-tab-btn.active {
+  background: rgba(0, 200, 255, 0.1); border-color: rgba(0, 200, 255, 0.2);
+  color: #00c8ff;
+}
+
+/* NGO Project Card */
+.ngo-project { border-color: rgba(167, 139, 250, 0.15); }
+.ngo-project:hover { border-color: rgba(167, 139, 250, 0.3); }
+.ngo-project .db-opp-type { color: #a78bfa; }
+.ngo-project .db-opp-icon { background: rgba(167, 139, 250, 0.1); }
+.db-status-chip.active { background: rgba(0, 200, 255, 0.1); color: #00c8ff; }
+
+.db-skills-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { font-size: 11px; padding: 4px 8px; border-radius: 6px; }
+
+.db-btn-apply {
+  width: 100%; padding: 12px; border: none; border-radius: 12px;
+  background: #00c8ff; color: #0a0d14; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.db-btn-apply:hover { background: #00a0cc; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(167, 139, 250, 0.4); }
+.db-btn-apply:disabled {
+  background: rgba(255,255,255,0.05); color: rgba(180,200,235,0.3);
+  cursor: not-allowed; transform: none; border: 1px solid rgba(255,255,255,0.05);
+}
+
 /* Light Mode Overrides */
+:host-context(body:not(.dark-mode)) .db-tabs { border-color: rgba(0,0,0,0.08); }
+:host-context(body:not(.dark-mode)) .db-tab-btn { color: rgba(0,0,0,0.5); }
+:host-context(body:not(.dark-mode)) .db-tab-btn:hover { background: rgba(0,0,0,0.03); color: #1a1a2e; }
 :host-context(body:not(.dark-mode)) .db-opp-card { background: white; border-color: rgba(0,0,0,0.06); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+
 :host-context(body:not(.dark-mode)) .db-opp-citizen { color: #1a1a2e; }
 :host-context(body:not(.dark-mode)) .db-opp-desc { color: rgba(0,0,0,0.6); }
 :host-context(body:not(.dark-mode)) .db-opp-meta { color: rgba(0,0,0,0.5); }

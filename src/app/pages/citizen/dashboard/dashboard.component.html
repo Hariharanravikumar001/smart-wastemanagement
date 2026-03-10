@@ -53,7 +53,7 @@
     <div class="db-card">
       <h3 class="db-card-title">📊 Category Breakdown</h3>
       <div *ngIf="(wasteStats$ | async) as stats">
-        <div *ngIf="stats.length === 0" class="db-empty">No completed pickups yet. Statistics will appear after your first completed collection.</div>
+        <div *ngIf="stats.length === 0" class="db-empty">Statistics will appear after your first completed collection.</div>
         <div *ngFor="let stat of stats" class="db-stat-bar-row">
           <div class="db-stat-bar-label">
             <span class="db-stat-bar-icon">{{ getCategoryIcon(stat.category) }}</span>
@@ -63,6 +63,33 @@
             <div class="db-stat-bar-fill" [style.width.%]="stat.percentage" [style.background]="getCategoryColor(stat.category)"></div>
           </div>
           <div class="db-stat-bar-value">{{ stat.weight }} kg</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="db-section mt-4">
+    <div class="db-card full-width">
+      <div class="db-card-header">
+        <h3 class="db-card-title">🏁 Recent Activity</h3>
+        <a routerLink="/citizen/pickup-history" class="db-link">Full History →</a>
+      </div>
+      
+      <div *ngIf="(historyRequests$ | async) as history">
+        <div *ngIf="history.length === 0" class="db-empty">No recent activity found.</div>
+        <div class="db-history-list-mini">
+          <div *ngFor="let req of history | slice:0:3" class="db-list-item mini">
+            <div class="db-list-icon small">{{ getCategoryIcon(req.wasteCategory) }}</div>
+            <div class="db-list-info">
+              <div class="db-list-title small">{{ req.wasteCategory }} — {{ req.description }}</div>
+              <div class="db-list-meta small">{{ req.location }} · {{ req.scheduledDate | date:'mediumDate' }}</div>
+            </div>
+            <div class="text-end">
+              <div class="db-list-weight" *ngIf="req.weight">{{ req.weight }} kg</div>
+              <span class="db-status-chip small" [class.completed]="req.status === 'Completed'">{{ req.status }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

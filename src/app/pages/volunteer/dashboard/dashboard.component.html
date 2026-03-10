@@ -3,28 +3,37 @@
   <p class="db-page-sub">Operational overview of your waste collection tasks</p>
 
   <div class="db-stats-row">
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap blue">📡</div>
+    <div class="db-stat-card primary">
+      <div class="db-stat-icon-wrap blue">🌍</div>
       <div>
-        <div class="db-stat-value">{{ (availablePickups$ | async)?.length || 0 }}</div>
-        <div class="db-stat-label">Available Tasks Near You</div>
+        <div class="db-stat-value">{{ (availableNGOProjects$ | async)?.length || 0 }}</div>
+        <div class="db-stat-label">Real Opportunities</div>
       </div>
     </div>
     <div class="db-stat-card">
       <div class="db-stat-icon-wrap purple">🚛</div>
       <div>
         <div class="db-stat-value">{{ (assignments$ | async)?.length || 0 }}</div>
-        <div class="db-stat-label">Active Assignments</div>
+        <div class="db-stat-label">My Active Tasks</div>
+      </div>
+    </div>
+    <div class="db-stat-card text-muted opacity-75">
+      <div class="db-stat-icon-wrap gray">📦</div>
+      <div>
+        <div class="db-stat-value">{{ (availablePickups$ | async)?.length || 0 }}</div>
+        <div class="db-stat-label">Citizen Pickups</div>
       </div>
     </div>
     <div class="db-stat-card">
-      <div class="db-stat-icon-wrap green">🏆</div>
+      <div class="db-stat-icon-wrap orange">💬</div>
       <div>
-        <div class="db-stat-value">{{ (completedCount$ | async) || 0 }}</div>
-        <div class="db-stat-label">Total Completed</div>
+        <div class="db-stat-value">{{ (unreadMessages$ | async) || 0 }}</div>
+        <div class="db-stat-label">Unread Messages</div>
       </div>
     </div>
   </div>
+
+
 
   <div class="db-grid-content">
     <!-- Active Assignments Glance -->
@@ -58,12 +67,43 @@
       <h3 class="db-card-title">📉 Recycling Contribution</h3>
       <div class="db-impact-stat">
         <div class="db-impact-value">{{ (totalWeight$ | async) || 0 }} kg</div>
-        <div class="db-impact-label">Total Waste Collected & Processed</div>
+        <div class="db-impact-label">Total Waste Collected</div>
       </div>
       <div class="db-impact-bar">
         <div class="db-impact-fill" [style.width.%]="85"></div>
       </div>
-      <p class="db-desc">Efficiency: 85% of assigned tasks completed within 24 hours.</p>
+    </div>
+
+    <!-- Available Real Opportunities -->
+    <div class="db-card">
+      <h3 class="db-card-title">🌍 Available Real Opportunities</h3>
+      <div *ngIf="(availableNGOProjects$ | async) as projects">
+        <div *ngIf="projects.length === 0" class="db-empty">
+          No new NGO projects at the moment.
+        </div>
+        <div *ngFor="let project of projects | slice:0:3" class="db-list-item">
+          <div class="db-list-icon">🌱</div>
+          <div class="db-list-info">
+            <div class="db-list-title">{{ project.title }}</div>
+            <div class="db-list-meta">
+              <span>📍 {{ project.location }}</span>
+              <span class="db-applicant-tag ms-2" *ngIf="project.applicantCount! > 0">
+                👥 {{ project.applicantCount }} Applicants: {{ project.applicantNames?.join(', ') }}
+              </span>
+              <span class="db-applicant-tag ms-2 text-muted" *ngIf="project.applicantCount === 0">
+                No applicants yet
+              </span>
+            </div>
+
+          </div>
+          <a routerLink="/volunteer/opportunities" class="db-btn-sm">View</a>
+        </div>
+
+      </div>
+      <div class="db-footer-link" *ngIf="(availableNGOProjects$ | async)?.length">
+        <a routerLink="/volunteer/opportunities">See all opportunities →</a>
+      </div>
     </div>
   </div>
+
 </div>

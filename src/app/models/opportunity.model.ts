@@ -12,6 +12,9 @@ export interface Opportunity {
   ngo_id?: any; // populated object or string
   organizationId?: string; // Alias
   organizationName?: string; // Alias
+  applicantCount?: number;
+  applicantNames?: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }
+

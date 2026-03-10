@@ -2,13 +2,14 @@
   <!-- Sidebar -->
   <aside class="admin-sidebar shadow">
     <div class="sidebar-header d-flex align-items-center px-4 py-3">
-      <i class="bi bi-recycle text-success fs-3 me-2"></i>
+      <div class="brand-icon-wrap me-2">♻️</div>
       <span class="fs-4 fw-bold logo-text">WasteZero</span>
     </div>
 
     <div class="sidebar-user p-4 mb-2 text-center border-bottom border-light border-opacity-10">
-      <div class="avatar shadow-sm mb-3 mx-auto">
-        {{ user.name.charAt(0).toUpperCase() }}
+      <div class="avatar shadow-sm mb-3 mx-auto overflow-hidden">
+        <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
+        <span *ngIf="!user.profileImage">{{ user.name.charAt(0).toUpperCase() }}</span>
       </div>
       <div class="user-info">
         <h6 class="fw-bold mb-0 text-truncate">{{ user.name }}</h6>
@@ -195,9 +196,13 @@
           <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white">
               <div
-                class="avatar-large shadow-sm mb-4 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold"
+                class="avatar-large shadow-sm mb-4 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold overflow-hidden position-relative"
                 style="width: 100px; height: 100px; font-size: 2.5rem; border-radius: 50%;">
-                {{ user.name.charAt(0).toUpperCase() }}
+                <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
+                <span *ngIf="!user.profileImage">{{ user.name.charAt(0).toUpperCase() }}</span>
+                <div class="avatar-edit-badge" (click)="toggleEditProfile()" style="position: absolute; bottom: 0; right: 0; width: 30px; height: 30px; background: #0d6efd; color: white; border-radius: 10px 0 0 0; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; opacity: 0.8;">
+                  <i class="bi bi-camera-fill"></i>
+                </div>
               </div>
               <h4 class="fw-bold mb-1">{{ user.name }}</h4>
               <p class="text-muted small mb-3">System Administrator</p>
@@ -240,8 +245,8 @@
             <div class="card border-0 shadow-sm rounded-4 bg-white mb-4 p-4">
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="fw-bold mb-0">Personal Details</h5>
-                <span *ngIf="profileDetailsForm.message && !isEditingProfile"
-                  class="badge bg-success animate-fade-in">{{ profileDetailsForm.message }}</span>
+                <span *ngIf="profileDetailsMessage && !isEditingProfile"
+                  class="badge bg-success animate-fade-in">{{ profileDetailsMessage }}</span>
               </div>
 
               <div *ngIf="!isEditingProfile" class="row g-3">
@@ -277,34 +282,48 @@
 
               <!-- Edit Form -->
               <form (ngSubmit)="saveProfileDetails()" *ngIf="isEditingProfile" class="row g-3">
-                <div *ngIf="profileDetailsForm.message" class="col-12 alert mb-3 py-2 small"
-                  [class.alert-danger]="profileDetailsForm.isError" [class.alert-success]="!profileDetailsForm.isError">
-                  {{ profileDetailsForm.message }}
+                <div *ngIf="profileDetailsMessage" class="col-12 alert mb-3 py-2 small"
+                  [class.alert-danger]="profileDetailsIsError" [class.alert-success]="!profileDetailsIsError">
+                  {{ profileDetailsMessage }}
+                </div>
+
+                <div class="col-12 mb-4">
+                  <div class="d-flex align-items-center gap-4">
+                    <div class="avatar-large shadow-sm overflow-hidden" style="width: 80px; height: 80px; border-radius: 50%; background: #f8fafb; display: flex; align-items: center; justify-content: center;">
+                      <img *ngIf="editUser.profileImage" [src]="editUser.profileImage" alt="Preview" class="avatar-img" />
+                      <span *ngIf="!editUser.profileImage" class="text-primary fw-bold fs-4">{{ editUser.name?.charAt(0) || 'A' }}</span>
+                    </div>
+                    <div>
+                      <label class="small fw-bold text-muted d-block mb-1">Profile Picture</label>
+                      <input type="file" (change)="onFileSelected($event)" accept="image/*" class="form-control form-control-sm border-0 bg-light">
+                      <small class="text-muted">Square image, max 2MB</small>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted mb-1">Full Name</label>
                   <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="profileDetailsForm.name" name="name" required>
+                    [(ngModel)]="editUser.name" name="name" required>
                 </div>
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted mb-1">Username</label>
                   <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="profileDetailsForm.username" name="username" required>
+                    [(ngModel)]="editUser.username" name="username" required>
                 </div>
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted mb-1">Email Address</label>
                   <input type="email" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="profileDetailsForm.email" name="email" required>
+                    [(ngModel)]="editUser.email" name="email" required>
                 </div>
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted mb-1">Location</label>
                   <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="profileDetailsForm.location" name="location">
+                    [(ngModel)]="editUser.location" name="location">
                 </div>
                 <div class="col-12">
                   <label class="small fw-bold text-muted mb-1">Skills (comma separated)</label>
-                  <textarea class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="profileDetailsForm.skills"
+                  <textarea class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="editUser.skills"
                     name="skills" rows="2" placeholder="Management, Database, Security..."></textarea>
                 </div>
                 <div class="col-12 mt-4 text-end">
@@ -340,16 +359,24 @@
                     [(ngModel)]="profileForm.confirmPassword" name="confirmPassword" required placeholder="••••••••">
                 </div>
                 <div class="col-12 mt-4">
-                  <button type="submit" class="btn btn-dark rounded-pill px-4 fw-bold py-2">
-                    <i class="bi bi-shield-check me-2"></i>Update Credentials
-                  </button>
-                </div>
+                  <button (click)="updatePassword()" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm"
+                  [disabled]="!profileForm.oldPassword || !profileForm.newPassword || !profileForm.confirmPassword">
+                  Update Password
+                </button>
+              </div>
               </form>
+
+              <div class="mt-5 pt-4 border-top text-center">
+                <p class="text-muted small mb-3">Danger Zone</p>
+                <button (click)="deleteAccount()" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">
+                  🗑️ Delete Administrator Account
+                </button>
+                <p class="extra-small text-danger mt-2 opacity-75">Warning: This will permanently remove your account and cannot be recovered.</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
 
       <!-- All Opportunities Management -->
       <div *ngIf="activeMenu === 'all-opportunities'">
@@ -471,6 +498,7 @@
                 <thead class="bg-light">
                   <tr>
                     <th class="px-4 py-3 border-0">Opportunity</th>
+                    <th class="py-3 border-0">Applicants</th>
                     <th class="py-3 border-0">Status</th>
                     <th class="py-3 border-0">Location</th>
                     <th class="px-4 py-3 border-0 text-end">Actions</th>
@@ -480,7 +508,15 @@
                   <tr *ngFor="let opp of allOpportunities">
                     <td class="px-4 py-3">
                       <div class="fw-bold text-dark">{{ opp.title }}</div>
-                      <div class="small text-muted text-truncate" style="max-width: 250px;">{{ opp.description }}</div>
+                      <div class="extra-small text-primary mt-1">
+                        <i class="bi bi-people-fill me-1"></i>
+                        {{ getApplicantNames(opp._id || opp.id) }}
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3">
+                        {{ getApplicantCount(opp._id || opp.id) }}
+                      </span>
                     </td>
                     <td>
                       <span class="badge border bg-opacity-10 rounded-pill"
@@ -509,6 +545,7 @@
                       </button>
                     </td>
                   </tr>
+
                   <tr *ngIf="allOpportunities.length === 0">
                     <td colspan="4" class="text-center py-5 text-muted">No opportunities yet. Click 'New Opportunity' to
                       create your first one.</td>
@@ -530,15 +567,21 @@
                 <div class="col-sm-6">
                   <div class="p-3 bg-light rounded-4">
                     <small class="text-muted d-block mb-1">Total Impact</small>
-                    <h4 class="fw-bold mb-0">1,240kg</h4>
-                    <small class="text-success">+12% from last month</small>
+                    <h4 class="fw-bold mb-0">{{ engagementAnalytics.totalImpact }}kg</h4>
+                    <small [class.text-success]="engagementAnalytics.totalImpactChange >= 0" 
+                           [class.text-danger]="engagementAnalytics.totalImpactChange < 0">
+                      {{ engagementAnalytics.totalImpactChange >= 0 ? '+' : '' }}{{ engagementAnalytics.totalImpactChange }}% from last month
+                    </small>
                   </div>
                 </div>
                 <div class="col-sm-6">
                   <div class="p-3 bg-light rounded-4">
                     <small class="text-muted d-block mb-1">Volunteer Response Rate</small>
-                    <h4 class="fw-bold mb-0">84%</h4>
-                    <small class="text-success">+5% improvement</small>
+                    <h4 class="fw-bold mb-0">{{ engagementAnalytics.responseRate }}%</h4>
+                    <small [class.text-success]="engagementAnalytics.responseRateChange >= 0"
+                           [class.text-danger]="engagementAnalytics.responseRateChange < 0">
+                      {{ engagementAnalytics.responseRateChange >= 0 ? '+' : '' }}{{ engagementAnalytics.responseRateChange }}% improvement
+                    </small>
                   </div>
                 </div>
               </div>
@@ -550,6 +593,7 @@
                 </div>
               </div>
             </div>
+
           </div>
           <div class="col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">

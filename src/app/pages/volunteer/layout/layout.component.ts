@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth.service';
+import { ChatService } from '../../../services/chat.service';
 import { ThemeService } from '../../../services/theme.service';
 
 @Component({
@@ -15,9 +16,11 @@ export class VolunteerLayoutComponent implements OnInit {
   currentUser: User | null = null;
   sidebarCollapsed = false;
   isDarkMode$ = this.themeService.isDarkMode$;
+  unreadCount$ = this.chatService.unreadCount$;
 
   constructor(
     private authService: AuthService,
+    private chatService: ChatService,
     private themeService: ThemeService,
     private router: Router
   ) {}

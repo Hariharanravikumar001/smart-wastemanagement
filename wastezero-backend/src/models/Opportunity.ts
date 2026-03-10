@@ -31,8 +31,25 @@ const OpportunitySchema: Schema = new Schema({
     },
     isDeleted: { type: Boolean, default: false }
 }, {
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+        transform: (doc, ret: any) => {
+            ret.id = ret._id;
+            delete ret._id;
+            delete ret.__v;
+            return ret;
+        }
+    },
+    toObject: { virtuals: true }
 });
+
+// Virtual for applications
+OpportunitySchema.virtual('applications', {
+    ref: 'Application',
+    localField: '_id',
+    foreignField: 'opportunity_id'
+});
+
 
 // Index for listing optimizations
 OpportunitySchema.index({ status: 1, isDeleted: 1 });

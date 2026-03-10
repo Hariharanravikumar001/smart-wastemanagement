@@ -39,6 +39,17 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.editUser.profileImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   toggleEditMode() {
     this.isEditMode = !this.isEditMode;
     if (this.isEditMode && this.currentUser) {
@@ -93,5 +104,19 @@ export class ProfileComponent implements OnInit {
         this.passwordError = err.error?.message || 'Failed to change password';
       }
     });
+  }
+
+  deleteAccount() {
+    if (confirm('Are you SURE you want to delete your account? This action is permanent and all your data (pickup requests, messages) will be removed forever.')) {
+      this.authService.deleteAccount().subscribe({
+        next: () => {
+          alert('Your account has been successfully deleted.');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.profileError = err.error?.message || 'Failed to delete account. Please try again later.';
+        }
+      });
+    }
   }
 }

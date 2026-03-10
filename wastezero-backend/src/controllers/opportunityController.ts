@@ -92,14 +92,14 @@ export const getOpportunities = async (req: AuthRequest, res: Response): Promise
         let query: any = {};
 
         // Volunteer sees only open and not deleted
-        if (req.user.role !== 'admin') {
+        if (req.user.role !== 'Admin') {
             query.status = 'open';
             query.isDeleted = false;
         } else {
-            // Admins might want to see deleted items if they specify, but by default hide them or show all their own
-            // For this spec, admins can see all their own
+            // Admins see their own opportunities
             query.ngo_id = req.user.id;
         }
+
 
         if (location) {
             query.location = { $regex: location as string, $options: 'i' };
@@ -114,15 +114,32 @@ export const getOpportunities = async (req: AuthRequest, res: Response): Promise
             .skip((pageNum - 1) * limitNum)
             .limit(limitNum)
             .sort({ createdAt: -1 })
-            .select(req.user.role !== 'admin' ? '-isDeleted -__v -updatedAt' : '')
+            .populate({
+                path: 'applications',
+                populate: { path: 'volunteer_id', select: 'name' }
+            })
             .populate('ngo_id', 'name email');
+
+        // Transform to include applicant data and remove raw virtuals if not admin (for privacy/cleanliness)
+        const transformedOpportunities = opportunities.map(opp => {
+            const oppObj = opp.toObject();
+            const apps = (oppObj as any).applications || [];
+            
+            return {
+                ...oppObj,
+                applicantCount: apps.length,
+                applicantNames: apps.map((a: any) => a.volunteer_id?.name || 'Unknown Volunteer'),
+                applications: undefined // Remove raw applications data
+            };
+        });
 
         res.status(200).json({
             total,
             page: pageNum,
             pages: Math.ceil(total / limitNum),
-            opportunities
+            opportunities: transformedOpportunities
         });
+
     } catch (error) {
         console.error('Get opportunities error:', error);
         res.status(500).json({ message: 'Server error' });

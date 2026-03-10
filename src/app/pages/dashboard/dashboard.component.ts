@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router, RouterLink } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
 import { Observable, of, map } from 'rxjs';
 import { ChatService } from '../../services/chat.service';
@@ -16,7 +16,6 @@ import { VolunteerDashboardComponent } from './components/volunteer-dashboard/vo
   imports: [
     CommonModule, 
     RouterModule, 
-    RouterLink, 
     FormsModule, 
     CitizenDashboardComponent, 
     VolunteerDashboardComponent
@@ -131,6 +130,17 @@ export class DashboardComponent implements OnInit {
         this.router.navigate(['/login']);
       } else {
         this.currentUser = user;
+        // Redirect to role-specific dashboard if accessing generic /dashboard
+        if (this.router.url === '/dashboard') {
+          if (user.role === 'Volunteer') {
+            this.router.navigate(['/volunteer/dashboard']);
+          } else if (user.role === 'Citizen' || user.role === 'User') {
+            this.router.navigate(['/citizen/dashboard']);
+          } else if (user.role === 'Admin') {
+            this.router.navigate(['/admin']);
+          }
+        }
+
         if (user.role === 'User' || user.role === 'Citizen') {
           this.recentMessages$ = this.chatService.messages$.pipe(
             map(msgs => msgs.filter(m => m.receiverId === user.id || m.senderId === user.id).slice(-20))

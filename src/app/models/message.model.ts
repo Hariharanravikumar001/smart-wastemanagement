@@ -6,4 +6,5 @@ export interface Message {
   content: string;
   timestamp: Date;
   isAdmin: boolean;
+  isRead?: boolean;
 }

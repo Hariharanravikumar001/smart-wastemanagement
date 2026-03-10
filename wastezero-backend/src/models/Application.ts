@@ -25,7 +25,15 @@ const ApplicationSchema: Schema = new Schema({
         default: 'pending'
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+        transform: (doc, ret: any) => {
+            ret.id = ret._id;
+            delete ret._id;
+            delete ret.__v;
+            return ret;
+        }
+    }
 });
 
 // Compound index to prevent duplicate applications for the same opportunity

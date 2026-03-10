@@ -32,6 +32,14 @@ export class ChatService {
     }
   }
 
+  public unreadCount$: Observable<number> = this.messages$.pipe(
+    map(messages => {
+      const currentUser = this.authService.currentUserValue;
+      if (!currentUser) return 0;
+      return messages.filter(m => m.receiverId === currentUser.id && !m.isRead).length;
+    })
+  );
+
   private saveMessages(messages: Message[]): void {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(messages));
@@ -48,6 +56,25 @@ export class ChatService {
     );
   }
 
+  markMessagesAsRead(senderId: string): void {
+    const currentUser = this.authService.currentUserValue;
+    if (!currentUser) return;
+
+    const currentMessages = this.messagesSubject.value;
+    let changed = false;
+    const updatedMessages = currentMessages.map(m => {
+      if (m.receiverId === currentUser.id && m.senderId === senderId && !m.isRead) {
+        changed = true;
+        return { ...m, isRead: true };
+      }
+      return m;
+    });
+
+    if (changed) {
+      this.saveMessages(updatedMessages);
+    }
+  }
+
   sendMessage(receiverId: string, content: string): void {
     const currentUser = this.authService.currentUserValue;
     if (!currentUser) return;
@@ -59,7 +86,8 @@ export class ChatService {
       receiverId: receiverId,
       content: content,
       timestamp: new Date(),
-      isAdmin: currentUser.role === 'Admin'
+      isAdmin: currentUser.role === 'Admin',
+      isRead: false
     };
 
     const currentMessages = this.messagesSubject.value;

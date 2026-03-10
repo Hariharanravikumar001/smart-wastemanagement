@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold" routerLink="/"><i class="bi bi-recycle text-success me-2"></i>WasteZero</a>
+    <a class="navbar-brand fw-bold" routerLink="/"><span class="me-2">♻️</span>WasteZero</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -27,7 +27,7 @@
               {{ currentUser.name }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" routerLink="/dashboard"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+              <li *ngIf="currentUser.role !== 'Citizen' && currentUser.role !== 'User'"><a class="dropdown-item" [routerLink]="getDashboardLink()"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
               <li *ngIf="currentUser.role === 'User' || currentUser.role === 'Citizen'"><a class="dropdown-item" routerLink="/pickup-request"><i class="bi bi-truck me-2"></i>Schedule Pickup</a></li>
               <li *ngIf="currentUser.role === 'Admin'"><a class="dropdown-item" routerLink="/admin"><i class="bi bi-shield-check me-2"></i>Admin Panel</a></li>
               <li><hr class="dropdown-divider"></li>

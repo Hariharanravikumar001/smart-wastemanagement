@@ -6,6 +6,8 @@ import authRoutes from './src/routes/authRoutes';
 import wasteRequestRoutes from './src/routes/wasteRequestRoutes';
 import opportunityRoutes from './src/routes/opportunityRoutes';
 import applicationRoutes from './src/routes/applicationRoutes';
+import adminRoutes from './src/routes/adminRoutes';
+
 
 dotenv.config();
 
@@ -14,13 +16,20 @@ const port = process.env['PORT'] || 4000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Routes
 app.use('/api', authRoutes);
 app.use('/api/waste-requests', wasteRequestRoutes);
 app.use('/api/opportunities', opportunityRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/admin', adminRoutes);
+
 
 // Database connection
 const mongoUri = process.env['MONGODB_URI'];

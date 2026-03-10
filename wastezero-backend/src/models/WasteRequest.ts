@@ -30,6 +30,15 @@ const wasteRequestSchema = new Schema<IWasteRequest>({
   volunteerName: { type: String },
   scheduledDate: { type: Date },
   createdAt: { type: Date, default: Date.now }
+}, {
+  toJSON: {
+    transform: (doc, ret: any) => {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
 export default mongoose.model<IWasteRequest>('WasteRequest', wasteRequestSchema);

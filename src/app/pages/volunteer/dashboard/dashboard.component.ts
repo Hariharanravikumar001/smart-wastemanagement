@@ -5,6 +5,9 @@ import { Observable, of, map } from 'rxjs';
 import { WasteRequest } from '../../../models/waste-request.model';
 import { User, AuthService } from '../../../services/auth.service';
 import { WasteRequestService } from '../../../services/waste-request.service';
+import { ChatService } from '../../../services/chat.service';
+import { OpportunityService } from '../../../services/opportunity.service';
+import { Opportunity } from '../../../models/opportunity.model';
 
 @Component({
   selector: 'app-volunteer-dashboard',
@@ -17,13 +20,18 @@ export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
   assignments$: Observable<WasteRequest[]> = of([]);
   availablePickups$: Observable<WasteRequest[]> = of([]);
+  availableNGOProjects$: Observable<Opportunity[]> = of([]);
   completedCount$: Observable<number> = of(0);
   totalWeight$: Observable<number> = of(0);
+  unreadMessages$: Observable<number> = this.chatService.unreadCount$;
 
   constructor(
     private authService: AuthService,
-    private wasteService: WasteRequestService
+    private wasteService: WasteRequestService,
+    private chatService: ChatService,
+    private opportunityService: OpportunityService
   ) {}
+
 
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
@@ -45,9 +53,17 @@ export class DashboardComponent implements OnInit {
         this.totalWeight$ = history$.pipe(
           map(reqs => reqs.reduce((sum, r) => sum + (r.weight || 0), 0))
         );
+
+        this.availableNGOProjects$ = this.opportunityService.getOpportunities().pipe(
+          map(res => {
+            const opps = res.opportunities || res;
+            return opps.filter((o: any) => o.status === 'open');
+          })
+        );
       }
     });
   }
+
 
   getCategoryIcon(cat: string): string {
     const icons: Record<string, string> = {

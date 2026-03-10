@@ -6,8 +6,11 @@ export interface AuthRequest extends Request {
 }
 
 export const authProtect = (req: AuthRequest, res: Response, next: NextFunction): void => {
-  // Get token from header
-  const token = req.header('x-auth-token') || req.header('Authorization')?.replace('Bearer ', '');
+  let token = req.header('x-auth-token');
+  const authHeader = req.header('Authorization');
+  if (!token && authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  }
 
   // Check if not token
   if (!token) {

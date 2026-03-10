@@ -8,7 +8,7 @@ import { WasteRequest } from '../models/waste-request.model';
   providedIn: 'root'
 })
 export class WasteRequestService {
-  private apiUrl = 'http://localhost:4001/api/waste-requests';
+  private apiUrl = 'http://localhost:5000/api/waste-requests';
 
   // We keep the subject if any components bind to it directly with async pipe
   private requestsSubject = new BehaviorSubject<WasteRequest[]>([]);

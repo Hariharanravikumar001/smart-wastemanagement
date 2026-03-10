@@ -27,6 +27,13 @@ export class AdminComponent implements OnInit {
   allOpportunities: Opportunity[] = [];
   applications: Application[] = [];
   oppStats: any = {};
+  engagementAnalytics: any = {
+    totalImpact: 0,
+    totalImpactChange: 0,
+    responseRate: 0,
+    responseRateChange: 0
+  };
+
 
   // Applications view state
   viewingApplicationsFor: string | null = null;
@@ -53,24 +60,18 @@ export class AdminComponent implements OnInit {
   };
 
   isEditingProfile = false;
-  profileDetailsForm = {
-    name: '',
-    username: '',
-    email: '',
-    location: '',
-    skills: '' as string, // Comma separated for input
-    message: '',
-    isError: false
-  };
+  editUser: any = {};
+  profileDetailsMessage = '';
+  profileDetailsIsError = false;
 
   stats: DashboardStats = {
     activeUsers: 0,
-    activeUsersChange: '+5%',
+    activeUsersChange: 'Live data',
     totalVolunteers: 0,
-    totalVolunteersChange: '+12%',
-    completedPickups: 245,
-    completedPickupsChange: '+8%',
-    systemHealth: '99.9%',
+    totalVolunteersChange: 'Live data',
+    completedPickups: 0,
+    completedPickupsChange: 'Live data',
+    systemHealth: '100%',
     systemHealthStatus: 'Optimal'
   };
 
@@ -91,7 +92,7 @@ export class AdminComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe(user => {
+    this.authService.currentUser$.subscribe((user: any) => {
       if (!user || user.role !== 'Admin') {
         this.router.navigate(['/login']);
       } else {
@@ -100,9 +101,10 @@ export class AdminComponent implements OnInit {
       }
     });
 
-    this.dashboardService.stats$.subscribe(stats => {
+    this.dashboardService.stats$.subscribe((stats: any) => {
       this.stats = { ...this.stats, ...stats };
     });
+
 
     if (typeof localStorage !== 'undefined') {
       const savedTheme = localStorage.getItem('admin_theme');
@@ -116,10 +118,21 @@ export class AdminComponent implements OnInit {
     this.loadApplications();
 
     try {
-      this.adminReportService.getOpportunityStats().subscribe(stats => {
+      this.adminReportService.getOpportunityStats().subscribe((stats: any) => {
         this.oppStats = stats;
       });
-    } catch (e) { console.log(e); }
+
+
+      this.adminReportService.getEngagementAnalytics().subscribe({
+        next: (analytics: any) => {
+          this.engagementAnalytics = analytics;
+        },
+        error: (err: any) => console.error('Failed to load engagement analytics:', err)
+      });
+
+    } catch (e) {
+      console.log(e);
+    }
 
     // Update dashboard stats
     this.dashboardService.updateStats({
@@ -128,6 +141,7 @@ export class AdminComponent implements OnInit {
     });
   }
 
+
   // --- Opportunities Management ---
 
   loadOpportunities() {
@@ -135,7 +149,8 @@ export class AdminComponent implements OnInit {
       next: (res) => {
         this.allOpportunities = res.opportunities || res;
       },
-      error: (err) => console.error('Failed to load opportunities:', err)
+      error: (err: any) => console.error('Failed to load opportunities:', err)
+
     });
   }
 
@@ -177,7 +192,8 @@ export class AdminComponent implements OnInit {
           this.loadOpportunities();
           this.closeOpportunityForm();
         },
-        error: (err) => alert('Error updating opportunity: ' + (err.error?.message || err.message))
+        error: (err: any) => alert('Error updating opportunity: ' + (err.error?.message || err.message))
+
       });
     } else {
       this.opportunityService.createOpportunity(data).subscribe({
@@ -185,7 +201,8 @@ export class AdminComponent implements OnInit {
           this.loadOpportunities();
           this.closeOpportunityForm();
         },
-        error: (err) => alert('Error creating opportunity: ' + (err.error?.message || err.message))
+        error: (err: any) => alert('Error creating opportunity: ' + (err.error?.message || err.message))
+
       });
     }
   }
@@ -195,7 +212,8 @@ export class AdminComponent implements OnInit {
     if (confirm('Are you sure you want to remove this opportunity? (Soft delete)')) {
       this.opportunityService.deleteOpportunity(id).subscribe({
         next: () => this.loadOpportunities(),
-        error: (err) => alert('Error deleting opportunity')
+        error: (err: any) => alert('Error deleting opportunity')
+
       });
     }
   }
@@ -204,8 +222,8 @@ export class AdminComponent implements OnInit {
 
   loadApplications() {
     this.applicationService.getAdminApplications().subscribe({
-      next: (apps) => this.applications = apps,
-      error: (err) => console.error('Failed to load applications:', err)
+      next: (apps: any) => this.applications = apps,
+      error: (err: any) => console.error('Failed to load applications:', err)
     });
   }
 
@@ -223,16 +241,38 @@ export class AdminComponent implements OnInit {
     if (!appId) return;
     this.applicationService.updateApplicationStatus(appId, status).subscribe({
       next: () => this.loadApplications(),
-      error: (err) => alert('Failed to update status')
+      error: (err: any) => alert('Failed to update status')
+
     });
   }
 
   getApplicationsForCurrentView() {
-    return this.applications.filter(app => {
+    return this.applications.filter((app: any) => {
       const oid = app.opportunity_id?._id || app.opportunity_id;
       return oid === this.viewingApplicationsFor;
     });
   }
+
+  getApplicantCount(oppId: string | undefined): number {
+    if (!oppId) return 0;
+    return this.applications.filter((app: any) => {
+      const oid = app.opportunity_id?._id || app.opportunity_id;
+      return oid === oppId;
+    }).length;
+  }
+
+  getApplicantNames(oppId: string | undefined): string {
+    if (!oppId) return '';
+    const apps = this.applications.filter((app: any) => {
+      const oid = app.opportunity_id?._id || app.opportunity_id;
+      return oid === oppId;
+    });
+
+    if (apps.length === 0) return 'No applicants yet';
+    
+    return apps.map((app: any) => app.volunteer_id?.name || 'Unknown Volunteer').join(', ');
+  }
+
 
   // --- Standard Admin Things ---
 
@@ -302,42 +342,52 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.editUser.profileImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   toggleEditProfile() {
     if (!this.currentUser) return;
 
     this.isEditingProfile = !this.isEditingProfile;
     if (this.isEditingProfile) {
-      this.profileDetailsForm.name = this.currentUser.name;
-      this.profileDetailsForm.username = this.currentUser.username;
-      this.profileDetailsForm.email = this.currentUser.email;
-      this.profileDetailsForm.location = this.currentUser.location || '';
-      this.profileDetailsForm.skills = (this.currentUser.skills || []).join(', ');
-      this.profileDetailsForm.message = '';
+      this.editUser = { 
+        ...this.currentUser,
+        skills: (this.currentUser.skills || []).join(', ')
+      };
+      this.profileDetailsMessage = '';
     }
   }
 
   saveProfileDetails() {
     if (!this.currentUser) return;
 
-    const skillsArray = this.profileDetailsForm.skills
-      ? this.profileDetailsForm.skills.split(',').map(s => s.trim()).filter(s => s !== '')
+    const skillsArray = this.editUser.skills
+      ? this.editUser.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s !== '')
       : [];
 
     this.authService.updateUserDetails(this.currentUser.email, {
-      name: this.profileDetailsForm.name,
-      username: this.profileDetailsForm.username,
-      email: this.profileDetailsForm.email,
-      location: this.profileDetailsForm.location,
+      ...this.editUser,
       skills: skillsArray
     }).subscribe({
       next: (result) => {
-        this.profileDetailsForm.message = result.message;
-        this.profileDetailsForm.isError = false;
-        this.isEditingProfile = false;
+        this.profileDetailsMessage = result.message;
+        this.profileDetailsIsError = false;
+        setTimeout(() => {
+          this.isEditingProfile = false;
+          this.profileDetailsMessage = '';
+        }, 1500);
       },
       error: (err) => {
-        this.profileDetailsForm.message = err.error?.message || 'Failed to update profile';
-        this.profileDetailsForm.isError = true;
+        this.profileDetailsMessage = err.error?.message || 'Failed to update profile';
+        this.profileDetailsIsError = true;
       }
     });
   }
@@ -345,5 +395,19 @@ export class AdminComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  deleteAccount() {
+    if (confirm('Are you SURE you want to delete your Admin account? This action is permanent and cannot be undone.')) {
+      this.authService.deleteAccount().subscribe({
+        next: () => {
+          alert('Your account has been successfully deleted.');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          alert(err.error?.message || 'Failed to delete account.');
+        }
+      });
+    }
   }
 }

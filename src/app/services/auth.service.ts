@@ -11,15 +11,18 @@ export interface User {
   role: 'User' | 'Volunteer' | 'Admin' | 'Citizen';
   location?: string;
   password?: string;
+  bio?: string;
   skills?: string[];
   wasteTypes?: string[]; // Types of waste the user is interested in/handles
   suspended?: boolean;
   assignedPickups?: string[]; // IDs of pickups assigned to the volunteer
+  profileImage?: string;
   activityRecords?: {
     totalWeight: number;
     completedPickups: number;
     lastActive: Date;
   };
+  created_at?: Date | string;
 }
 
 @Injectable({
@@ -52,7 +55,7 @@ export class AuthService {
            if (response && response.token) {
              const user: User = { 
                ...response, 
-               id: response.token,
+               id: response.id || response._id || response.token, // Fallback to token only if absolutely necessary
                role: this.mapRole(response.role),
                email: response.email || userCredentials.email,
                username: response.username || response.name,
@@ -225,6 +228,19 @@ export class AuthService {
               this.currentUserSubject.next(updatedUser);
             }
           }
+        })
+      );
+  }
+
+  // Delete Account
+  deleteAccount(): Observable<any> {
+    const token = localStorage.getItem('wastezero_token');
+    const headers = { 'Authorization': `Bearer ${token}` };
+
+    return this.http.delete<any>(`${this.apiUrl}/profile`, { headers })
+      .pipe(
+        tap(() => {
+          this.logout();
         })
       );
   }

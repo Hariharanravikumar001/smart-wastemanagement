@@ -3,6 +3,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import User from '../models/User';
+import WasteRequest from '../models/WasteRequest';
+import Application from '../models/Application';
+import Message from '../models/Message';
 import { AuthRequest } from '../middleware/authMiddleware';
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
@@ -77,11 +80,13 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         if (err) throw err;
         res.json({ 
           token, 
+          id: user.id,
           role: user.role, 
           name: user.name,
           username: user.username,
           location: user.location,
-          email: user.email
+          email: user.email,
+          profileImage: user.profileImage
         });
       }
     );
@@ -97,7 +102,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
 export const updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { name, username, location } = req.body;
+    const { name, username, location, profileImage, skills, email } = req.body;
     const userId = req.user?.id;
 
     if (!userId) {
@@ -121,8 +126,20 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       user.username = username;
     }
 
+    // Check if new email is already taken by another user
+    if (email && email !== user.email) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        res.status(400).json({ message: 'Email already taken' });
+        return;
+      }
+      user.email = email;
+    }
+
     if (name) user.name = name;
     if (location !== undefined) user.location = location;
+    if (profileImage !== undefined) user.profileImage = profileImage;
+    if (skills !== undefined) user.skills = skills;
 
     await user.save();
     res.json({ message: 'Profile updated successfully', user: {
@@ -130,7 +147,8 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       username: user.username,
       email: user.email,
       role: user.role,
-      location: user.location
+      location: user.location,
+      profileImage: user.profileImage
     }});
   } catch (err: any) {
     console.error('Profile Update Error:', err.message);
@@ -278,5 +296,45 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
   } catch (err: any) {
     console.error(err.message);
     res.status(500).send('Server Error');
+  }
+};
+
+// Delete Account
+export const deleteAccount = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: 'User not authorized' });
+      return;
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    // Delete all associated data
+    // 1. Waste Requests
+    await WasteRequest.deleteMany({
+      $or: [{ citizenId: userId }, { volunteerId: userId }]
+    });
+
+    // 2. Applications
+    await Application.deleteMany({ volunteer_id: userId });
+
+    // 3. Messages
+    await Message.deleteMany({
+      $or: [{ sender_id: userId }, { receiver_id: userId }]
+    });
+
+    // 4. Finally delete the user
+    await User.findByIdAndDelete(userId);
+
+    res.json({ message: 'Account and all associated data deleted successfully' });
+  } catch (err: any) {
+    console.error('Account Deletion Error:', err.message);
+    res.status(500).json({ message: 'Server error during account deletion' });
   }
 };

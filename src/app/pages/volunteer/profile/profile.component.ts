@@ -39,10 +39,25 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.editUser.profileImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   toggleEditMode() {
     this.isEditMode = !this.isEditMode;
     if (this.isEditMode && this.currentUser) {
-      this.editUser = { ...this.currentUser };
+      this.editUser = { 
+        ...this.currentUser,
+        skills: Array.isArray(this.currentUser.skills) ? [...this.currentUser.skills] : [],
+        bio: this.currentUser.bio || ''
+      };
       this.profileSuccess = '';
       this.profileError = '';
     }
@@ -93,5 +108,23 @@ export class ProfileComponent implements OnInit {
         this.passwordError = err.error?.message || 'Failed to change password';
       }
     });
+  }
+
+  deleteAccount() {
+    if (confirm('Are you SURE you want to delete your Volunteer account? This action is permanent and all your assigned pickups and applications will be removed.')) {
+      this.authService.deleteAccount().subscribe({
+        next: () => {
+          alert('Your account has been successfully deleted.');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.profileError = err.error?.message || 'Failed to delete account. Please try again later.';
+        }
+      });
+    }
+  }
+
+  onSkillsChange(value: string) {
+    this.editUser.skills = value.split(',').map(s => s.trim()).filter(s => s !== '');
   }
 }

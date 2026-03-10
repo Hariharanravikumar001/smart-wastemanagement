@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     const role = this.authService.currentUserValue?.role;
     const isLoginPage = url.includes('/login') || url.includes('/register');
     const isAdminPage = url.includes('/admin') || (role === 'Admin');
-    const isDashboard = url.includes('/dashboard');
+    const isDashboard = url.includes('/dashboard') || url.includes('/citizen') || url.includes('/volunteer');
     const isOpportunities = url.includes('/opportunities');
     this.showNavbar = !isLoginPage && !isAdminPage && !isDashboard && !isOpportunities;
   }
