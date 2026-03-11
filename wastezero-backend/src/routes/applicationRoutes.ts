@@ -16,12 +16,12 @@ router.use(authProtect);
 router.post('/', requireRole(['volunteer']), applyForOpportunity);
 
 // @route   GET /api/applications/admin
-router.get('/admin', requireRole(['admin']), getAdminApplications);
+router.get('/admin', requireRole(['admin', 'ngo']), getAdminApplications);
 
 // @route   GET /api/applications/volunteer
 router.get('/volunteer', requireRole(['volunteer']), getVolunteerApplications);
 
 // @route   PUT /api/applications/:id/status
-router.put('/:id/status', requireRole(['admin']), updateApplicationStatus);
+router.put('/:id/status', requireRole(['admin', 'ngo']), updateApplicationStatus);
 
 export default router;

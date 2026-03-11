@@ -56,12 +56,17 @@ export const applyForOpportunity = async (req: AuthRequest, res: Response): Prom
 // @access  Private (Admin)
 export const getAdminApplications = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        // Find all opportunities owned by this admin
-        const myOpportunities = await Opportunity.find({ ngo_id: req.user.id }).select('_id');
-        const oppIds = myOpportunities.map(opp => opp._id);
+        let query = {};
+        const role = req.user.role?.toLowerCase();
 
-        // Find applications for these opportunities
-        const applications = await Application.find({ opportunity_id: { $in: oppIds } })
+        if (role === 'ngo') {
+            const myOpportunities = await Opportunity.find({ ngo_id: req.user.id }).select('_id');
+            const oppIds = myOpportunities.map(opp => opp._id);
+            query = { opportunity_id: { $in: oppIds } };
+        } 
+        // Admin gets all (empty query)
+
+        const applications = await Application.find(query)
             .populate('volunteer_id', 'name email username location')
             .populate('opportunity_id', 'title description location duration')
             .sort({ createdAt: -1 });
@@ -95,38 +100,57 @@ export const getVolunteerApplications = async (req: AuthRequest, res: Response):
 export const updateApplicationStatus = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const { status } = req.body;
+        const appId = req.params.id;
+
+        console.log('Update Status Request:', { appId, status, userId: req.user?.id, role: req.user?.role });
 
         if (!['accepted', 'rejected'].includes(status)) {
             res.status(400).json({ message: 'Invalid status' });
             return;
         }
 
-        const application = await Application.findById(req.params.id)
+        const application = await Application.findById(appId)
             .populate('opportunity_id');
 
         if (!application) {
+            console.log('Application not found:', appId);
             res.status(404).json({ message: 'Application not found' });
             return;
         }
 
         // Verify ownership indirectly or directly
         const opp: any = application.opportunity_id;
-        if (opp.ngo_id.toString() !== req.user.id) {
-            res.status(403).json({ message: 'Not authorized to update this application' });
-            return;
+        
+        if (!opp) {
+            console.log('Opportunity not found for application:', appId);
+            // If opportunity is gone, we still might want to allow deletion or rejection?
+            // For now, let's just fail or allow admin to bypass if they really want to.
+            if (req.user.role?.toLowerCase() !== 'admin') {
+                res.status(404).json({ message: 'Associated opportunity not found. Only admins can modify this.' });
+                return;
+            }
+        } else {
+            console.log('Authorization Check:', {
+                oppCreator: opp.ngo_id.toString(),
+                currentUserId: req.user.id,
+                isCreator: opp.ngo_id.toString() === req.user.id,
+                isAdmin: req.user.role?.toLowerCase() === 'admin'
+            });
+
+            if (opp.ngo_id.toString() !== req.user.id && req.user.role?.toLowerCase() !== 'admin') {
+                const msg = `Not authorized to update this application. Your role: ${req.user.role}, Your ID: ${req.user.id}, NGO Creator ID: ${opp.ngo_id}`;
+                console.log(msg);
+                res.status(403).json({ message: msg });
+                return;
+            }
         }
 
         application.status = status;
         const updatedApplication = await application.save();
 
-        // Optionally update the opportunity to 'in-progress' if accepted
-        // if (status === 'accepted') {
-        //  await Opportunity.findByIdAndUpdate(opp._id, { status: 'in-progress' });
-        // }
-
         res.status(200).json(updatedApplication);
-    } catch (error) {
-        console.error('Update application status error:', error);
-        res.status(500).json({ message: 'Server error' });
+    } catch (error: any) {
+        console.error('Update application status error:', error.message);
+        res.status(500).json({ message: 'Server error: ' + error.message });
     }
 };

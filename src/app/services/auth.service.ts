@@ -8,7 +8,7 @@ export interface User {
   name: string;
   username: string;
   email: string;
-  role: 'User' | 'Volunteer' | 'Admin' | 'Citizen';
+  role: 'User' | 'Volunteer' | 'Admin' | 'Citizen' | 'NGO';
   location?: string;
   password?: string;
   bio?: string;
@@ -80,9 +80,10 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
-  private mapRole(role: string): 'User' | 'Volunteer' | 'Admin' | 'Citizen' {
+  private mapRole(role: string): 'User' | 'Volunteer' | 'Admin' | 'Citizen' | 'NGO' {
       if(role === 'admin') return 'Admin';
       if(role === 'volunteer') return 'Volunteer';
+      if(role === 'ngo') return 'NGO';
       return 'Citizen'; // Both 'user' and 'citizen' will map to 'Citizen'
   }
 

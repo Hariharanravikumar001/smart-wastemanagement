@@ -7,6 +7,6 @@ const router = express.Router();
 
 // @route   GET /api/admin/analytics
 // @access  Private (Admin)
-router.get('/analytics', authProtect, requireRole(['Admin']), getAnalytics);
+router.get('/analytics', authProtect, requireRole(['Admin', 'NGO']), getAnalytics);
 
 export default router;

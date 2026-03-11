@@ -19,6 +19,7 @@ export class OpportunityListComponent implements OnInit {
   currentUser: User | null = null;
   isAdmin = false;
   isVolunteer = false;
+  isNGO = false;
   sidebarOpen = true;
   searchQuery = '';
 
@@ -33,6 +34,7 @@ export class OpportunityListComponent implements OnInit {
       this.currentUser = user;
       this.isAdmin = user?.role === 'Admin';
       this.isVolunteer = user?.role === 'Volunteer';
+      this.isNGO = user?.role === 'NGO';
     });
     this.loadOpportunities();
   }
@@ -59,9 +61,12 @@ export class OpportunityListComponent implements OnInit {
 
   deleteOpportunity(id: string | undefined) {
     if (!id) return;
-    if (confirm('Are you sure you want to delete this opportunity?')) {
+    if (confirm('Are you sure you want to PERMANENTLY delete this opportunity? This action cannot be undone.')) {
       this.opportunityService.deleteOpportunity(id).subscribe({
-        next: () => this.loadOpportunities(),
+        next: () => {
+          this.opportunities = this.opportunities.filter(o => (o._id || o.id) !== id);
+          this.filterOpportunities();
+        },
         error: (err) => alert('Failed to delete opportunity')
       });
     }

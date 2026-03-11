@@ -17,11 +17,15 @@ export const requireRole = (roles: string[]) => {
                 return;
             }
 
-            if (!roles.includes(user.role)) {
+            const userRole = user.role.toLowerCase();
+            const allowedRoles = roles.map(r => r.toLowerCase());
+
+            if (!allowedRoles.includes(userRole)) {
                 res.status(403).json({ message: `Access denied. Requires one of roles: ${roles.join(', ')}` });
                 return;
             }
 
+            console.log(`Role Validation: User ${user.email} (Role: ${user.role}) vs Allowed: ${roles}`);
             // Attach full user object for subsequent middlewares if needed
             req.user.role = user.role;
             next();

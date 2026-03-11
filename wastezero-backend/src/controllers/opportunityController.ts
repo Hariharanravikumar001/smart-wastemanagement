@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Opportunity from '../models/Opportunity';
+import Application from '../models/Application';
 import { AuthRequest } from '../middleware/authMiddleware';
 
 // @desc    Create new opportunity
@@ -62,18 +63,25 @@ export const updateOpportunity = async (req: AuthRequest, res: Response): Promis
     }
 };
 
-// @desc    Soft delete opportunity
+// @desc    Permanent delete opportunity
 // @route   DELETE /api/opportunities/:id
-// @access  Private (Admin creator)
+// @access  Private (Admin or NGO creator)
 export const deleteOpportunity = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        // Opportunity attached by ownership middleware
-        const opportunity = (req as any).opportunity;
+        // Opportunity ID from request params
+        const id = req.params.id;
 
-        opportunity.isDeleted = true;
-        await opportunity.save();
+        // Clean up associated applications
+        await Application.deleteMany({ opportunity_id: id });
 
-        res.status(200).json({ message: 'Opportunity successfully deleted' });
+        const deletedOpportunity = await Opportunity.findByIdAndDelete(id);
+
+        if (!deletedOpportunity) {
+            res.status(404).json({ message: 'Opportunity not found' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Opportunity permanently deleted' });
     } catch (error) {
         console.error('Delete opportunity error:', error);
         res.status(500).json({ message: 'Server error' });
@@ -91,14 +99,17 @@ export const getOpportunities = async (req: AuthRequest, res: Response): Promise
 
         let query: any = {};
 
+        const role = req.user.role?.toLowerCase();
+
         // Volunteer sees only open and not deleted
-        if (req.user.role !== 'Admin') {
+        if (role !== 'admin' && role !== 'ngo') {
             query.status = 'open';
             query.isDeleted = false;
-        } else {
-            // Admins see their own opportunities
+        } else if (role === 'ngo') {
+            // NGOs see their own
             query.ngo_id = req.user.id;
         }
+        // Admins see ALL opportunities for global oversight
 
 
         if (location) {

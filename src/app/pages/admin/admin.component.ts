@@ -20,6 +20,9 @@ import { Application } from '../../models/application.model';
 export class AdminComponent implements OnInit {
   currentUser: User | null = null;
   activeMenu = 'dashboard';
+  isAdmin = false;
+  isVolunteer = false;
+  isNGO = false;
   isDarkMode = false;
   isSidebarCollapsed = false;
 
@@ -37,6 +40,7 @@ export class AdminComponent implements OnInit {
 
   // Applications view state
   viewingApplicationsFor: string | null = null;
+  currentOpportunity: Opportunity | null = null;
 
   // Form State for Opportunities
   showOpportunityForm = false;
@@ -93,10 +97,13 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     this.authService.currentUser$.subscribe((user: any) => {
-      if (!user || user.role !== 'Admin') {
+      const role = user?.role?.toLowerCase();
+      if (!user || (role !== 'admin' && role !== 'ngo')) {
         this.router.navigate(['/login']);
       } else {
         this.currentUser = user;
+        this.isAdmin = role === 'admin';
+        this.isNGO = role === 'ngo';
         this.loadAdminData();
       }
     });
@@ -208,12 +215,23 @@ export class AdminComponent implements OnInit {
   }
 
   deleteOpportunityByAdmin(id: string | undefined) {
-    if (!id) return;
-    if (confirm('Are you sure you want to remove this opportunity? (Soft delete)')) {
+    if (!id) {
+      console.warn('Attempted to delete opportunity with undefined ID');
+      return;
+    }
+    
+    if (confirm('Are you sure you want to PERMANENTLY delete this opportunity? This action cannot be undone.')) {
       this.opportunityService.deleteOpportunity(id).subscribe({
-        next: () => this.loadOpportunities(),
-        error: (err: any) => alert('Error deleting opportunity')
-
+        next: () => {
+          this.allOpportunities = this.allOpportunities.filter(opp => (opp._id || opp.id) !== id);
+          // Also reload analytics as they might be affected
+          this.loadAdminData();
+        },
+        error: (err: any) => {
+          console.error('Delete opportunity error:', err);
+          const errorMsg = err.error?.message || err.message || 'Unknown error';
+          alert(`Error deleting opportunity: ${errorMsg}`);
+        }
       });
     }
   }
@@ -230,42 +248,64 @@ export class AdminComponent implements OnInit {
   viewApplicationsFor(oppId: string | undefined) {
     if (!oppId) return;
     this.viewingApplicationsFor = oppId;
+    this.currentOpportunity = this.allOpportunities.find(o => (o._id || o.id) === oppId) || null;
     this.showOpportunityForm = false;
   }
 
   closeApplicationsView() {
     this.viewingApplicationsFor = null;
+    this.currentOpportunity = null;
   }
 
   updateApplicationStatus(appId: string | undefined, status: 'accepted' | 'rejected') {
     if (!appId) return;
     this.applicationService.updateApplicationStatus(appId, status).subscribe({
-      next: () => this.loadApplications(),
-      error: (err: any) => alert('Failed to update status')
-
+      next: (updatedApp) => {
+        // Update local state for immediate feedback
+        const index = this.applications.findIndex(a => (a._id || a.id) === appId);
+        if (index !== -1) {
+          this.applications[index].status = status;
+        }
+        // Force list reload to be safe
+        this.loadApplications();
+        // Also reload opportunities to update counts if needed
+        this.loadOpportunities();
+      },
+      error: (err: any) => {
+        console.error('Update status error:', err);
+        const errorMsg = err.error?.message || err.message || 'Unknown error';
+        alert(`Failed to update status: ${errorMsg}`);
+      }
     });
   }
 
   getApplicationsForCurrentView() {
-    return this.applications.filter((app: any) => {
-      const oid = app.opportunity_id?._id || app.opportunity_id;
-      return oid === this.viewingApplicationsFor;
+    console.log('Filtering applications for:', this.viewingApplicationsFor);
+    console.log('Total applications available:', this.applications.length);
+    
+    const filtered = this.applications.filter((app: any) => {
+      const oid = app.opportunity_id?._id || app.opportunity_id?.id || app.opportunity_id;
+      const match = String(oid) === String(this.viewingApplicationsFor);
+      return match;
     });
+
+    console.log('Filtered applications:', filtered);
+    return filtered;
   }
 
   getApplicantCount(oppId: string | undefined): number {
     if (!oppId) return 0;
     return this.applications.filter((app: any) => {
-      const oid = app.opportunity_id?._id || app.opportunity_id;
-      return oid === oppId;
+      const oid = app.opportunity_id?._id || app.opportunity_id?.id || app.opportunity_id;
+      return String(oid) === String(oppId);
     }).length;
   }
 
   getApplicantNames(oppId: string | undefined): string {
     if (!oppId) return '';
     const apps = this.applications.filter((app: any) => {
-      const oid = app.opportunity_id?._id || app.opportunity_id;
-      return oid === oppId;
+      const oid = app.opportunity_id?._id || app.opportunity_id?.id || app.opportunity_id;
+      return String(oid) === String(oppId);
     });
 
     if (apps.length === 0) return 'No applicants yet';
@@ -289,6 +329,7 @@ export class AdminComponent implements OnInit {
     if (menuId !== 'all-opportunities') {
       this.showOpportunityForm = false;
       this.viewingApplicationsFor = null;
+      this.currentOpportunity = null;
     }
   }
 

@@ -18,6 +18,7 @@ export class OpportunityDetailComponent implements OnInit {
   currentUser: User | null = null;
   isAdmin = false;
   isVolunteer = false;
+  isNGO = false;
   sidebarOpen = true;
 
   hasApplied = false;
@@ -36,6 +37,7 @@ export class OpportunityDetailComponent implements OnInit {
       this.currentUser = user;
       this.isAdmin = user?.role === 'Admin';
       this.isVolunteer = user?.role === 'Volunteer';
+      this.isNGO = user?.role === 'NGO';
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -86,6 +88,7 @@ export class OpportunityDetailComponent implements OnInit {
     if (this.opportunity) {
       const oppId = this.opportunity._id || this.opportunity.id;
       if (!oppId) return;
+      if (!confirm('Are you sure you want to PERMANENTLY delete this opportunity? This action cannot be undone.')) return;
       this.opportunityService.deleteOpportunity(oppId).subscribe(() => {
         this.router.navigate(['/opportunities']);
       });

@@ -46,7 +46,7 @@
           <h1 class="ol-page-title">🌱 All Opportunities</h1>
           <p class="ol-page-sub">Browse and discover volunteer opportunities</p>
         </div>
-        <a *ngIf="isAdmin" routerLink="/opportunities/new" class="ol-action-btn">+ Create New</a>
+        <a *ngIf="isAdmin || isNGO" routerLink="/opportunities/new" class="ol-action-btn">+ Create New</a>
       </div>
 
       <div class="ol-search-wrap">
@@ -70,7 +70,7 @@
           <div class="ol-card-skills">
             <span *ngFor="let skill of opp.skillsRequired" class="ol-skill">{{ skill }}</span>
           </div>
-          <div class="ol-card-footer" *ngIf="isAdmin">
+          <div class="ol-card-footer" *ngIf="isAdmin || isNGO">
             <a [routerLink]="['/opportunities/edit', opp.id]" class="ol-btn-edit" (click)="$event.stopPropagation()">Edit</a>
             <button class="ol-btn-delete" (click)="$event.stopPropagation(); deleteOpportunity(opp.id)">Delete</button>
           </div>

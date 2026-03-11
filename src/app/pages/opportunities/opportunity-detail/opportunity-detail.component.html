@@ -53,7 +53,7 @@
           <h1 class="od-title">{{ opportunity.title }}</h1>
           <p class="od-posted">Posted {{ opportunity.createdAt | date:'mediumDate' }}</p>
         </div>
-        <div class="od-admin-actions" *ngIf="isAdmin">
+        <div class="od-admin-actions" *ngIf="isAdmin || isNGO">
           <a [routerLink]="['/opportunities/edit', opportunity.id]" class="od-btn-edit">✏️ Edit</a>
           <button class="od-btn-delete" (click)="deleteOpportunity()">🗑 Delete</button>
         </div>

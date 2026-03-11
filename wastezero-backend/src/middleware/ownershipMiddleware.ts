@@ -18,8 +18,18 @@ export const verifyOwnership = async (req: AuthRequest, res: Response, next: Nex
             return;
         }
 
-        if (opportunity.ngo_id.toString() !== req.user.id) {
-            res.status(403).json({ message: 'Access denied: You are not the creator of this opportunity' });
+        console.log('Final Ownership Decision:', {
+            oppCreator: opportunity.ngo_id.toString(),
+            userId: req.user.id,
+            userRole: req.user.role,
+            isCreator: opportunity.ngo_id.toString() === req.user.id,
+            isAdmin: req.user.role?.toLowerCase() === 'admin'
+        });
+
+        if (opportunity.ngo_id.toString() !== req.user.id && req.user.role?.toLowerCase() !== 'admin') {
+            const msg = `Access denied: You are not the creator and your role is ${req.user.role}. (User ID: ${req.user.id}, Creator ID: ${opportunity.ngo_id})`;
+            console.log(msg);
+            res.status(403).json({ message: msg });
             return;
         }
 
