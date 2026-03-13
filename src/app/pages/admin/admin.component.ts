@@ -118,6 +118,11 @@ export class AdminComponent implements OnInit {
       this.isDarkMode = savedTheme === 'dark';
       this.applyTheme();
     }
+
+    // Collapse sidebar by default on mobile
+    if (typeof window !== 'undefined' && window.innerWidth < 992) {
+      this.isSidebarCollapsed = true;
+    }
   }
 
   private loadAdminData() {

@@ -1,4 +1,42 @@
-<div class="db-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+<div class="db-layout" [class.sidebar-collapsed]="sidebarCollapsed" [class.mobile-sidebar-open]="!sidebarCollapsed">
+  <!-- Mobile Navbar -->
+  <nav class="navbar navbar-dark bg-dark d-md-none fixed-top shadow-sm px-3" style="z-index: 1060;">
+    <div class="d-flex align-items-center w-100 justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="db-brand">
+          <div class="db-brand-icon-wrap" style="width: 30px; height: 30px; font-size: 14px; background: linear-gradient(135deg, rgba(0,200,255,0.15), rgba(167,139,250,0.1));">♻️</div>
+          <span class="db-brand-name" style="font-size: 16px;">WasteZero</span>
+        </div>
+      </div>
+      <div class="db-avatar shadow-sm" style="width: 32px; height: 32px; font-size: 12px;" *ngIf="currentUser as user" routerLink="/volunteer/profile">
+        <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
+        <span *ngIf="!user.profileImage">{{ user.name.charAt(0) }}</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Bottom Navbar -->
+  <nav class="navbar fixed-bottom bg-dark border-top border-light border-opacity-10 d-md-none px-2 py-0 bottom-nav">
+    <div class="container-fluid justify-content-around py-2">
+      <a class="nav-link-bottom" routerLink="/volunteer/dashboard" routerLinkActive="active">
+        <span class="bottom-nav-icon">📊</span>
+        <span>Home</span>
+      </a>
+      <a class="nav-link-bottom" routerLink="/volunteer/opportunities" routerLinkActive="active">
+        <span class="bottom-nav-icon">🛰️</span>
+        <span>Tasks</span>
+      </a>
+      <a class="nav-link-bottom" routerLink="/volunteer/my-pickups" routerLinkActive="active">
+        <span class="bottom-nav-icon">🚛</span>
+        <span>Pickups</span>
+      </a>
+      <a class="nav-link-bottom" (click)="logout()" style="cursor: pointer;">
+        <span class="bottom-nav-icon">🚪</span>
+        <span>Logout</span>
+      </a>
+    </div>
+  </nav>
+
   <!-- SIDEBAR -->
   <aside class="db-sidebar">
     <div class="db-sidebar-glow"></div>

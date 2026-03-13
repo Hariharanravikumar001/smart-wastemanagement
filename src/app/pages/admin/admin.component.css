@@ -15,14 +15,15 @@
   color: white;
   display: flex;
   flex-direction: column;
-  z-index: 1030;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1050;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-content-area {
   flex-grow: 1;
   margin-left: 280px;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-header {
@@ -347,17 +348,100 @@
   border: 1px solid rgba(0, 0, 0, 0.05) !important;
 }
 
+.avatar-mini-mobile {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.nav-link-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.nav-link-bottom i {
+  font-size: 1.25rem;
+  margin-bottom: 2px;
+}
+
+.nav-link-bottom.active {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
 @media (max-width: 991.98px) {
   .admin-sidebar {
-    width: 0;
-    overflow: hidden;
+    display: none !important;
   }
 
   .admin-content-area {
-    margin-left: 0;
+    margin-left: 0 !important;
+    padding-top: 60px;
+    padding-bottom: 70px; /* Space for bottom nav */
   }
 
+  .admin-wrapper.mobile-sidebar-open .admin-sidebar {
+    display: none;
+  }
+
+  /* Remove overlay effect since we use bottom nav now */
+  .admin-wrapper.mobile-sidebar-open::after {
+    display: none;
+  }
+
+  .admin-content-area header.content-header {
+    top: 60px;
+    display: none !important; /* Hide secondary header on mobile to save space */
+  }
+
+  .opportunity-mobile-card,
+  .application-mobile-card {
+    background-color: white;
+    transition: background-color 0.2s ease;
+  }
+
+  .opportunity-mobile-card:active,
+  .application-mobile-card:active {
+    background-color: #f8fafb;
+  }
+
+  .opportunity-mobile-card .btn-link {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  :host-context(.admin-dark-mode) .opportunity-mobile-card,
+  :host-context(.admin-dark-mode) .application-mobile-card {
+    background-color: #1e293b !important;
+  }
+
+  :host-context(.admin-dark-mode) .opportunity-mobile-card:active,
+  :host-context(.admin-dark-mode) .application-mobile-card:active {
+    background-color: #334155 !important;
+  }
+}
+
+@media (min-width: 992px) {
   .admin-wrapper.sidebar-collapsed .admin-sidebar {
-    width: 280px;
+    width: 80px !important;
+    transform: translateX(0);
+  }
+
+  .admin-wrapper.sidebar-collapsed .admin-content-area {
+    margin-left: 80px !important;
   }
 }

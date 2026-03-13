@@ -225,22 +225,28 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
       },
     });
 
-    const info = await transporter.sendMail({
-      from: `"WasteZero Support" <${process.env['EMAIL_USER'] || 'support@wastezero.com'}>`,
-      to: user.email,
-      subject: 'WasteZero - Password Reset OTP',
-      text: `Your password reset OTP is: ${otp}. It will expire in 15 minutes.`,
-      html: `<p>Your password reset OTP is: <strong>${otp}</strong>.</p><p>It will expire in 15 minutes.</p>`,
-    });
-
-    console.log('OTP Email sent to: %s', user.email);
+    try {
+      const info = await transporter.sendMail({
+        from: `"WasteZero Support" <${process.env['EMAIL_USER'] || 'support@wastezero.com'}>`,
+        to: user.email,
+        subject: 'WasteZero - Password Reset OTP',
+        text: `Your password reset OTP is: ${otp}. It will expire in 15 minutes.`,
+        html: `<p>Your password reset OTP is: <strong>${otp}</strong>.</p><p>It will expire in 15 minutes.</p>`,
+      });
+      console.log('OTP Email sent to: %s', user.email);
+    } catch (mailErr: any) {
+      console.error('Failed to send email:', mailErr.message);
+      console.log('--- DEVELOPMENT FALLBACK ---');
+      console.log(`OTP for ${user.email} is: ${otp}`);
+      console.log('---------------------------');
+    }
 
     res.json({ 
-      message: 'OTP sent successfully to email'
+      message: 'OTP sent successfully (check console if email fails in dev)'
     });
   } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Forgot Password Error:', err.message);
+    res.status(500).json({ message: 'Server error during forgot password process' });
   }
 };
 
@@ -262,8 +268,8 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
 
     res.json({ message: 'OTP verified successfully' });
   } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Verify OTP Error:', err.message);
+    res.status(500).json({ message: 'Server error during OTP verification' });
   }
 };
 
@@ -294,8 +300,8 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     
     res.json({ message: 'Password has been reset successfully' });
   } catch (err: any) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Reset Password Error:', err.message);
+    res.status(500).json({ message: 'Server error during password reset' });
   }
 };
 

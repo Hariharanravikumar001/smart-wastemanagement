@@ -33,6 +33,10 @@ export class CitizenLayoutComponent implements OnInit {
         this.currentUser = user;
       }
     });
+
+    if (typeof window !== 'undefined' && window.innerWidth < 769) {
+      this.sidebarCollapsed = true;
+    }
   }
 
   toggleSidebar() {

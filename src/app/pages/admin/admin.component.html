@@ -1,4 +1,39 @@
-<div class="admin-wrapper" [class.sidebar-collapsed]="isSidebarCollapsed" *ngIf="currentUser as user">
+<div class="admin-wrapper" [class.sidebar-collapsed]="isSidebarCollapsed" [class.mobile-sidebar-open]="!isSidebarCollapsed" *ngIf="currentUser as user">
+  <!-- Mobile Navbar -->
+  <nav class="navbar navbar-dark bg-dark d-lg-none fixed-top shadow-sm px-3">
+    <div class="d-flex align-items-center w-100 justify-content-between">
+      <div class="d-flex align-items-center">
+        <span class="navbar-brand fw-bold mb-0">WasteZero</span>
+      </div>
+      <div class="avatar-mini-mobile shadow-sm overflow-hidden" (click)="setActiveMenu('profile')">
+        <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
+        <span *ngIf="!user.profileImage" class="text-white fw-bold">{{ user.name.charAt(0).toUpperCase() }}</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Bottom Navbar -->
+  <nav class="navbar fixed-bottom bg-dark border-top border-light border-opacity-10 d-lg-none px-2 py-0 bottom-nav">
+    <div class="container-fluid justify-content-around py-2">
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'dashboard'" (click)="setActiveMenu('dashboard')">
+        <i class="bi bi-grid-1x2"></i>
+        <span>Home</span>
+      </a>
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'all-opportunities'" (click)="setActiveMenu('all-opportunities')">
+        <i class="bi bi-briefcase"></i>
+        <span>Tasks</span>
+      </a>
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'reports'" (click)="setActiveMenu('reports')">
+        <i class="bi bi-file-earmark-bar-graph"></i>
+        <span>Reports</span>
+      </a>
+      <a class="nav-link-bottom" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </nav>
+
   <!-- Sidebar -->
   <aside class="admin-sidebar shadow">
     <div class="sidebar-header d-flex align-items-center px-4 py-3">
@@ -450,14 +485,14 @@
           </div>
           
           <!-- Opportunity Details Summary -->
-          <div class="bg-light bg-opacity-50 p-4 border-bottom" *ngIf="currentOpportunity">
+          <div class="bg-light bg-opacity-50 p-3 p-md-4 border-bottom" *ngIf="currentOpportunity">
             <div class="row g-3">
               <div class="col-md-8">
                 <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Description</label>
                 <p class="small mb-0">{{ currentOpportunity.description }}</p>
               </div>
               <div class="col-md-4">
-                <div class="d-flex flex-column gap-2">
+                <div class="d-flex flex-row flex-md-column gap-3 gap-md-2 flex-wrap">
                   <div class="d-flex align-items-center small">
                     <i class="bi bi-geo-alt me-2 text-primary"></i>
                     <span>{{ currentOpportunity.location }}</span>
@@ -467,7 +502,6 @@
                     <span>{{ currentOpportunity.duration }}</span>
                   </div>
                   <div class="d-flex align-items-center small">
-                    <i class="bi bi-tag me-2 text-primary"></i>
                     <span class="badge bg-opacity-10 rounded-pill" 
                       [class.bg-success]="currentOpportunity.status === 'open'"
                       [class.text-success]="currentOpportunity.status === 'open'"
@@ -481,7 +515,8 @@
             </div>
           </div>
           <div class="card-body p-0">
-            <div class="table-responsive">
+            <!-- Desktop Table View -->
+            <div class="table-responsive d-none d-md-block">
               <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                   <tr>
@@ -515,6 +550,31 @@
                 </tbody>
               </table>
             </div>
+
+            <!-- Mobile Card View -->
+            <div class="d-md-none">
+              <div *ngFor="let app of getApplicationsForCurrentView()" class="application-mobile-card p-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <div class="fw-bold text-dark">{{ app.volunteer_id?.name || app.volunteer_id }}</div>
+                    <div class="extra-small text-muted">{{ app.volunteer_id?.email }}</div>
+                  </div>
+                  <span class="badge rounded-pill extra-small" [class.bg-warning]="app.status === 'pending'"
+                    [class.bg-success]="app.status === 'accepted'" [class.bg-danger]="app.status === 'rejected'">
+                    {{ app.status | titlecase }}
+                  </span>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-3" *ngIf="app.status === 'pending'">
+                  <button class="btn btn-sm btn-success rounded-pill px-3"
+                    (click)="updateApplicationStatus(app._id || app.id, 'accepted')">Accept</button>
+                  <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                    (click)="updateApplicationStatus(app._id || app.id, 'rejected')">Reject</button>
+                </div>
+              </div>
+              <div *ngIf="getApplicationsForCurrentView().length === 0" class="text-center py-5 text-muted small">
+                No applications found.
+              </div>
+            </div>
           </div>
         </div>
 
@@ -531,7 +591,8 @@
             </div>
           </div>
           <div class="card-body p-0">
-            <div class="table-responsive">
+            <!-- Desktop Table View -->
+            <div class="table-responsive d-none d-md-block">
               <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                   <tr>
@@ -590,6 +651,58 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="d-md-none">
+              <div *ngFor="let opp of allOpportunities" class="opportunity-mobile-card p-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="flex-grow-1">
+                    <div class="fw-bold text-dark mb-1">{{ opp.title }}</div>
+                    <div class="badge bg-info bg-opacity-10 text-info rounded-pill extra-small px-3">
+                      {{ (opp.applicantCount !== undefined) ? opp.applicantCount : getApplicantCount(opp._id || opp.id) }} Applicants
+                    </div>
+                  </div>
+                  <span class="badge border bg-opacity-10 rounded-pill extra-small"
+                    [class.border-success]="opp.status === 'open'" [class.text-success]="opp.status === 'open'"
+                    [class.bg-success]="opp.status === 'open'" [class.border-warning]="opp.status === 'in-progress'"
+                    [class.text-warning]="opp.status === 'in-progress'"
+                    [class.bg-warning]="opp.status === 'in-progress'"
+                    [class.border-secondary]="opp.status === 'closed'"
+                    [class.text-secondary]="opp.status === 'closed'" [class.bg-secondary]="opp.status === 'closed'">
+                    {{ opp.status | titlecase }}
+                  </span>
+                </div>
+                
+                <div class="d-flex align-items-center mb-3">
+                  <div class="extra-small text-muted me-3">
+                    <i class="bi bi-geo-alt me-1"></i>{{ opp.location }}
+                  </div>
+                  <div class="extra-small text-primary text-truncate flex-grow-1">
+                    <i class="bi bi-people-fill me-1"></i>
+                    {{ (opp.applicantNames && opp.applicantNames.length > 0) ? opp.applicantNames.join(', ') : getApplicantNames(opp._id || opp.id) }}
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-around pt-2 border-top">
+                  <button class="btn btn-sm btn-link text-primary text-decoration-none py-0"
+                    (click)="viewApplicationsFor(opp._id || opp.id)">
+                    <i class="bi bi-people me-1"></i> Applications
+                  </button>
+                  <button class="btn btn-sm btn-link text-secondary text-decoration-none py-0"
+                    (click)="openEditOpportunityForm(opp)">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-link text-danger text-decoration-none py-0"
+                    (click)="deleteOpportunityByAdmin(opp._id || opp.id)">
+                    <i class="bi bi-trash me-1"></i> Delete
+                  </button>
+                </div>
+              </div>
+              
+              <div *ngIf="allOpportunities.length === 0" class="text-center py-5 text-muted small">
+                No opportunities yet.
+              </div>
             </div>
           </div>
         </div>
