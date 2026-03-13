@@ -1,11 +1,19 @@
-const http = require('http');
+import http from 'http';
+import { URL } from 'url';
 
 const API_BASE = 'http://localhost:5000/api';
 
-async function makeRequest(endpoint, method = 'GET', body = null) {
-  return new Promise((resolve, reject) => {
+interface ApiResponse {
+  status: number;
+  data: any;
+  raw: string;
+  error?: string;
+}
+
+async function makeRequest(endpoint: string, method: string = 'GET', body: any = null): Promise<ApiResponse> {
+  return new Promise((resolve) => {
     const url = new URL(API_BASE + endpoint);
-    const options = {
+    const options: http.RequestOptions = {
       hostname: url.hostname,
       port: url.port,
       path: url.pathname + url.search,
@@ -21,19 +29,19 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
       res.on('end', () => {
         try {
           resolve({
-            status: res.statusCode,
+            status: res.statusCode || 500,
             data: data ? JSON.parse(data) : null,
-            raw: data // Keep raw string in case JSON parsing fails but we still want to log it
+            raw: data 
           });
         } catch (e) {
           console.error(`\nFailed to parse JSON from ${options.method} ${options.path}. Status: ${res.statusCode}\nContent: ${data.substring(0, 200)}...\n`);
-          resolve({ status: res.statusCode, data: data, raw: data });
+          resolve({ status: res.statusCode || 500, data: data, raw: data });
         }
       });
     });
 
     req.on('error', (err) => {
-      resolve({ status: 500, error: err.message, data: null });
+      resolve({ status: 500, error: err.message, data: null, raw: '' });
     });
     if (body) {
       req.write(JSON.stringify(body));
@@ -47,12 +55,12 @@ async function runTests() {
   let passed = 0;
   let failed = 0;
 
-  const test = async (name, fn) => {
+  const test = async (name: string, fn: () => Promise<void>) => {
     try {
       await fn();
       console.log(`✅ ${name}`);
       passed++;
-    } catch (err) {
+    } catch (err: any) {
       console.log(`❌ ${name}`);
       console.log(`   Error: ${err.message}`);
       failed++;
@@ -71,8 +79,6 @@ async function runTests() {
 
   // 2. Authenticate (Login as Admin)
   await test('Authenticate Admin User', async () => {
-    // Assuming an admin user exists or we can login with arbitrary credentials for testing if backend allows
-    // We will register a test user first to ensure we have credentials
     const testUserEmail = `testadmin_${Date.now()}@example.com`;
     const testUserName = `testadmin_${Date.now()}`;
     const testUser = {
@@ -84,19 +90,15 @@ async function runTests() {
       location: 'Test City'
     };
 
-    // Try to register (might fail if already exists, which is fine)
     const regRes = await makeRequest('/register', 'POST', testUser);
     console.log(`Registration result: ${regRes.status} - ${regRes.raw}`);
 
-    // Login
     const loginRes = await makeRequest('/login', 'POST', {
       email: testUserEmail,
       password: 'password123'
     });
 
     console.log(`Login Status: ${loginRes.status}`);
-    console.log('Login Response Data:', loginRes.raw);
-
     if (loginRes.status !== 200 || !loginRes.data || !loginRes.data.token) {
       throw new Error(`Login failed: ${loginRes.status} ${loginRes.raw}`);
     }
@@ -104,11 +106,10 @@ async function runTests() {
     token = loginRes.data.token;
   });
 
-  // Helper with Auth
-  const makeAuthRequest = (endpoint, method = 'GET', body = null) => {
-    return new Promise((resolve, reject) => {
+  const makeAuthRequest = (endpoint: string, method: string = 'GET', body: any = null): Promise<ApiResponse> => {
+    return new Promise((resolve) => {
       const url = new URL(API_BASE + endpoint);
-      const options = {
+      const options: http.RequestOptions = {
         hostname: url.hostname,
         port: url.port,
         path: url.pathname + url.search,
@@ -125,26 +126,25 @@ async function runTests() {
         res.on('end', () => {
           try {
             resolve({
-              status: res.statusCode,
+              status: res.statusCode || 500,
               data: data ? JSON.parse(data) : null,
               raw: data
             });
           } catch (e) {
             console.error(`\nFailed to parse JSON from ${options.method} ${options.path}. Status: ${res.statusCode}\nContent: ${data.substring(0, 200)}...\n`);
-            resolve({ status: res.statusCode, data: data, raw: data });
+            resolve({ status: res.statusCode || 500, data: data, raw: data });
           }
         });
       });
 
       req.on('error', (err) => {
-         resolve({ status: 500, error: err.message, data: null });
+         resolve({ status: 500, error: err.message, data: null, raw: '' });
       });
       if (body) req.write(JSON.stringify(body));
       req.end();
     });
   };
 
-  // 3. Fetch Waste Requests
   await test('Fetch Available Waste Requests', async () => {
     const res = await makeAuthRequest('/waste-requests/available');
     if (res.status !== 200 || !Array.isArray(res.data)) {
@@ -152,7 +152,6 @@ async function runTests() {
     }
   });
 
-  // 4. Fetch Opportunities
   await test('Fetch Open Opportunities', async () => {
     const res = await makeAuthRequest('/opportunities');
     if (res.status !== 200 || !res.data || !Array.isArray(res.data.opportunities)) {

@@ -64,35 +64,28 @@ export class DashboardService {
       });
     });
 
-    // Sync user stats
-    const allUsers = this.authService.getAllUsers();
-    const volunteers = allUsers.filter((u: any) => u.role === 'Volunteer');
-    const activeUsers = allUsers.filter((u: any) => !u.suspended);
+    // Sync completed pickups from real requests
+    this.wasteRequestService.requests$.subscribe(requests => {
+      const completed = requests.filter((r: any) => r.status === 'Completed');
+      const completedCount = completed.length;
+      
+      const recentCompleted = completed.filter((r: any) => {
+        const date = r.createdAt ? new Date(r.createdAt) : new Date();
+        return date >= oneWeekAgo;
+      }).length;
 
-    // Volunteer growth
-    const recentVolunteers = volunteers.filter((u: any) => {
-      const date = u.created_at ? new Date(u.created_at) : new Date();
-      return date >= oneWeekAgo;
-    }).length;
-    const vGrowth = volunteers.length > recentVolunteers
-      ? ((recentVolunteers / (volunteers.length - recentVolunteers)) * 100).toFixed(1)
-      : (recentVolunteers > 0 ? '100' : '0');
+      const growth = completedCount > recentCompleted 
+        ? ((recentCompleted / (completedCount - recentCompleted)) * 100).toFixed(1)
+        : (recentCompleted > 0 ? '100' : '0');
 
-    // Active users growth
-    const recentUsers = activeUsers.filter((u: any) => {
-      const date = u.created_at ? new Date(u.created_at) : new Date();
-      return date >= oneWeekAgo;
-    }).length;
-    const uGrowth = activeUsers.length > recentUsers
-      ? ((recentUsers / (activeUsers.length - recentUsers)) * 100).toFixed(1)
-      : (recentUsers > 0 ? '100' : '0');
-
-    this.updateStats({
-      totalVolunteers: volunteers.length,
-      totalVolunteersChange: `+${vGrowth}% weekly`,
-      activeUsers: activeUsers.length,
-      activeUsersChange: `+${uGrowth}% weekly`
+      this.updateStats({ 
+        completedPickups: completedCount,
+        completedPickupsChange: `+${growth}% this week`
+      });
     });
+
+    // NOTE: Active Users and Total Volunteers are now handled by AdminReportService 
+    // and updated via updateStats from the AdminComponent to ensure real backend data.
   }
 
   private loadStats(): void {

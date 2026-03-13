@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import nodemailer from 'nodemailer';
 import User from '../models/User';
 import WasteRequest from '../models/WasteRequest';
 import Application from '../models/Application';
 import Message from '../models/Message';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { sendEmail } from '../utils/emailService';
+import crypto from 'crypto';
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -35,6 +36,33 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
     });
 
     await user.save();
+
+    // Send Welcome Email
+    const welcomeHtml = `
+      <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+        <h2 style="color: #2e7d32;">Welcome to WasteZero!</h2>
+        <p>Hello <strong>${user.name}</strong>,</p>
+        <p>Thank you for joining WasteZero - Smart Waste Management Platform. We're excited to have you as a <strong>${user.role}</strong>.</p>
+        <p>Our platform helps you manage waste efficiently and contribute to a cleaner environment.</p>
+        <div style="background: #f1f8e9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p style="margin: 0;"><strong>Your Dashboard is ready:</strong> <a href="http://localhost:4200/login" style="color: #2e7d32; text-decoration: none; font-weight: bold;">Log in Now</a></p>
+        </div>
+        <p>If you have any questions, feel free to reply to this email.</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 12px; color: #777;">WasteZero Smart Waste Management Platform</p>
+      </div>
+    `;
+    
+    // We send this asynchronously, no need to wait for it before giving response to user
+    sendEmail(
+      user.email, 
+      'Welcome to WasteZero!', 
+      `Hello ${user.name}, welcome to WasteZero. Your account as a ${user.role} has been created.`, 
+      welcomeHtml
+    ).then(success => {
+       if (success) console.log(`✅ Welcome email sent to ${user.email}`);
+       else console.error(`❌ Failed to send welcome email to ${user.email}`);
+    });
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err: any) {
@@ -216,29 +244,29 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
     user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
     await user.save();
 
-    // Use environment variables for SMTP details
-    const transporter = nodemailer.createTransport({
-      service: process.env['EMAIL_SERVICE'] || 'gmail',
-      auth: {
-        user: process.env['EMAIL_USER'] || 'your-email@gmail.com',
-        pass: process.env['EMAIL_PASS'] || 'your-app-password',
-      },
-    });
+    // Use shared email service
+    const subject = 'WasteZero - Password Reset OTP';
+    const text = `Your password reset OTP is: ${otp}. It will expire in 15 minutes.`;
+    const html = `<div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #2e7d32;">Password Reset Request</h2>
+                <p>Hello,</p>
+                <p>We received a request to reset your password for your WasteZero account.</p>
+                <p>Your 6-digit OTP is:</p>
+                <div style="font-size: 24px; font-weight: bold; color: #1565c0; padding: 10px; background: #f5f5f5; border-radius: 5px; display: inline-block;">${otp}</div>
+                <p>This code will expire in 15 minutes.</p>
+                <p>If you did not request this, please ignore this email.</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #777;">WasteZero Smart Waste Management Platform</p>
+               </div>`;
 
-    try {
-      const info = await transporter.sendMail({
-        from: `"WasteZero Support" <${process.env['EMAIL_USER'] || 'support@wastezero.com'}>`,
-        to: user.email,
-        subject: 'WasteZero - Password Reset OTP',
-        text: `Your password reset OTP is: ${otp}. It will expire in 15 minutes.`,
-        html: `<p>Your password reset OTP is: <strong>${otp}</strong>.</p><p>It will expire in 15 minutes.</p>`,
-      });
-      console.log('OTP Email sent to: %s', user.email);
-    } catch (mailErr: any) {
-      console.error('Failed to send email:', mailErr.message);
-      console.log('--- DEVELOPMENT FALLBACK ---');
-      console.log(`OTP for ${user.email} is: ${otp}`);
-      console.log('---------------------------');
+    const emailSent = await sendEmail(user.email, subject, text, html);
+
+    if (emailSent) {
+      console.log('✅ OTP Email successfully sent to: %s', user.email);
+    } else {
+      console.error('❌ Failed to send reset email to: %s', user.email);
+      // Fallback log for development
+      console.log(`DEBUG: OTP for ${user.email} is ${otp}`);
     }
 
     res.json({ 

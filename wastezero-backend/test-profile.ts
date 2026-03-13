@@ -1,12 +1,16 @@
-const http = require('http');
+import http from 'http';
 
-const data = JSON.stringify({
+const testUser = {
   email: 'testcitizen@example.com',
   password: 'password123',
   name: 'Test Citizen',
   username: 'testcitizen',
   role: 'citizen'
-});
+};
+
+const data = JSON.stringify(testUser);
+
+console.log('⏳ Registering test citizen...');
 
 const reqRegister = http.request({
   hostname: 'localhost',
@@ -18,7 +22,10 @@ const reqRegister = http.request({
     'Content-Length': data.length
   }
 }, res => {
-  console.log(`Register status: ${res.statusCode}`);
+  console.log(`📋 Register status: ${res.statusCode}`);
+  
+  const loginData = JSON.stringify({ email: testUser.email, password: testUser.password });
+  
   const reqLogin = http.request({
     hostname: 'localhost',
     port: 4001,
@@ -26,20 +33,28 @@ const reqRegister = http.request({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Content-Length': JSON.stringify({ email: 'testcitizen@example.com', password: 'password123' }).length
+      'Content-Length': loginData.length
     }
   }, resLogin => {
     let body = '';
     resLogin.on('data', d => body += d);
     resLogin.on('end', () => {
-      const token = JSON.parse(body).token;
-      console.log('Got token:', token ? 'yes' : 'no');
+      let token = '';
+      try {
+          token = JSON.parse(body).token;
+      } catch (e) {
+          console.error('❌ Failed to parse login body:', body);
+          return;
+      }
+      
+      console.log('🔑 Got token:', token ? 'YES' : 'NO');
       
       const updateData = JSON.stringify({
         name: 'Updated Citizen',
         location: 'New York'
       });
       
+      console.log('⏳ Updating profile...');
       const reqUpdate = http.request({
         hostname: 'localhost',
         port: 4001,
@@ -54,15 +69,15 @@ const reqRegister = http.request({
         let updateBody = '';
         resUpdate.on('data', d => updateBody += d);
         resUpdate.on('end', () => {
-          console.log(`Update status: ${resUpdate.statusCode}`);
-          console.log('Update body:', updateBody);
+          console.log(`📋 Update status: ${resUpdate.statusCode}`);
+          console.log('📄 Update body:', updateBody);
         });
       });
       reqUpdate.write(updateData);
       reqUpdate.end();
     });
   });
-  reqLogin.write(JSON.stringify({ email: 'testcitizen@example.com', password: 'password123' }));
+  reqLogin.write(loginData);
   reqLogin.end();
 });
 

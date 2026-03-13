@@ -161,43 +161,34 @@
   <h1 class="db-page-title">📈 Waste Statistics</h1>
   <p class="db-page-sub">Your personal waste recycling breakdown</p>
 
-  <div class="db-stats-row">
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap green">🌿</div>
-      <div>
-        <div class="db-stat-value">{{ (totalWeight$ | async) || 0 }} kg</div>
-        <div class="db-stat-label">Total Recycled</div>
-      </div>
-    </div>
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap blue">⚡</div>
-      <div>
-        <div class="db-stat-value">{{ (impactScore$ | async) || 0 }}</div>
-        <div class="db-stat-label">Impact Score</div>
-      </div>
-    </div>
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap purple">🏆</div>
-      <div>
-        <div class="db-stat-value">{{ (completedCount$ | async) || 0 }}</div>
-        <div class="db-stat-label">Completed Pickups</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="db-card">
-    <h3 class="db-card-title">📊 Category Breakdown</h3>
-    <div *ngIf="(wasteStats$ | async) as stats">
-      <div *ngIf="stats.length === 0" class="db-empty">No completed pickups yet. Statistics will appear after your first completed collection.</div>
-      <div *ngFor="let stat of stats" class="db-stat-bar-row">
-        <div class="db-stat-bar-label">
-          <span class="db-stat-bar-icon">{{ getCategoryIcon(stat.category) }}</span>
-          <span>{{ stat.category }}</span>
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="db-card h-100">
+        <h3 class="db-card-title">📊 Category Distribution</h3>
+        <div class="flex-grow-1" style="height: 300px; position: relative; display: flex; align-items: center; justify-content: center;">
+          <canvas id="citizenCategoryChart"></canvas>
+          <div *ngIf="(wasteStats$ | async)?.length === 0" class="text-muted small" style="position: absolute;">
+            No data available.
+          </div>
         </div>
-        <div class="db-stat-bar-track">
-          <div class="db-stat-bar-fill" [style.width.%]="stat.percentage" [style.background]="getCategoryColor(stat.category)"></div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="db-card h-100">
+        <h3 class="db-card-title">📊 Category Breakdown</h3>
+        <div *ngIf="(wasteStats$ | async) as stats">
+          <div *ngIf="stats.length === 0" class="db-empty">No completed pickups yet. Statistics will appear after your first completed collection.</div>
+          <div *ngFor="let stat of stats" class="db-stat-bar-row">
+            <div class="db-stat-bar-label">
+              <span class="db-stat-bar-icon">{{ getCategoryIcon(stat.category) }}</span>
+              <span>{{ stat.category }}</span>
+            </div>
+            <div class="db-stat-bar-track">
+              <div class="db-stat-bar-fill" [style.width.%]="stat.percentage" [style.background]="getCategoryColor(stat.category)"></div>
+            </div>
+            <div class="db-stat-bar-value">{{ stat.weight }} kg ({{ stat.percentage }}%)</div>
+          </div>
         </div>
-        <div class="db-stat-bar-value">{{ stat.weight }} kg ({{ stat.percentage }}%)</div>
       </div>
     </div>
   </div>

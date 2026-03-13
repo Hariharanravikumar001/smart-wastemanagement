@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, PLATFORM_ID, Inject, NgZone } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -9,6 +10,9 @@ import { ApplicationService } from '../../services/application.service';
 import { AdminReportService } from '../../services/admin-report.service';
 import { Opportunity } from '../../models/opportunity.model';
 import { Application } from '../../models/application.model';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-admin',
@@ -17,7 +21,7 @@ import { Application } from '../../models/application.model';
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit, AfterViewInit {
   currentUser: User | null = null;
   activeMenu = 'dashboard';
   isAdmin = false;
@@ -36,6 +40,12 @@ export class AdminComponent implements OnInit {
     responseRate: 0,
     responseRateChange: 0
   };
+
+  // Charts
+  private engagementChart: any;
+  private reportsEngagementChart: any;
+  private opsByTypeChart: any;
+  private isBrowser: boolean;
 
 
   // Applications view state
@@ -92,8 +102,12 @@ export class AdminComponent implements OnInit {
     private dashboardService: DashboardService,
     private opportunityService: OpportunityService,
     private applicationService: ApplicationService,
-    private adminReportService: AdminReportService
-  ) { }
+    private adminReportService: AdminReportService,
+    private ngZone: NgZone,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit() {
     this.authService.currentUser$.subscribe((user: any) => {
@@ -125,6 +139,145 @@ export class AdminComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit() {
+    if (this.isBrowser) {
+      this.ngZone.runOutsideAngular(() => {
+        this.initCharts();
+      });
+    }
+  }
+
+  private initCharts() {
+    // Engagement Chart (Dashboard)
+    const ctxEng = document.getElementById('engagementChart') as HTMLCanvasElement;
+    if (ctxEng) {
+      if (this.engagementChart) {
+        this.engagementChart.destroy();
+      }
+      this.engagementChart = new Chart(ctxEng, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Engagement',
+            data: [0, 0, 0, 0, 0, 0, 0],
+            borderColor: '#10b981',
+            tension: 0.4,
+            fill: true,
+            backgroundColor: 'rgba(16, 185, 129, 0.1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { 
+            y: { 
+              beginAtZero: true, 
+              grid: { display: false },
+              ticks: { precision: 0, stepSize: 1 }
+            }, 
+            x: { grid: { display: false } } 
+          }
+        }
+      });
+    }
+
+    // Engagement Line Chart (Reports)
+    const ctxReportsEng = document.getElementById('reportsEngagementChart') as HTMLCanvasElement;
+    if (ctxReportsEng) {
+      if (this.reportsEngagementChart) {
+        this.reportsEngagementChart.destroy();
+      }
+      this.reportsEngagementChart = new Chart(ctxReportsEng, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Engagement',
+            data: [0, 0, 0, 0, 0, 0, 0],
+            borderColor: '#3b82f6',
+            tension: 0.4,
+            fill: true,
+            backgroundColor: 'rgba(59, 130, 246, 0.1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { 
+            y: { 
+              beginAtZero: true, 
+              grid: { display: false },
+              ticks: { precision: 0, stepSize: 1 }
+            }, 
+            x: { grid: { display: false } } 
+          }
+        }
+      });
+    }
+
+    // Ops by Type Chart
+    const ctxOps = document.getElementById('opsByTypeChart') as HTMLCanvasElement;
+    if (ctxOps) {
+      if (this.opsByTypeChart) {
+        this.opsByTypeChart.destroy();
+      }
+      this.opsByTypeChart = new Chart(ctxOps, {
+        type: 'doughnut',
+        data: {
+          labels: [],
+          datasets: [{
+            data: [],
+            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#64748b']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 6 } } },
+          cutout: '70%'
+        }
+      });
+    }
+  }
+
+  private updateCharts() {
+    if (!this.isBrowser) return;
+
+    if (this.engagementChart && this.engagementAnalytics.trends) {
+      this.ngZone.runOutsideAngular(() => {
+        const labels = this.engagementAnalytics.trends.labels;
+        const data = this.engagementAnalytics.trends.data;
+        
+        this.engagementChart.data.labels = labels;
+        this.engagementChart.data.datasets[0].data = data;
+        this.engagementChart.data.datasets[0].label = 'Pickup Requests';
+        this.engagementChart.update();
+
+        if (this.reportsEngagementChart) {
+          this.reportsEngagementChart.data.labels = labels;
+          this.reportsEngagementChart.data.datasets[0].data = data;
+          this.reportsEngagementChart.data.datasets[0].label = 'Pickup Requests';
+          this.reportsEngagementChart.update();
+        }
+      });
+    }
+
+    if (this.opsByTypeChart && this.oppStats.byType) {
+      this.ngZone.runOutsideAngular(() => {
+        const labels = Object.keys(this.oppStats.byType);
+        const data = Object.values(this.oppStats.byType);
+        this.opsByTypeChart.data.labels = labels;
+        this.opsByTypeChart.data.datasets[0].data = data;
+        this.opsByTypeChart.update();
+      });
+    }
+  }
+
+  selectedRange = '1week';
+
   private loadAdminData() {
     this.loadOpportunities();
     this.loadApplications();
@@ -132,25 +285,38 @@ export class AdminComponent implements OnInit {
     try {
       this.adminReportService.getOpportunityStats().subscribe((stats: any) => {
         this.oppStats = stats;
+        this.updateCharts();
       });
 
 
-      this.adminReportService.getEngagementAnalytics().subscribe({
-        next: (analytics: any) => {
-          this.engagementAnalytics = analytics;
-        },
-        error: (err: any) => console.error('Failed to load engagement analytics:', err)
-      });
+      this.updateAnalytics();
 
     } catch (e) {
       console.log(e);
     }
 
-    // Update dashboard stats
-    this.dashboardService.updateStats({
-      activeUsers: 0,
-      totalVolunteers: 0
-    });
+    // Dashboard stats are now updated from analytics data in the updateAnalytics subscription
+  }
+
+  updateAnalytics(range: string = this.selectedRange) {
+      this.selectedRange = range;
+      this.adminReportService.getEngagementAnalytics(range).subscribe({
+        next: (analytics: any) => {
+          this.engagementAnalytics = analytics;
+          
+          // Update real-time stats cards with data from analytics
+          this.dashboardService.updateStats({
+            activeUsers: analytics.activeUsers || 0,
+            activeUsersChange: analytics.activeUsersChange !== undefined ? `${analytics.activeUsersChange >= 0 ? '+' : ''}${analytics.activeUsersChange}% monthly` : 'Live data',
+            totalVolunteers: analytics.totalVolunteers || 0,
+            totalVolunteersChange: analytics.totalVolunteersChange !== undefined ? `${analytics.totalVolunteersChange >= 0 ? '+' : ''}${analytics.totalVolunteersChange}% monthly` : 'Live data',
+            completedPickups: analytics.completedPickups || 0
+          });
+
+          this.updateCharts();
+        },
+        error: (err: any) => console.error('Failed to load engagement analytics:', err)
+      });
   }
 
 
@@ -335,6 +501,15 @@ export class AdminComponent implements OnInit {
       this.showOpportunityForm = false;
       this.viewingApplicationsFor = null;
       this.currentOpportunity = null;
+    }
+
+    if (this.isBrowser && (menuId === 'dashboard' || menuId === 'reports')) {
+      setTimeout(() => {
+        this.ngZone.runOutsideAngular(() => {
+          this.initCharts();
+          this.updateCharts();
+        });
+      }, 0);
     }
   }
 

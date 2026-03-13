@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         // Hide footer on dashboard, admin, login and register routes
-        const hiddenPaths = ['/register', '/login', '/dashboard', '/admin', '/opportunities', '/citizen', '/volunteer'];
+        const hiddenPaths = ['/register', '/login', '/dashboard', '/admin', '/opportunities', '/citizen', '/volunteer', '/forgot-password'];
         this.showFooter = !hiddenPaths.some(path => event.urlAfterRedirects.includes(path));
         this.checkNavbarVisibility(event.urlAfterRedirects);
       }
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
 
   private checkNavbarVisibility(url: string) {
     const role = this.authService.currentUserValue?.role;
-    const isLoginPage = url.includes('/login') || url.includes('/register');
+    const isLoginPage = url.includes('/login') || url.includes('/register') || url.includes('/forgot-password');
     const isAdminPage = url.includes('/admin') || (role === 'Admin');
     const isDashboard = url.includes('/dashboard') || url.includes('/citizen') || url.includes('/volunteer');
     const isOpportunities = url.includes('/opportunities');

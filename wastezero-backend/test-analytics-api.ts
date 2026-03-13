@@ -1,9 +1,15 @@
-const http = require('http');
+import http from 'http';
+import { URL } from 'url';
 
-function post(url, data) {
+interface ApiResponse {
+    status: number;
+    data: any;
+}
+
+function post(url: string, data: any): Promise<ApiResponse> {
     return new Promise((resolve, reject) => {
         const urlObj = new URL(url);
-        const options = {
+        const options: http.RequestOptions = {
             hostname: urlObj.hostname,
             port: urlObj.port,
             path: urlObj.pathname,
@@ -19,9 +25,9 @@ function post(url, data) {
             res.on('data', (chunk) => body += chunk);
             res.on('end', () => {
                 try {
-                    resolve({ status: res.statusCode, data: JSON.parse(body) });
+                    resolve({ status: res.statusCode || 500, data: JSON.parse(body) });
                 } catch (e) {
-                    resolve({ status: res.statusCode, data: body });
+                    resolve({ status: res.statusCode || 500, data: body });
                 }
             });
         });
@@ -32,10 +38,10 @@ function post(url, data) {
     });
 }
 
-function get(url, token) {
+function get(url: string, token: string): Promise<ApiResponse> {
     return new Promise((resolve, reject) => {
         const urlObj = new URL(url);
-        const options = {
+        const options: http.RequestOptions = {
             hostname: urlObj.hostname,
             port: urlObj.port,
             path: urlObj.pathname,
@@ -50,9 +56,9 @@ function get(url, token) {
             res.on('data', (chunk) => body += chunk);
             res.on('end', () => {
                 try {
-                    resolve({ status: res.statusCode, data: JSON.parse(body) });
+                    resolve({ status: res.statusCode || 500, data: JSON.parse(body) });
                 } catch (e) {
-                    resolve({ status: res.statusCode, data: body });
+                    resolve({ status: res.statusCode || 500, data: body });
                 }
             });
         });
@@ -64,7 +70,7 @@ function get(url, token) {
 
 async function testAnalytics() {
     try {
-        console.log('Testing login...');
+        console.log('⏳ Testing login...');
         const loginRes = await post('http://localhost:4000/api/login', {
             email: 'admin@example.com',
             password: 'password123'
@@ -76,18 +82,18 @@ async function testAnalytics() {
         }
 
         const token = loginRes.data.token;
-        console.log('Login successful, fetching analytics...');
+        console.log('✅ Login successful, fetching analytics...');
         
         const analyticsRes = await get('http://localhost:4000/api/admin/analytics', token);
         
-        console.log('Analytics Response:', JSON.stringify(analyticsRes.data, null, 2));
+        console.log('📊 Analytics Response:', JSON.stringify(analyticsRes.data, null, 2));
         
         if (analyticsRes.status === 200 && 'totalImpact' in analyticsRes.data) {
             console.log('✅ Analytics API verification successful!');
         } else {
             console.error('❌ Analytics API verification failed:', analyticsRes.data);
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('❌ Error during verification:', error.message);
     }
 }

@@ -24,8 +24,8 @@ export class AdminReportService {
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
-  getEngagementAnalytics(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/analytics`, { headers: this.getHeaders() });
+  getEngagementAnalytics(range: string = '1week'): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/analytics?range=${range}`, { headers: this.getHeaders() });
   }
 
 

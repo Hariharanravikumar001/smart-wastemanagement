@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Need to define a minimal User model here since the backend one imports ESM typescript
 const userSchema = new mongoose.Schema({
@@ -11,14 +11,16 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-mongoose.connect('mongodb+srv://hariharan:HARI2005@smartwaste.x1zrn.mongodb.net/test?retryWrites=true&w=majority&appName=Smartwaste')
+const MONGODB_URI = 'mongodb+srv://hariharan:HARI2005@smartwaste.x1zrn.mongodb.net/test?retryWrites=true&w=majority&appName=Smartwaste';
+
+mongoose.connect(MONGODB_URI)
   .then(async () => {
-    console.log('Connected to DB');
+    console.log('✅ Connected to DB');
     const user = await User.findOne({ email: 'testcitizen@example.com' });
-    console.log('User in DB:', JSON.stringify(user, null, 2));
+    console.log('👤 User in DB:', JSON.stringify(user, null, 2));
     process.exit(0);
   })
   .catch(err => {
-    console.error(err);
+    console.error('❌ Connection Error:', err);
     process.exit(1);
   });

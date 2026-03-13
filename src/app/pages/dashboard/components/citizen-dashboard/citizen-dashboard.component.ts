@@ -1,10 +1,13 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, NgZone, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable, of, map } from 'rxjs';
 import { WasteRequest } from '../../../../models/waste-request.model';
 import { User } from '../../../../services/auth.service';
 import { WasteRequestService } from '../../../../services/waste-request.service';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-citizen-dashboard',
@@ -13,7 +16,7 @@ import { WasteRequestService } from '../../../../services/waste-request.service'
   templateUrl: './citizen-dashboard.component.html',
   styleUrls: ['./citizen-dashboard.component.css']
 })
-export class CitizenDashboardComponent implements OnInit {
+export class CitizenDashboardComponent implements OnInit, OnChanges {
   @Input() currentUser: User | null = null;
   @Input() activeTab: string = 'overview';
   @Output() setTab = new EventEmitter<string>();
@@ -34,7 +37,17 @@ export class CitizenDashboardComponent implements OnInit {
   categories: WasteRequest['wasteCategory'][] = ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Glass', 'Paper', 'Hazardous', 'Other'];
   submitSuccess = false;
 
-  constructor(private wasteService: WasteRequestService) {}
+  private categoryDistributionChart: any;
+  private currentStats: any[] = [];
+  private isBrowser: boolean;
+
+  constructor(
+    private wasteService: WasteRequestService,
+    private ngZone: NgZone,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit() {
     if (this.currentUser) {
@@ -49,6 +62,16 @@ export class CitizenDashboardComponent implements OnInit {
       );
       this.newRequest.location = this.currentUser.location || '';
       this.recalcStats();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.isBrowser && changes['activeTab'] && this.activeTab === 'statistics') {
+      setTimeout(() => {
+        this.ngZone.runOutsideAngular(() => {
+          this.initCategoryDistributionChart();
+        });
+      }, 0);
     }
   }
 
@@ -96,12 +119,63 @@ export class CitizenDashboardComponent implements OnInit {
         const total = collected.reduce((sum, r) => sum + (r.weight || 0), 0);
         if (total === 0) return [];
         const categories = [...new Set(collected.map(r => r.wasteCategory))];
-        return categories.map(cat => {
+        const result = categories.map(cat => {
           const catWeight = collected.filter(r => r.wasteCategory === cat).reduce((sum, r) => sum + (r.weight || 0), 0);
           return { category: cat, weight: catWeight, percentage: Math.round((catWeight / total) * 100) };
         }).sort((a, b) => b.weight - a.weight);
+        
+        this.currentStats = result;
+        if (this.isBrowser && this.activeTab === 'statistics') {
+          setTimeout(() => {
+            this.ngZone.runOutsideAngular(() => this.updateCategoryDistributionChart());
+          }, 0);
+        }
+        return result;
       })
     );
+  }
+
+  private initCategoryDistributionChart() {
+    const ctx = document.getElementById('citizenCategoryChart') as HTMLCanvasElement;
+    if (ctx) {
+      if (this.categoryDistributionChart) {
+        this.categoryDistributionChart.destroy();
+      }
+      this.categoryDistributionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: [],
+          datasets: [{
+            data: [],
+            backgroundColor: [],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%',
+          plugins: {
+            legend: { position: 'right' }
+          }
+        }
+      });
+      this.updateCategoryDistributionChart();
+    }
+  }
+
+  private updateCategoryDistributionChart() {
+    if (this.categoryDistributionChart && this.currentStats.length > 0) {
+      const labels = this.currentStats.map(s => s.category);
+      const data = this.currentStats.map(s => s.weight);
+      const bgColors = this.currentStats.map(s => this.getCategoryColor(s.category));
+
+      this.categoryDistributionChart.data.labels = labels;
+      this.categoryDistributionChart.data.datasets[0].data = data;
+      this.categoryDistributionChart.data.datasets[0].backgroundColor = bgColors;
+      this.categoryDistributionChart.update();
+    }
   }
 
   getCategoryIcon(cat: string): string {
