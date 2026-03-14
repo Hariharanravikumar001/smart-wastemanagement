@@ -1,0 +1,95 @@
+.services-container {
+  overflow-x: hidden;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-light-soft {
+  background-color: #f8f9fa;
+}
+
+/* Service Card Styling */
+.service-card {
+  background: white;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+}
+
+.icon-box {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  font-size: 28px;
+}
+
+/* Step Items */
+.step-item {
+  position: relative;
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  background: #f1f8e9;
+  color: #2e7d32;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 20px;
+  border: 2px solid #c8e6c9;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-up {
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards ease-out;
+}
+
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 1s forwards ease-out;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .display-3 {
+    font-size: 2.5rem;
+  }
+  
+  .service-card {
+    padding: 2rem !important;
+  }
+}

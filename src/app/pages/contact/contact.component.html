@@ -1,0 +1,103 @@
+<div class="contact-page">
+  <!-- Hero Section -->
+  <section class="hero-section text-center py-5 bg-light-soft">
+    <div class="container py-lg-4">
+      <h1 class="display-4 fw-bold mb-3 text-gradient">Get In Touch</h1>
+      <p class="lead text-secondary mx-auto" style="max-width: 600px;">
+        Have questions about our services or want to partner with us? Our team is here to help you make a difference.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+      <div class="row g-5">
+        <!-- Contact Info & Map -->
+        <div class="col-lg-5 animate-slide-up">
+          <div class="contact-info-card p-4 p-md-5 rounded-4 shadow-sm bg-white h-100">
+            <h3 class="fw-bold mb-4">Contact Information</h3>
+            
+            <div class="info-item d-flex mb-4" *ngFor="let info of contactInfo">
+              <div class="info-icon me-3 shadow-sm" [style.background-color]="info.color + '15'" [style.color]="info.color">
+                <i class="bi" [ngClass]="info.icon"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-1">{{ info.title }}</h6>
+                <p class="text-secondary mb-0">{{ info.details }}</p>
+              </div>
+            </div>
+
+            <div class="mt-5">
+              <h6 class="fw-bold mb-3">Connect With Us</h6>
+              <div class="d-flex gap-3">
+                <a href="#" class="social-btn facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="social-btn twitter"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="social-btn instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="social-btn linkedin"><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+
+            <!-- Stylized Map Placeholder -->
+            <div class="map-placeholder mt-5 rounded-4 overflow-hidden border">
+              <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                <div class="text-center p-4">
+                  <i class="bi bi-map-fill text-success display-4 mb-3"></i>
+                  <p class="text-secondary small mb-0">Interactive Map Preview</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-7 animate-slide-up delay-1">
+          <div class="contact-form-card p-4 p-md-5 rounded-4 shadow-sm bg-white">
+            <h3 class="fw-bold mb-4">Send us a Message</h3>
+            
+            <div *ngIf="isSubmitted" class="alert alert-success border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center animate-fade-in">
+              <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+              <div>
+                <strong>Thank you!</strong> Your message has been sent successfully. We'll get back to you soon.
+              </div>
+            </div>
+
+            <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="name" name="name" [(ngModel)]="contactData.name" required placeholder="Name">
+                    <label for="name">Your Name</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" name="email" [(ngModel)]="contactData.email" required placeholder="Email">
+                    <label for="email">Email Address</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="subject" name="subject" [(ngModel)]="contactData.subject" required placeholder="Subject">
+                    <label for="subject">Subject</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating mb-4">
+                    <textarea class="form-control" id="message" name="message" [(ngModel)]="contactData.message" required placeholder="Message" style="height: 150px"></textarea>
+                    <label for="message">Message</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill shadow w-100 py-3 d-flex align-items-center justify-content-center" [disabled]="!contactForm.form.valid || isSending">
+                    <span *ngIf="isSending" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    {{ isSending ? 'Sending Message...' : 'Send Message' }}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

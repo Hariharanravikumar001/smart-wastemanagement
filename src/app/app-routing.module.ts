@@ -12,12 +12,22 @@ import { ChatComponent } from './pages/chat/chat.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { PickupRequestComponent } from './pages/pickup-request/pickup-request.component';
 import { AuthGuard } from './guards/auth.guard';
+import { ServicesComponent } from './pages/services/services.component';
+import { ContactComponent } from './pages/contact/contact.component';
+import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
+import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
+import { AboutUsComponent } from './pages/about-us/about-us.component';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'services', component: ServicesComponent },
+  { path: 'contact', component: ContactComponent },
+  { path: 'about-us', component: AboutUsComponent },
+  { path: 'terms-of-service', component: TermsOfServiceComponent },
+  { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { 
     path: 'dashboard', 
     loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent),

@@ -1,0 +1,67 @@
+<div class="services-container">
+  <!-- Hero Section -->
+  <section class="hero-section text-center py-5">
+    <div class="container py-lg-5">
+      <h1 class="display-3 fw-bold mb-3 animate-fade-in text-gradient">Our Smart Services</h1>
+      <p class="lead text-secondary mx-auto mb-5 animate-slide-up" style="max-width: 700px;">
+        WasteZero leverages cutting-edge technology to revolutionize waste management. From intelligent sorting to community-driven action, we provide tools for a cleaner tomorrow.
+      </p>
+      <div class="d-flex justify-content-center gap-3 animate-slide-up delay-1">
+        <a routerLink="/register" class="btn btn-success btn-lg px-4 rounded-pill shadow-sm">Get Started</a>
+        <a href="#how-it-works" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">How it Works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Grid -->
+  <section class="py-5 bg-light-soft">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-6" *ngFor="let service of services; let i = index">
+          <div class="service-card h-100 p-4 p-md-5 rounded-4 shadow-sm animate-slide-up" [style.border-top]="'5px solid ' + service.color" [style.animation-delay]="(i * 0.1) + 's'">
+            <div class="icon-box mb-4" [style.background-color]="service.color + '15'" [style.color]="service.color">
+              <i class="bi" [ngClass]="service.icon"></i>
+            </div>
+            <h3 class="fw-bold mb-3">{{ service.title }}</h3>
+            <p class="text-secondary mb-4">{{ service.description }}</p>
+            <ul class="list-unstyled">
+              <li class="mb-2 d-flex align-items-center" *ngFor="let detail of service.details">
+                <i class="bi bi-check2-circle text-success me-3"></i>
+                <span>{{ detail }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="py-5 overflow-hidden">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold display-5">How It Works</h2>
+        <div class="mx-auto bg-success rounded-pill" style="height: 4px; width: 60px;"></div>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-3" *ngFor="let step of howItWorks; let i = index">
+          <div class="step-item text-center p-3 animate-fade-in" [style.animation-delay]="(i * 0.15) + 's'">
+            <div class="step-number mb-4 mx-auto">{{ step.step }}</div>
+            <h5 class="fw-bold">{{ step.title }}</h5>
+            <p class="text-secondary small">{{ step.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-5 bg-success text-white">
+    <div class="container py-4 text-center">
+      <h2 class="fw-bold mb-4">Ready to Make an Impact?</h2>
+      <p class="mb-5 opacity-75 mx-auto" style="max-width: 600px;">Join thousands of citizens and volunteers already using WasteZero to build more sustainable communities.</p>
+      <a routerLink="/register" class="btn btn-light btn-lg px-5 rounded-pill fw-bold text-success shadow">Join Now</a>
+    </div>
+  </section>
+</div>

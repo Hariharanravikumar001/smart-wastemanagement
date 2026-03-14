@@ -1,0 +1,110 @@
+.contact-page {
+  background-color: #fbfbfb;
+}
+
+.bg-light-soft {
+  background-color: #f8f9fa;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Info Cards */
+.contact-info-card, .contact-form-card {
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+}
+
+.info-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* Social Buttons */
+.social-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: white;
+  color: #555;
+  border: 1px solid #eee;
+  transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px);
+  color: white;
+}
+
+.facebook:hover { background-color: #3b5998; border-color: #3b5998; }
+.twitter:hover { background-color: #000000; border-color: #000000; }
+.instagram:hover { background-color: #e4405f; border-color: #e4405f; }
+.linkedin:hover { background-color: #0077b5; border-color: #0077b5; }
+
+/* Form Styling */
+.form-control:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.1);
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: #2e7d32;
+}
+
+.map-placeholder {
+  height: 200px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.delay-1 { animation-delay: 0.2s; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2.2rem;
+  }
+  
+  .contact-info-card, .contact-form-card {
+    padding: 1.5rem !important;
+  }
+}
