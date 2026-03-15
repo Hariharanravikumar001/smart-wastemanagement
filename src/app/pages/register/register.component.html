@@ -79,7 +79,7 @@
 
               <div class="mb-4 form-check">
                 <input type="checkbox" class="form-check-input" id="terms" name="terms" [(ngModel)]="termsAccepted" required>
-                <label class="form-check-label text-muted small" for="terms">I agree to the <a href="#" class="text-success text-decoration-none">Terms of Service</a> and <a href="#" class="text-success text-decoration-none">Privacy Policy</a></label>
+                <label class="form-check-label text-muted small" for="terms">I agree to the <a routerLink="/terms-of-service" target="_blank" class="text-success text-decoration-none">Terms of Service</a> and <a routerLink="/privacy-policy" target="_blank" class="text-success text-decoration-none">Privacy Policy</a></label>
               </div>
 
               <button type="submit" class="btn btn-success w-100 btn-lg rounded-pill fw-bold shadow-sm" [disabled]="!registerForm.valid || password !== confirmPassword || !termsAccepted">
