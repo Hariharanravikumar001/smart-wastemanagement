@@ -108,3 +108,33 @@
 :host-context(body:not(.dark-mode)) .db-link { color: #008a4e; }
 :host-context(body:not(.dark-mode)) .db-list-item.mini { background: #f8fafc; border-color: rgba(0,0,0,0.05); }
 :host-context(body:not(.dark-mode)) .db-list-weight { color: #059669; }
+
+/* Rewards Hub Dynamic Styles */
+.rewards-hub-bg {
+  background: #FFFFFF !important;
+}
+.rewards-hub-text {
+  color: #212529 !important;
+}
+.rewards-hub-badge {
+  background: #f8f9fa !important;
+  color: #212529 !important;
+}
+.rewards-hub-subtext {
+  color: #6c757d !important;
+}
+
+:host-context(body.dark-mode) .rewards-hub-bg {
+  background: #0F172A !important;
+}
+:host-context(body.dark-mode) .rewards-hub-text {
+  color: #FFFFFF !important;
+}
+:host-context(body.dark-mode) .rewards-hub-badge {
+  background: rgba(255,255,255,0.1) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255,255,255,0.2) !important;
+}
+:host-context(body.dark-mode) .rewards-hub-subtext {
+  color: #94a3b8 !important;
+}

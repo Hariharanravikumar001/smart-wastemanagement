@@ -4,6 +4,7 @@ import Opportunity from '../models/Opportunity';
 import { AuthRequest } from '../middleware/authMiddleware';
 import Notification from '../models/Notification';
 import { createNotification } from '../services/notificationService';
+import AdminLog from '../models/AdminLog';
 
 // @desc    Apply for an opportunity
 // @route   POST /api/applications
@@ -32,7 +33,7 @@ export const applyForOpportunity = async (req: AuthRequest, res: Response): Prom
         // Check if already applied
         const existingApplication = await Application.findOne({
             opportunity_id,
-            volunteer_id: req.user.id
+            volunteer_id: req.user!.id
         });
 
         if (existingApplication) {
@@ -42,7 +43,7 @@ export const applyForOpportunity = async (req: AuthRequest, res: Response): Prom
 
         const application = new Application({
             opportunity_id,
-            volunteer_id: req.user.id
+            volunteer_id: req.user!.id
         });
 
         const savedApplication = await application.save();
@@ -59,10 +60,10 @@ export const applyForOpportunity = async (req: AuthRequest, res: Response): Prom
 export const getAdminApplications = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         let query = {};
-        const role = req.user.role?.toLowerCase();
+        const role = req.user!.role?.toLowerCase();
 
         if (role === 'ngo') {
-            const myOpportunities = await Opportunity.find({ ngo_id: req.user.id }).select('_id');
+            const myOpportunities = await Opportunity.find({ ngo_id: req.user!.id }).select('_id').lean();
             const oppIds = myOpportunities.map(opp => opp._id);
             query = { opportunity_id: { $in: oppIds } };
         } 
@@ -71,7 +72,9 @@ export const getAdminApplications = async (req: AuthRequest, res: Response): Pro
         const applications = await Application.find(query)
             .populate('volunteer_id', 'name email username location')
             .populate('opportunity_id', 'title description location duration')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .limit(50)
+            .lean();
 
         res.status(200).json(applications);
     } catch (error) {
@@ -85,9 +88,11 @@ export const getAdminApplications = async (req: AuthRequest, res: Response): Pro
 // @access  Private (Volunteer)
 export const getVolunteerApplications = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const applications = await Application.find({ volunteer_id: req.user.id })
+        const applications = await Application.find({ volunteer_id: req.user!.id })
             .populate('opportunity_id', 'title description location duration status ngo_id')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .limit(50)
+            .lean();
 
         res.status(200).json(applications);
     } catch (error) {
@@ -102,7 +107,7 @@ export const getVolunteerApplications = async (req: AuthRequest, res: Response):
 export const updateApplicationStatus = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const { status } = req.body;
-        const appId = req.params.id;
+        const appId = req.params['id'];
 
         console.log('Update Status Request:', { appId, status, userId: req.user?.id, role: req.user?.role });
 
@@ -125,12 +130,13 @@ export const updateApplicationStatus = async (req: AuthRequest, res: Response): 
         
         if (!opp) {
             console.log('Opportunity not found for application:', appId);
-            if (req.user.role?.toLowerCase() !== 'admin') {
+            if (req.user!.role?.toLowerCase() !== 'admin') {
                 res.status(404).json({ message: 'Associated opportunity not found. Only admins can modify this.' });
                 return;
             }
         } else {
-            if (opp.ngo_id.toString() !== req.user.id && req.user.role?.toLowerCase() !== 'admin') {
+            const oppNgoId = opp.ngo_id.toString();
+            if (oppNgoId !== req.user!.id && req.user!.role?.toLowerCase() !== 'admin') {
                 const msg = `Not authorized to update this application.`;
                 res.status(403).json({ message: msg });
                 return;
@@ -139,6 +145,12 @@ export const updateApplicationStatus = async (req: AuthRequest, res: Response): 
 
         application.status = status;
         const updatedApplication = await application.save();
+
+        // 📋 Log admin action
+        await AdminLog.create({
+          action: `${status === 'accepted' ? 'Accepted' : 'Rejected'} application for opportunity: "${opp?.title || appId}" — volunteer: ${application.volunteer_id}`,
+          user_id: req.user!.id
+        });
 
         if (status === 'accepted' && opp) {
             opp.status = 'in-progress';

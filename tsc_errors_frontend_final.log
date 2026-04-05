@@ -1,0 +1,12 @@
+﻿src/app/pages/citizen/pickup-history/pickup-history.component.ts(44,123): error TS2339: Property 'toLowerCase' does not exist on type 'never'.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(116,123): error TS2339: Property 'toLowerCase' does not exist on type 'never'.
+wastezero-backend/check_users.ts(7,30): error TS4111: Property 'MONGODB_URI' comes from an index signature, so it must be accessed with ['MONGODB_URI'].
+wastezero-backend/test_aggregation.ts(8,30): error TS4111: Property 'MONGODB_URI' comes from an index signature, so it must be accessed with ['MONGODB_URI'].
+wastezero-backend/test_create_opp_direct.ts(1,19): error TS2307: Cannot find module 'axios' or its corresponding type declarations.
+wastezero-backend/test_login.ts(1,19): error TS2307: Cannot find module 'axios' or its corresponding type declarations.
+wastezero-backend/test_visibility.ts(39,9): error TS7034: Variable 'acceptedApps' implicitly has type 'any[]' in some locations where its type cannot be determined.
+wastezero-backend/test_visibility.ts(43,23): error TS7005: Variable 'acceptedApps' implicitly has an 'any[]' type.
+wastezero-backend/verify_ngo_fix.ts(4,25): error TS2307: Cannot find module '../src/models/Opportunity' or its corresponding type declarations.
+wastezero-backend/verify_ngo_fix.ts(5,25): error TS2307: Cannot find module '../src/models/Application' or its corresponding type declarations.
+wastezero-backend/verify_ngo_fix.ts(39,49): error TS7006: Parameter 'a' implicitly has an 'any' type.
+wastezero-backend/verify_volunteer_access.ts(2,19): error TS2307: Cannot find module 'axios' or its corresponding type declarations.

@@ -1,0 +1,5 @@
+src/app/pages/citizen/layout/layout.component.spec.ts(3,10): error TS2305: Module '"./layout.component"' has no exported member 'LayoutComponent'.
+src/app/pages/citizen/messages/messages.component.spec.ts(3,10): error TS2305: Module '"./messages.component"' has no exported member 'MessagesComponent'.
+src/app/pages/volunteer/layout/layout.component.spec.ts(3,10): error TS2305: Module '"./layout.component"' has no exported member 'LayoutComponent'.
+src/app/pages/volunteer/messages/messages.component.spec.ts(3,10): error TS2305: Module '"./messages.component"' has no exported member 'MessagesComponent'.
+src/server/models/waste-request.model.ts(29,19): error TS2693: 'number' only refers to a type, but is being used as a value here.

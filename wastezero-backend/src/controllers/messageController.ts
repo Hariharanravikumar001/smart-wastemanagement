@@ -12,8 +12,13 @@ import { createNotification } from '../services/notificationService';
 // @access  Private
 export const sendMessage = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const { receiver_id, content, messageType, mediaUrl } = req.body;
-        const sender_id = req.user.id;
+        const { receiver_id, content, messageType, mediaUrl, opportunity_id } = req.body;
+        const sender_id = req.user?.id;
+
+        if (!sender_id) {
+            res.status(401).json({ message: 'User not authorized' });
+            return;
+        }
 
         if (!receiver_id || !content) {
             res.status(400).json({ message: 'Receiver and content are required' });
@@ -23,27 +28,50 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
         const newMessage = new Message({
             sender_id,
             receiver_id,
+            opportunity_id: opportunity_id || undefined,
             content,
             messageType: messageType || 'text',
             mediaUrl
         });
 
         await newMessage.save();
+        console.log(`✅ Message saved from ${sender_id} to ${receiver_id}`);
 
         // Emit real-time message to receiver
         emitToUser(receiver_id, 'new_message', newMessage);
 
-        // Also create a real-time notification
-        const sender = await User.findById(sender_id);
-        await createNotification(
-            receiver_id,
-            'New Message',
-            `You have a new message from ${sender?.name || 'User'}`,
-            'info'
-        );
-        res.status(201).json(newMessage);
+        let senderName = 'User';
+        try {
+            const sender = await User.findById(sender_id);
+            if (sender) senderName = sender.name;
+        } catch (err) {
+            console.error('Error fetching sender name:', err);
+        }
 
-        res.status(201).json(newMessage);
+        const messageObj = newMessage.toObject() as any;
+        messageObj.id = newMessage._id.toString();
+        messageObj.senderId = sender_id.toString();
+        messageObj.receiverId = receiver_id.toString();
+        messageObj.senderName = senderName;
+
+        console.log(`📡 Emitting message from ${senderName} (${sender_id}) to ${receiver_id}`);
+
+        // Emit real-time message to receiver (with senderName)
+        emitToUser(receiver_id.toString(), 'new_message', messageObj);
+
+        // Also create a real-time notification
+        try {
+            await createNotification(
+                receiver_id,
+                'New Message',
+                `You have a new message from ${senderName}`,
+                'info'
+            );
+        } catch (notifErr) {
+            console.error('Error creating message notification:', notifErr);
+        }
+
+        res.status(201).json(messageObj);
     } catch (error) {
         console.error('Send message error:', error);
         res.status(500).json({ message: 'Server error' });
@@ -56,14 +84,67 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 export const getConversation = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const { partnerId } = req.params;
-        const userId = req.user.id;
+        const { opportunityId } = req.query;
+        const userIdStr = req.user?.id;
 
-        const messages = await Message.find({
+        if (!userIdStr || !partnerId) {
+            res.status(400).json({ message: 'Invalid request parameters' });
+            return;
+        }
+
+        const userId = new mongoose.Types.ObjectId(userIdStr as string);
+        const pId = new mongoose.Types.ObjectId(partnerId as string);
+
+        let matchQuery: any = {
             $or: [
-                { sender_id: userId, receiver_id: partnerId },
-                { sender_id: partnerId, receiver_id: userId }
+                { sender_id: userId, receiver_id: pId },
+                { sender_id: pId, receiver_id: userId }
             ]
-        }).sort({ timestamp: 1 });
+        };
+
+        if (opportunityId) {
+            matchQuery.opportunity_id = new mongoose.Types.ObjectId(opportunityId as string);
+        } else {
+            // Include both generic messages and those with opportunity IDs if not specified
+            // This ensures messages are visible regardless of context
+        }
+
+        const messages = await Message.aggregate([
+            {
+                $match: matchQuery
+            },
+            {
+                $sort: { timestamp: 1 }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'sender_id',
+                    foreignField: '_id',
+                    as: 'senderInfo'
+                }
+            },
+            {
+                $unwind: { path: '$senderInfo', preserveNullAndEmptyArrays: true }
+            },
+            {
+                $project: {
+                    id: '$_id',
+                    senderId: '$sender_id',
+                    receiverId: '$receiver_id',
+                    senderName: { $ifNull: ['$senderInfo.name', 'User'] },
+                    content: 1,
+                    messageType: 1,
+                    mediaUrl: 1,
+                    timestamp: 1,
+                    isRead: 1,
+                    isDelivered: 1,
+                    isDeletedForEveryone: 1,
+                    deletedFor: 1,
+                    _id: 0
+                }
+            }
+        ]);
 
         res.status(200).json(messages);
     } catch (error) {
@@ -77,8 +158,14 @@ export const getConversation = async (req: AuthRequest, res: Response): Promise<
 // @access  Private
 export const getConversationsList = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const userId = new mongoose.Types.ObjectId(req.user.id);
+        const userIdStr = req.user?.id;
+        if (!userIdStr) {
+            res.status(401).json({ message: 'User not authorized' });
+            return;
+        }
+        const userId = new mongoose.Types.ObjectId(userIdStr as string);
 
+        console.log(`🔍 Fetching conversations for user: ${userId}`);
         // Aggregate to find unique conversation partners and their last message
         const conversations = await Message.aggregate([
             {
@@ -95,22 +182,25 @@ export const getConversationsList = async (req: AuthRequest, res: Response): Pro
             {
                 $group: {
                     _id: {
-                        $cond: [
-                            { $eq: ["$sender_id", userId] },
-                            "$receiver_id",
-                            "$sender_id"
-                        ]
+                        partnerId: {
+                            $cond: {
+                                if: { $eq: ["$sender_id", userId] },
+                                then: "$receiver_id",
+                                else: "$sender_id"
+                            }
+                        },
+                        opportunityId: "$opportunity_id"
                     },
                     lastMessage: { $first: "$content" },
                     lastMessageTime: { $first: "$timestamp" },
                     messageId: { $first: "$_id" },
                     unreadCount: {
                         $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$receiver_id", userId] }, { $eq: ["$isRead", false] }] },
-                                1,
-                                0
-                            ]
+                            $cond: {
+                                if: { $and: [{ $eq: ["$receiver_id", userId] }, { $eq: ["$isRead", false] }] },
+                                then: 1,
+                                else: 0
+                            }
                         }
                     }
                 }
@@ -118,18 +208,31 @@ export const getConversationsList = async (req: AuthRequest, res: Response): Pro
             {
                 $lookup: {
                     from: 'users',
-                    localField: '_id',
+                    localField: '_id.partnerId',
                     foreignField: '_id',
                     as: 'partner'
                 }
             },
             {
-                $unwind: '$partner'
+                $unwind: { path: '$partner', preserveNullAndEmptyArrays: true }
+            },
+            {
+                $lookup: {
+                    from: 'opportunities',
+                    localField: '_id.opportunityId',
+                    foreignField: '_id',
+                    as: 'opportunity'
+                }
+            },
+            {
+                $unwind: { path: '$opportunity', preserveNullAndEmptyArrays: true }
             },
             {
                 $project: {
-                    partnerId: '$_id',
+                    partnerId: '$_id.partnerId',
+                    opportunityId: '$_id.opportunityId',
                     partnerName: '$partner.name',
+                    opportunityTitle: '$opportunity.title',
                     lastMessage: 1,
                     lastMessageTime: 1,
                     unreadCount: 1,
@@ -141,9 +244,42 @@ export const getConversationsList = async (req: AuthRequest, res: Response): Pro
             }
         ]);
 
+        console.log(`✅ Found ${conversations.length} conversations for ${userId}`);
         res.status(200).json(conversations);
     } catch (error) {
         console.error('Get conversations list error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc    Mark messages from a partner as read
+// @route   PUT /api/messages/read/:partnerId
+// @access  Private
+export const markAsRead = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const { partnerId } = req.params;
+        const { opportunityId } = req.query;
+        const userId = req.user!.id;
+
+        const filter: any = { 
+            sender_id: partnerId as string, 
+            receiver_id: userId as string, 
+            isRead: false 
+        };
+
+        if (opportunityId) {
+            filter.opportunity_id = new mongoose.Types.ObjectId(opportunityId as string);
+        }
+
+        // Update all messages where I am the receiver and partner is the sender
+        await Message.updateMany(filter, { $set: { isRead: true } });
+
+        // Notify the partner (the sender) via socket that their messages were read
+        emitToUser(partnerId as string, 'messages_read', { readerId: userId });
+
+        res.status(200).json({ message: 'Messages marked as read' });
+    } catch (error) {
+        console.error('Mark as read error:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };

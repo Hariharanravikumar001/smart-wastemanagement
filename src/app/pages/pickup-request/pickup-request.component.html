@@ -19,14 +19,25 @@
           <p class="text-muted">Help us keep the environment clean by scheduling a regular waste collection.</p>
         </div>
 
+        <div *ngIf="error" class="alert alert-danger border-0 shadow-sm rounded-4 mb-4">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+        </div>
+        <div *ngIf="success" class="alert alert-success border-0 shadow-sm rounded-4 mb-4">
+          <i class="bi bi-check-circle-fill me-2"></i> Request submitted! Redirecting...
+        </div>
+
         <form (ngSubmit)="onSubmit()" #pickupForm="ngForm">
           <!-- Waste Category -->
           <div class="mb-4">
-            <label class="form-label fw-bold text-muted text-uppercase small ls-1">Waste Category</label>
+            <label class="form-label fw-bold text-muted text-uppercase small ls-1">Waste Category (Select one or more)</label>
             <div class="row g-2">
               <div class="col-6 col-md-4" *ngFor="let cat of categories">
-                <input type="radio" class="btn-check" name="category" [id]="cat" [value]="cat" [(ngModel)]="request.wasteCategory">
-                <label class="btn btn-outline-success w-100 rounded-pill py-2" [for]="cat">
+                <input type="checkbox" class="btn-check" [id]="cat" [checked]="isCategorySelected(cat)" (change)="onCategoryToggle(cat)">
+                <label class="btn w-100 rounded-pill py-2 transition-all d-flex align-items-center justify-content-center gap-2" 
+                       [for]="cat"
+                       [class.btn-success]="isCategorySelected(cat)"
+                       [class.btn-outline-success]="!isCategorySelected(cat)">
+                  <i class="bi" [class.bi-check-circle-fill]="isCategorySelected(cat)" [class.bi-circle]="!isCategorySelected(cat)"></i>
                   {{ cat }}
                 </label>
               </div>

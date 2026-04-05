@@ -6,6 +6,7 @@ export interface IOpportunity extends Document {
     skills: string[];
     duration: string;
     location: string;
+    wasteType?: string;
     status: 'open' | 'closed' | 'in-progress';
     ngo_id: mongoose.Types.ObjectId;
     isDeleted: boolean;
@@ -19,6 +20,7 @@ const OpportunitySchema: Schema = new Schema({
     skills: { type: [String], default: [] },
     duration: { type: String, required: true },
     location: { type: String, required: true },
+    wasteType: { type: String },
     status: {
         type: String,
         enum: ['open', 'closed', 'in-progress'],
@@ -54,5 +56,6 @@ OpportunitySchema.virtual('applications', {
 // Index for listing optimizations
 OpportunitySchema.index({ status: 1, isDeleted: 1 });
 OpportunitySchema.index({ location: 1 });
+OpportunitySchema.index({ ngo_id: 1 });
 
 export default mongoose.model<IOpportunity>('Opportunity', OpportunitySchema);

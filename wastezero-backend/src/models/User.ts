@@ -13,12 +13,17 @@ export interface IUser extends Document {
   resetPasswordExpires?: Date;
   created_at: Date;
   profileImage?: string;
+  isOnline: boolean;
+  lastActive: Date;
+  isSuspended: boolean;
+  rewardPoints: number;
+  badges: string[];
 }
 
 const UserSchema: Schema = new Schema({
   name: { type: String, required: true },
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
+  username: { type: String, required: true },
+  email: { type: String, required: true },
   password: { type: String, required: true },
   role: { 
     type: String, 
@@ -32,7 +37,12 @@ const UserSchema: Schema = new Schema({
   resetPasswordOtp: { type: String },
   resetPasswordExpires: { type: Date },
   created_at: { type: Date, default: Date.now },
-  profileImage: { type: String }
+  profileImage: { type: String },
+  isOnline: { type: Boolean, default: false },
+  lastActive: { type: Date, default: Date.now },
+  isSuspended: { type: Boolean, default: false },
+  rewardPoints: { type: Number, default: 0 },
+  badges: { type: [String], default: [] }
 }, {
   toJSON: {
     transform: (doc, ret: any) => {
@@ -44,5 +54,11 @@ const UserSchema: Schema = new Schema({
     }
   }
 });
+
+// Indexes for search optimization
+UserSchema.index({ email: 1 }, { unique: true, collation: { locale: 'en', strength: 2 } });
+UserSchema.index({ username: 1 }, { unique: true, collation: { locale: 'en', strength: 2 } });
+UserSchema.index({ role: 1 });
+UserSchema.index({ location: 1 });
 
 export default mongoose.model<IUser>('User', UserSchema);

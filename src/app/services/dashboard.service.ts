@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { WasteRequestService } from './waste-request.service';
 import { AuthService } from './auth.service';
@@ -33,10 +34,13 @@ export class DashboardService {
   private readonly STORAGE_KEY = 'wastezero_dashboard_stats';
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: any,
     private wasteRequestService: WasteRequestService,
     private authService: AuthService
   ) {
-    this.loadStats();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadStats();
+    }
     this.initRealTimeStats();
   }
 
@@ -46,6 +50,8 @@ export class DashboardService {
 
     // Sync completed pickups from real requests
     this.wasteRequestService.requests$.subscribe(requests => {
+      if (!requests || requests.length === 0) return;
+      
       const completed = requests.filter((r: any) => r.status === 'Completed');
       const completedCount = completed.length;
       
@@ -54,28 +60,9 @@ export class DashboardService {
         return date >= oneWeekAgo;
       }).length;
 
-      const growth = completedCount > recentCompleted 
-        ? ((recentCompleted / (completedCount - recentCompleted)) * 100).toFixed(1)
-        : (recentCompleted > 0 ? '100' : '0');
-
-      this.updateStats({ 
-        completedPickups: completedCount,
-        completedPickupsChange: `+${growth}% this week`
-      });
-    });
-
-    // Sync completed pickups from real requests
-    this.wasteRequestService.requests$.subscribe(requests => {
-      const completed = requests.filter((r: any) => r.status === 'Completed');
-      const completedCount = completed.length;
-      
-      const recentCompleted = completed.filter((r: any) => {
-        const date = r.createdAt ? new Date(r.createdAt) : new Date();
-        return date >= oneWeekAgo;
-      }).length;
-
-      const growth = completedCount > recentCompleted 
-        ? ((recentCompleted / (completedCount - recentCompleted)) * 100).toFixed(1)
+      const previousCount = Math.max(0, completedCount - recentCompleted);
+      const growth = previousCount > 0 
+        ? ((recentCompleted / previousCount) * 100).toFixed(1)
         : (recentCompleted > 0 ? '100' : '0');
 
       this.updateStats({ 
@@ -89,7 +76,7 @@ export class DashboardService {
   }
 
   private loadStats(): void {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       const stored = localStorage.getItem(this.STORAGE_KEY);
       if (stored) {
         this.statsSubject.next(JSON.parse(stored));
@@ -117,7 +104,7 @@ export class DashboardService {
   }
 
   private saveStats(stats: DashboardStats): void {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
     }
     this.statsSubject.next(stats);

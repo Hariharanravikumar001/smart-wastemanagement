@@ -1,0 +1,8 @@
+﻿src/controllers/adminController.ts(9,17): error TS2451: Cannot redeclare block-scoped variable 'range'.
+src/controllers/adminController.ts(10,15): error TS2451: Cannot redeclare block-scoped variable 'now'.
+src/controllers/adminController.ts(11,15): error TS2451: Cannot redeclare block-scoped variable 'thirtyDaysAgo'.
+src/controllers/adminController.ts(12,15): error TS2451: Cannot redeclare block-scoped variable 'sixtyDaysAgo'.
+src/controllers/adminController.ts(14,17): error TS2451: Cannot redeclare block-scoped variable 'range'.
+src/controllers/adminController.ts(15,15): error TS2451: Cannot redeclare block-scoped variable 'now'.
+src/controllers/adminController.ts(16,15): error TS2451: Cannot redeclare block-scoped variable 'thirtyDaysAgo'.
+src/controllers/adminController.ts(17,15): error TS2451: Cannot redeclare block-scoped variable 'sixtyDaysAgo'.

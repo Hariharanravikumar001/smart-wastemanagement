@@ -4,18 +4,32 @@
 
   <!-- Active Assignments List -->
   <div class="db-section">
-    <h3 class="db-sub-title">📡 Current Operations</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="db-sub-title mb-0">📡 Current Operations</h3>
+      <button class="btn btn-sm shadow-sm rounded-pill px-3 fw-bold transition-all" 
+              [class.btn-warning]="smartRouteMode" [class.text-dark]="smartRouteMode" 
+              [class.btn-outline-secondary]="!smartRouteMode"
+              (click)="toggleSmartRoute()">
+        <i class="bi bi-geo-alt-fill me-1"></i> {{ smartRouteMode ? 'Smart Route Active' : 'Enable Smart Route' }}
+      </button>
+    </div>
+    
     <div *ngIf="(activePickups$ | async) as actives">
       <div *ngIf="actives.length === 0" class="db-empty">
         You have no active assignments. 
         <a routerLink="/volunteer/opportunities" class="db-link">Accept available tasks →</a>
       </div>
       
-      <div *ngFor="let req of actives" class="db-card db-pickup-item" [class.highlight]="completingRequestId === req.id">
+      <div *ngFor="let req of (smartRouteMode ? smartRouteOrder : actives); let i = index" class="db-card db-pickup-item position-relative" [class.highlight]="completingRequestId === req.id" [class.border-warning]="smartRouteMode">
+        
+        <!-- Smart Route Index Badge -->
+        <div *ngIf="smartRouteMode" class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-warning text-dark fs-6 shadow" style="margin-top: 15px; margin-left: 15px; z-index: 5;">
+          Stop {{ i + 1 }}
+        </div>
         <div class="db-pickup-core">
           <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
           <div class="db-list-info">
-            <div class="db-list-title">{{ req.wasteCategory }} — {{ req.citizenName }}</div>
+            <div class="db-list-title">{{ formatCategories(req.wasteCategory) }} — {{ req.citizenName }}</div>
             <div class="db-list-meta">📍 {{ req.location }}</div>
             <div class="db-list-meta">🕒 Scheduled: {{ req.scheduledDate | date:'shortTime' }}</div>
           </div>
@@ -28,6 +42,9 @@
 
         <!-- Action Controls -->
         <div class="db-pickup-actions" *ngIf="completingRequestId !== req.id">
+          <button [routerLink]="['/chat', req.citizenId, req.citizenName]" class="db-action-btn neutral">
+            💬 Message Citizen
+          </button>
           <button *ngIf="req.status === 'Scheduled'" 
                   class="db-action-btn primary" 
                   (click)="updateStatus(req.id, 'In Progress')">
@@ -62,11 +79,11 @@
       <div *ngIf="completed.length === 0" class="db-empty">No completed collections yet in this session.</div>
       
       <div class="db-history-grid">
-        <div *ngFor="let req of completed" class="db-card db-history-card">
+        <div *ngFor="let req of completed" class="db-card db-history-card" (click)="viewDetails(req)" style="cursor: pointer;">
           <div class="db-hist-header">
             <span class="db-hist-icon">{{ getCategoryIcon(req.wasteCategory) }}</span>
             <div class="db-hist-info">
-              <div class="db-hist-title">{{ req.wasteCategory }}</div>
+              <div class="db-hist-title">{{ formatCategories(req.wasteCategory) }}</div>
               <div class="db-hist-meta">{{ req.citizenName }}</div>
             </div>
             <div class="db-hist-weight">{{ req.weight }} kg</div>
@@ -75,6 +92,50 @@
             <span>✅ Success</span>
             <span>{{ req.scheduledDate | date:'shortDate' }}</span>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Modal -->
+  <div class="db-modal-overlay" *ngIf="selectedRequest" (click)="closeDetails()">
+    <div class="db-modal-content" (click)="$event.stopPropagation()">
+      <div class="db-modal-header">
+        <h3 class="db-modal-title">📦 Collection Details</h3>
+        <button class="db-modal-close" (click)="closeDetails()">×</button>
+      </div>
+      <div class="db-modal-body">
+        <div class="db-detail-row">
+          <span class="db-detail-label">Waste Category:</span>
+          <span class="db-detail-value">{{ formatCategories(selectedRequest.wasteCategory) }}</span>
+        </div>
+        <div class="db-detail-row">
+          <span class="db-detail-label">Citizen Name:</span>
+          <span class="db-detail-value">{{ selectedRequest.citizenName }}</span>
+        </div>
+        <div class="db-detail-row">
+          <span class="db-detail-label">Location:</span>
+          <span class="db-detail-value">📍 {{ selectedRequest.location }}</span>
+        </div>
+        <div class="db-detail-row">
+          <span class="db-detail-label">Picked up by:</span>
+          <span class="db-detail-value">👤 {{ selectedRequest.volunteerName }}</span>
+        </div>
+        <div class="db-detail-row">
+          <span class="db-detail-label">Date:</span>
+          <span class="db-detail-value">{{ selectedRequest.scheduledDate | date:'fullDate' }}</span>
+        </div>
+        <div class="db-detail-row">
+          <span class="db-detail-label">Time:</span>
+          <span class="db-detail-value">{{ selectedRequest.scheduledDate | date:'shortTime' }}</span>
+        </div>
+        <div class="db-detail-row">
+          <span class="db-detail-label">Total Weight:</span>
+          <span class="db-detail-value text-success font-weight-bold">{{ selectedRequest.weight }} kg</span>
+        </div>
+        <div class="db-detail-row" *ngIf="selectedRequest.description">
+          <span class="db-detail-label">Description:</span>
+          <p class="db-detail-desc">{{ selectedRequest.description }}</p>
         </div>
       </div>
     </div>

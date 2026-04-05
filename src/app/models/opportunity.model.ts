@@ -14,6 +14,7 @@ export interface Opportunity {
   organizationName?: string; // Alias
   applicantCount?: number;
   applicantNames?: string[];
+  totalScore?: number; // Added for matching logic
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -1,14 +1,16 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { BottomNavbarComponent } from './components/bottom-navbar/bottom-navbar.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
@@ -26,29 +28,19 @@ import { PickupRequestComponent } from './pages/pickup-request/pickup-request.co
   declarations: [
     AppComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+    BottomNavbarComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     CommonModule,
-    RouterModule,
-    OpportunityDetailComponent,
-    ChatComponent,
-    OpportunityFormComponent,
-    DashboardComponent,
-    OpportunityListComponent,
-    AdminComponent,
-    LandingComponent,
-    LoginComponent,
-    RegisterComponent,
-    PickupRequestComponent,
-    MessagesComponent
+    RouterModule
   ],
   providers: [
-    provideClientHydration(),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DatePipe
   ],
   bootstrap: [AppComponent]

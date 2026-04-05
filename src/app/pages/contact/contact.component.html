@@ -1,97 +1,101 @@
-<div class="contact-page">
+<div class="contact-premium-wrapper">
   <!-- Hero Section -->
-  <section class="hero-section text-center py-5 bg-light-soft">
-    <div class="container py-lg-4">
-      <h1 class="display-4 fw-bold mb-3 text-gradient">Get In Touch</h1>
-      <p class="lead text-secondary mx-auto" style="max-width: 600px;">
-        Have questions about our services or want to partner with us? Our team is here to help you make a difference.
+  <section class="contact-hero text-center py-5">
+    <div class="container py-lg-4 animate-up">
+      <span class="badge bg-success bg-opacity-10 text-success mb-3 px-3 py-2 rounded-pill fw-bold">CONTACT US</span>
+      <h1 class="display-4 fw-bold mb-3 text-gradient">Let's Connect For A <span class="text-dark">Better World</span></h1>
+      <p class="lead text-secondary mx-auto mb-4" style="max-width: 650px;">
+        Have a question about our services, or want to explore partnership opportunities? We're here to help you navigate your journey toward zero waste.
       </p>
     </div>
   </section>
 
   <section class="py-5">
-    <div class="container">
-      <div class="row g-5">
-        <!-- Contact Info & Map -->
-        <div class="col-lg-5 animate-slide-up">
-          <div class="contact-info-card p-4 p-md-5 rounded-4 shadow-sm bg-white h-100">
-            <h3 class="fw-bold mb-4">Contact Information</h3>
-            
-            <div class="info-item d-flex mb-4" *ngFor="let info of contactInfo">
-              <div class="info-icon me-3 shadow-sm" [style.background-color]="info.color + '15'" [style.color]="info.color">
-                <i class="bi" [ngClass]="info.icon"></i>
-              </div>
-              <div>
-                <h6 class="fw-bold mb-1">{{ info.title }}</h6>
-                <p class="text-secondary mb-0">{{ info.details }}</p>
-              </div>
-            </div>
-
-            <div class="mt-5">
-              <h6 class="fw-bold mb-3">Connect With Us</h6>
-              <div class="d-flex gap-3">
-                <a href="#" class="social-btn facebook"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="social-btn twitter"><i class="bi bi-twitter-x"></i></a>
-                <a href="#" class="social-btn instagram"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="social-btn linkedin"><i class="bi bi-linkedin"></i></a>
-              </div>
-            </div>
-
-            <!-- Stylized Map Placeholder -->
-            <div class="map-placeholder mt-5 rounded-4 overflow-hidden border">
-              <div class="d-flex align-items-center justify-content-center h-100 bg-light">
-                <div class="text-center p-4">
-                  <i class="bi bi-map-fill text-success display-4 mb-3"></i>
-                  <p class="text-secondary small mb-0">Interactive Map Preview</p>
+    <div class="container py-lg-5">
+      <div class="contact-card-premium shadow-2xl border-0">
+        <div class="row g-0">
+          <!-- Contact Details Sidebar -->
+          <div class="col-lg-5 info-sidebar d-flex flex-column animate-up delay-1">
+            <div class="mb-5">
+              <h3 class="fw-bold mb-4">Contact Information</h3>
+              <p class="text-muted small mb-5">Fill out the form and our team will get back to you within 24 hours.</p>
+              
+              <div class="info-box d-flex align-items-center mb-4" *ngFor="let info of contactInfo">
+                <div class="info-box-icon shadow-sm" [style.background-color]="info.color + '15'" [style.color]="info.color">
+                  <i class="bi" [ngClass]="info.icon"></i>
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-0">{{ info.title }}</h6>
+                  <p class="text-secondary small mb-0">{{ info.details }}</p>
                 </div>
               </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="mt-auto pt-4 border-top">
+              <h6 class="fw-bold mb-4">Official Channels</h6>
+              <div class="d-flex gap-3">
+                <a href="#" class="social-pill shadow-sm"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="social-pill shadow-sm"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="social-pill shadow-sm"><i class="bi bi-linkedin"></i></a>
+                <a href="#" class="social-pill shadow-sm"><i class="bi bi-instagram"></i></a>
+              </div>
+            </div>
+
+            <!-- Map Visualization -->
+            <div class="map-visual-box mt-5 shadow-inner">
+               <div class="address-tag text-center shadow-lg">
+                  <i class="bi bi-geo-alt-fill text-success me-2"></i> 
+                  WasteZero Headquarters
+               </div>
+               <div class="overlay" style="position: absolute; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle, transparent, rgba(46, 125, 50, 0.05));"></div>
             </div>
           </div>
-        </div>
 
-        <!-- Contact Form -->
-        <div class="col-lg-7 animate-slide-up delay-1">
-          <div class="contact-form-card p-4 p-md-5 rounded-4 shadow-sm bg-white">
+          <!-- Contact Form -->
+          <div class="col-lg-7 bg-light-soft p-5 animate-up delay-2">
             <h3 class="fw-bold mb-4">Send us a Message</h3>
             
-            <div *ngIf="isSubmitted" class="alert alert-success border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center animate-fade-in">
-              <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+            <div *ngIf="isSubmitted" class="alert alert-success border-0 shadow-lg rounded-4 mb-4 d-flex align-items-center p-4 animate-fade-in">
+              <div class="bg-white rounded-circle p-2 me-3 shadow-sm"><i class="bi bi-check-lg text-success fs-4"></i></div>
               <div>
-                <strong>Thank you!</strong> Your message has been sent successfully. We'll get back to you soon.
+                <h6 class="fw-bold mb-1">Message Received!</h6>
+                <p class="small mb-0 opacity-75">Thank you for reaching out. We've received your inquiry and will respond via email shortly.</p>
               </div>
             </div>
 
-            <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="name" name="name" [(ngModel)]="contactData.name" required placeholder="Name">
-                    <label for="name">Your Name</label>
-                  </div>
+            <form (ngSubmit)="onSubmit()" #contactForm="ngForm" class="row g-4 mt-2">
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" class="form-control premium-input border-0" id="name" name="name" [(ngModel)]="contactData.name" required placeholder="Name">
+                  <label for="name">Your Name</label>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="email" name="email" [(ngModel)]="contactData.email" required placeholder="Email">
-                    <label for="email">Email Address</label>
-                  </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="email" class="form-control premium-input border-0" id="email" name="email" [(ngModel)]="contactData.email" required placeholder="Email">
+                  <label for="email">Email Address</label>
                 </div>
-                <div class="col-12">
-                  <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="subject" name="subject" [(ngModel)]="contactData.subject" required placeholder="Subject">
-                    <label for="subject">Subject</label>
-                  </div>
+              </div>
+              <div class="col-12">
+                <div class="form-floating">
+                  <input type="text" class="form-control premium-input border-0" id="subject" name="subject" [(ngModel)]="contactData.subject" required placeholder="Subject">
+                  <label for="subject">How can we help?</label>
                 </div>
-                <div class="col-12">
-                  <div class="form-floating mb-4">
-                    <textarea class="form-control" id="message" name="message" [(ngModel)]="contactData.message" required placeholder="Message" style="height: 150px"></textarea>
-                    <label for="message">Message</label>
-                  </div>
+              </div>
+              <div class="col-12">
+                <div class="form-floating mb-3">
+                  <textarea class="form-control premium-input border-0" id="message" name="message" [(ngModel)]="contactData.message" required placeholder="Message" style="height: 180px"></textarea>
+                  <label for="message">Your Message</label>
                 </div>
-                <div class="col-12">
-                  <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill shadow w-100 py-3 d-flex align-items-center justify-content-center" [disabled]="!contactForm.form.valid || isSending">
-                    <span *ngIf="isSending" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    {{ isSending ? 'Sending Message...' : 'Send Message' }}
-                  </button>
+              </div>
+              <div class="col-12 text-end">
+                <button type="submit" class="btn btn-success btn-lg shadow-sm w-100 py-3 submit-btn" [disabled]="!contactForm.form.valid || isSending">
+                  <span *ngIf="isSending" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  {{ isSending ? 'Transmitting Data...' : 'Send Inquiry Now' }}
+                </button>
+                <div class="text-center mt-3">
+                   <small class="text-muted"><i class="bi bi-info-circle me-1"></i> Data encrypted with 256-bit SSL technology.</small>
                 </div>
               </div>
             </form>
@@ -99,5 +103,53 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- Support / FAQ Section -->
+  <section class="py-5 bg-white border-top">
+     <div class="container py-lg-5">
+        <div class="text-center mb-5 animate-up">
+           <h2 class="fw-bold display-5 mb-3">Quick Support</h2>
+           <p class="text-secondary mx-auto" style="max-width: 600px;">Sometimes the quickest way to get an answer is through our self-service center.</p>
+        </div>
+
+        <div class="row g-4 mt-3 animate-up delay-2">
+           <div class="col-md-4">
+              <div class="faq-card p-4 h-100 bg-white">
+                 <h6 class="fw-bold mb-3 d-flex align-items-center"><i class="bi bi-question-circle text-success me-2 fs-5"></i> General Inquiries</h6>
+                 <p class="small text-muted mb-4">Basic information about account setup, role permissions, and platform requirements.</p>
+                 <a href="#" class="text-success small fw-bold text-decoration-none">Read Articles <i class="bi bi-chevron-right ms-1"></i></a>
+              </div>
+           </div>
+           <div class="col-md-4">
+              <div class="faq-card p-4 h-100 bg-white">
+                 <h6 class="fw-bold mb-3 d-flex align-items-center"><i class="bi bi-truck text-success me-2 fs-5"></i> Pickup & Logistics</h6>
+                 <p class="small text-muted mb-4">Detailed help on scheduling, handle hazardous materials, and tracking live vehicles.</p>
+                 <a href="#" class="text-success small fw-bold text-decoration-none">View Help <i class="bi bi-chevron-right ms-1"></i></a>
+              </div>
+           </div>
+           <div class="col-md-4">
+              <div class="faq-card p-4 h-100 bg-white">
+                 <h6 class="fw-bold mb-3 d-flex align-items-center"><i class="bi bi-shield-lock text-success me-2 fs-5"></i> Security & Privacy</h6>
+                 <p class="small text-muted mb-4">Information on data protection, account recovery, and two-factor authentication.</p>
+                 <a href="#" class="text-success small fw-bold text-decoration-none">Privacy Center <i class="bi bi-chevron-right ms-1"></i></a>
+              </div>
+           </div>
+        </div>
+     </div>
+  </section>
+
+  <!-- Global Presence -->
+  <section class="py-5 bg-light-soft">
+     <div class="container py-lg-5 text-center gallary">
+        <h6 class="fw-bold mb-4 opacity-50">TRUSTED BY 500+ MUNICIPALITIES GLOBALLY</h6>
+        <div class="d-flex flex-wrap justify-content-center gap-5 opacity-25" style="filter: grayscale(1);">
+           <i class="bi bi-building fs-1"></i>
+           <i class="bi bi-house-door fs-1"></i>
+           <i class="bi bi-bank fs-1"></i>
+           <i class="bi bi-shop fs-1"></i>
+           <i class="bi bi-reception-4 fs-1"></i>
+        </div>
+     </div>
   </section>
 </div>

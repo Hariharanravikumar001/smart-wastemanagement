@@ -5,5 +5,10 @@ main.full-page {
   display: block !important;
   padding: 0;
   margin: 0;
-  overflow: hidden;
+}
+
+@media (max-width: 991.98px) {
+  main.has-bottom-nav {
+    padding-bottom: 70px !important;
+  }
 }

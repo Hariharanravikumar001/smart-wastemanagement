@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { AuthService } from './auth.service';
@@ -20,18 +21,34 @@ export class NotificationService {
   private socket: Socket | null = null;
   private notificationsSubject = new BehaviorSubject<Notification[]>([]);
   public notifications$ = this.notificationsSubject.asObservable();
-  private apiUrl = 'http://localhost:5000/api/notifications';
+  private apiUrl = '/api/notifications';
 
-  constructor(private http: HttpClient, private authService: AuthService) {
-    this.initSocket();
-    this.loadNotifications();
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: any,
+    private http: HttpClient, 
+    private authService: AuthService
+  ) {
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        if (!this.socket) {
+          this.initSocket();
+        }
+        this.loadNotifications();
+      } else {
+        if (this.socket) {
+          this.socket.disconnect();
+          this.socket = null;
+        }
+        this.notificationsSubject.next([]);
+      }
+    });
   }
 
   private initSocket(): void {
     const user = this.authService.currentUserValue;
     if (!user) return;
 
-    this.socket = io('http://localhost:5000');
+    this.socket = io({ path: '/socket.io' });
     this.socket.on('connect', () => {
       this.socket?.emit('join', user.id);
     });
@@ -57,7 +74,7 @@ export class NotificationService {
   }
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('wastezero_token');
+    const token = isPlatformBrowser(this.platformId) ? localStorage.getItem('wastezero_token') : null;
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 

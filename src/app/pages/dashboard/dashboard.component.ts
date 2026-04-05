@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../services/theme.service';
 import { CitizenDashboardComponent } from './components/citizen-dashboard/citizen-dashboard.component';
 import { VolunteerDashboardComponent } from './components/volunteer-dashboard/volunteer-dashboard.component';
+import { MessagesComponent } from '../messages/messages.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,7 +19,8 @@ import { VolunteerDashboardComponent } from './components/volunteer-dashboard/vo
     RouterModule, 
     FormsModule, 
     CitizenDashboardComponent, 
-    VolunteerDashboardComponent
+    VolunteerDashboardComponent,
+    MessagesComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
@@ -37,6 +39,8 @@ export class DashboardComponent implements OnInit {
   passwordSuccess = '';
   profileSuccess = '';
   profileError = '';
+  isSending = false;
+  adminId: string | null = null;
 
   // Messages
   chatMessage = '';
@@ -110,9 +114,22 @@ export class DashboardComponent implements OnInit {
   }
 
   sendChatMessage() {
-    if (!this.chatMessage.trim() || !this.currentUser) return;
-    this.chatService.sendMessage('volunteer_support', this.chatMessage);
+    if (!this.chatMessage.trim() || !this.currentUser || this.isSending) return;
+    
+    // Use fetched adminId or fallback to a known admin if possible
+    const recipientId = this.adminId;
+    
+    if (!recipientId) {
+      console.error('No administrator found to receive the message');
+      this.profileError = 'Support is currently unavailable. Please try again later.';
+      return;
+    }
+
+    this.isSending = true;
+    this.chatService.sendMessage(recipientId, this.chatMessage);
     this.chatMessage = '';
+    // Reset sending flag after a short delay
+    setTimeout(() => this.isSending = false, 500);
   }
 
   toggleTheme() {
@@ -136,17 +153,31 @@ export class DashboardComponent implements OnInit {
             this.router.navigate(['/volunteer/dashboard']);
           } else if (user.role === 'Citizen' || user.role === 'User') {
             this.router.navigate(['/citizen/dashboard']);
-          } else if (user.role === 'Admin') {
+          } else if (user.role === 'Admin' || user.role === 'NGO') {
             this.router.navigate(['/admin']);
           }
         }
 
-        if (user.role === 'User' || user.role === 'Citizen') {
+        if (user.role === 'User' || user.role === 'Citizen' || user.role === 'Volunteer') {
           this.recentMessages$ = this.chatService.messages$.pipe(
             map(msgs => msgs.filter(m => m.receiverId === user.id || m.senderId === user.id).slice(-20))
           );
+          
+          this.fetchAdminId();
         }
       }
+    });
+  }
+
+  fetchAdminId() {
+    this.authService.getAllUsers().subscribe({
+      next: (users) => {
+        const admin = users.find(u => u.role === 'Admin');
+        if (admin) {
+          this.adminId = admin.id;
+        }
+      },
+      error: (err) => console.error('Error fetching admin for support:', err)
     });
   }
 }

@@ -48,9 +48,9 @@ export class StatisticsComponent implements OnInit {
           map(reqs => {
             const total = reqs.reduce((sum, r) => sum + (r.weight || 0), 0);
             if (total === 0) return [];
-            const categories = [...new Set(reqs.map(r => r.wasteCategory))];
+            const categories = [...new Set(reqs.flatMap(r => Array.isArray(r.wasteCategory) ? r.wasteCategory : [r.wasteCategory]))];
             return categories.map(cat => {
-              const catWeight = reqs.filter(r => r.wasteCategory === cat).reduce((sum, r) => sum + (r.weight || 0), 0);
+              const catWeight = reqs.filter(r => (Array.isArray(r.wasteCategory) ? r.wasteCategory.includes(cat) : r.wasteCategory === cat)).reduce((sum, r) => sum + (r.weight || 0), 0);
               return { category: cat, weight: catWeight, percentage: Math.round((catWeight / total) * 100) };
             }).sort((a, b) => b.weight - a.weight);
           })
@@ -59,19 +59,32 @@ export class StatisticsComponent implements OnInit {
     });
   }
 
-  getCategoryIcon(cat: string): string {
+  getCategoryIcon(cat: string | string[]): string {
     const icons: Record<string, string> = {
       'Plastic': '🧴', 'Organic': '🌿', 'E-Waste': '💻', 'Metal': '🔩',
       'Glass': '🥃', 'Paper': '📄', 'Hazardous': '☢️', 'Other': '📦'
     };
+    if (Array.isArray(cat)) {
+        return cat.length > 0 ? icons[cat[0]] || '📦' : '📦';
+    }
     return icons[cat] || '📦';
   }
 
-  getCategoryColor(cat: string): string {
+  getCategoryColor(cat: string | string[]): string {
     const colors: Record<string, string> = {
       'Plastic': '#00c8ff', 'Organic': '#63ffb4', 'E-Waste': '#a78bfa', 'Metal': '#f59e0b',
       'Glass': '#06b6d4', 'Paper': '#f97316', 'Hazardous': '#ef4444', 'Other': '#8b5cf6'
     };
+    if (Array.isArray(cat)) {
+        return cat.length > 0 ? colors[cat[0]] || '#63ffb4' : '#63ffb4';
+    }
     return colors[cat] || '#63ffb4';
+  }
+
+  formatCategories(cat: string | string[]): string {
+      if (Array.isArray(cat)) {
+          return cat.join(', ');
+      }
+      return cat;
   }
 }

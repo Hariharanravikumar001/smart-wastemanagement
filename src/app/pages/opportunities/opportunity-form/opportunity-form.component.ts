@@ -16,6 +16,7 @@ import { Opportunity } from '../../../models/opportunity.model';
 export class OpportunityFormComponent implements OnInit {
   isEditMode = false;
   opportunityId: string | null = null;
+  isSubmitting = false;
 
   form = {
     title: '',
@@ -65,6 +66,8 @@ export class OpportunityFormComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.isSubmitting) return;
+
     const data: any = {
       title: this.form.title,
       description: this.form.description,
@@ -76,15 +79,23 @@ export class OpportunityFormComponent implements OnInit {
       organizationName: this.form.organizationName
     };
 
+    this.isSubmitting = true;
+
     if (this.isEditMode && this.opportunityId) {
       this.opportunityService.updateOpportunity(this.opportunityId, data).subscribe({
         next: () => this.router.navigate(['/opportunities']),
-        error: (err) => alert('Error updating opportunity')
+        error: (err) => {
+          alert('Error updating opportunity');
+          this.isSubmitting = false;
+        }
       });
     } else {
       this.opportunityService.createOpportunity(data).subscribe({
         next: () => this.router.navigate(['/opportunities']),
-        error: (err) => alert('Error creating opportunity')
+        error: (err) => {
+          alert('Error creating opportunity');
+          this.isSubmitting = false;
+        }
       });
     }
   }

@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -14,31 +15,56 @@ export interface User {
   bio?: string;
   skills?: string[];
   wasteTypes?: string[]; // Types of waste the user is interested in/handles
-  suspended?: boolean;
+  isSuspended?: boolean;
   assignedPickups?: string[]; // IDs of pickups assigned to the volunteer
   profileImage?: string;
+  isOnline?: boolean;
+  lastActive?: Date | string;
   activityRecords?: {
     totalWeight: number;
     completedPickups: number;
     lastActive: Date;
   };
   created_at?: Date | string;
+  rewardPoints?: number;
+  badges?: string[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/api';
+  private apiUrl = '/api';
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    if (typeof localStorage !== 'undefined') {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: any,
+    private http: HttpClient
+  ) {
+    if (isPlatformBrowser(this.platformId)) {
       const savedUser = localStorage.getItem('wastezero_user');
-      if (savedUser) {
-        this.currentUserSubject.next(JSON.parse(savedUser));
+      const token = localStorage.getItem('wastezero_token');
+      
+      if (savedUser && token) {
+        // Simple JWT expiration check
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const expiry = payload.exp * 1000;
+          if (Date.now() > expiry) {
+            console.warn('Session expired. Logging out.');
+            this.logout();
+          } else {
+            this.currentUserSubject.next(JSON.parse(savedUser));
+          }
+        } catch (e) {
+          console.error('Invalid token found. Clearing session.');
+          this.logout();
+        }
+      } else if (savedUser && !token) {
+        // Inconsistent state
+        this.logout();
       }
     }
   }
@@ -62,18 +88,46 @@ export class AuthService {
                location: response.location
              }; 
 
-             if (typeof localStorage !== 'undefined') {
+             if (isPlatformBrowser(this.platformId)) {
                 localStorage.setItem('wastezero_user', JSON.stringify(user));
                 localStorage.setItem('wastezero_token', response.token);
              }
              this.currentUserSubject.next(user);
            }
+        }),
+        catchError(err => {
+          if (err.status === 0) {
+            console.error('Connection refuse: Please ensure your backend server is running on port 5000.');
+            return throwError(() => new Error('Unable to connect to backend server. Is it running?'));
+          }
+          return throwError(() => err);
+        })
+      );
+  }
+
+  googleLogin(idToken: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/google-login`, { idToken })
+      .pipe(
+        tap(response => {
+          if (response && response.token) {
+            const user: User = { 
+               ...response, 
+               id: response.id || response._id,
+               role: this.mapRole(response.role)
+             }; 
+
+            if (isPlatformBrowser(this.platformId)) {
+              localStorage.setItem('wastezero_user', JSON.stringify(user));
+              localStorage.setItem('wastezero_token', response.token);
+            }
+            this.currentUserSubject.next(user);
+          }
         })
       );
   }
 
   logout(): void {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('wastezero_user');
       localStorage.removeItem('wastezero_token');
     }
@@ -81,10 +135,18 @@ export class AuthService {
   }
 
   private mapRole(role: string): 'User' | 'Volunteer' | 'Admin' | 'Citizen' | 'NGO' {
-      if(role === 'admin') return 'Admin';
-      if(role === 'volunteer') return 'Volunteer';
-      if(role === 'ngo') return 'NGO';
-      return 'Citizen'; // Both 'user' and 'citizen' will map to 'Citizen'
+    if (!role) {
+      console.warn('⚠️ [AUTH] Missing role in data. Defaulting to Citizen.');
+      return 'Citizen';
+    }
+    const r = role.toLowerCase();
+    if (r === 'admin') return 'Admin';
+    if (r === 'volunteer' || r === 'agent') return 'Volunteer';
+    if (r === 'ngo' || r === 'organization') return 'NGO';
+    if (r === 'user' || r === 'citizen' || r === 'resident') return 'Citizen';
+    
+    console.debug('🔍 [AUTH] Unmapped role found:', r, 'Mapping to Citizen.');
+    return 'Citizen'; 
   }
 
   // Uses actual backend API
@@ -99,93 +161,40 @@ export class AuthService {
           role: mappedRole,
           location
       };
-
-      return this.http.post<any>(`${this.apiUrl}/register`, registerData);
+      
+      return this.http.post<any>(`${this.apiUrl}/register`, registerData).pipe(
+        catchError(err => {
+          if (err.status === 0) {
+            console.error('Connection refuse: Please ensure your backend server is running on port 5000.');
+            return throwError(() => new Error('Unable to connect to backend server. Is it running?'));
+          }
+          return throwError(() => err);
+        })
+      );
   }
 
   // Legacy Mock methods below (kept for partial compatibility if needed by other components)
-  public getAllUsers(): User[] {
-    if (typeof localStorage !== 'undefined') {
-      const users = localStorage.getItem('wastezero_users');
-      return users ? JSON.parse(users) : [];
-    }
-    return [];
+  public getAllUsers(): Observable<User[]> {
+    return this.http.get<any>(`${this.apiUrl}/admin/users`).pipe(
+      map(response => {
+        const users = response.users || (Array.isArray(response) ? response : []);
+        return users.map((u: any) => ({
+          ...u,
+          id: u.id || u._id,
+          role: this.mapRole(u.role)
+        }));
+      })
+    );
   }
 
-  authenticate(email: string): User {
-    const users = this.getAllUsers();
-    const cleanEmail = email.trim().toLowerCase();
-    let user = users.find(u => u.email === cleanEmail);
-    
-    // Fallback if user didn't register (so the old mock admin@example.com still works)
-    if (!user) {
-      user = {
-        id: Math.random().toString(36).substring(2, 11),
-        name: cleanEmail.split('@')[0],
-        username: cleanEmail.split('@')[0],
-        email: cleanEmail,
-        role: 'Citizen',
-        password: 'password123',
-        location: 'New York, USA'
-      };
-      if (cleanEmail.includes('admin')) {
-        user.role = 'Admin';
-        user.location = 'California, USA';
-      }
-      if (cleanEmail.includes('volunteer')) {
-        user.role = 'Volunteer';
-        user.location = 'London, UK';
-      }
-      if (cleanEmail.includes('user')) {
-        user.role = 'User';
-      }
-      
-      // Persist this auto-generated user so updateUserDetails works
-      users.push(user);
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('wastezero_users', JSON.stringify(users));
-      }
-    }
-
-    if (user && user.suspended) {
-      throw new Error('This account has been suspended. Please contact support.');
-    }
-    return user;
-  }
-
-  setUserStatus(email: string, suspended: boolean): { success: boolean, message: string } {
-    const users = this.getAllUsers();
-    const userIndex = users.findIndex(u => u.email === email);
-    
-    if (userIndex === -1) {
-      return { success: false, message: 'User not found' };
-    }
-
-    users[userIndex].suspended = suspended;
-    
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('wastezero_users', JSON.stringify(users));
-      
-      const currentUser = this.currentUserValue;
-      if (currentUser && currentUser.email === email) {
-        const updatedUser = { ...currentUser, suspended };
-        this.login(updatedUser);
-        if (suspended) {
-          this.logout();
-        }
-      }
-    }
-
-    return { success: true, message: `User ${suspended ? 'suspended' : 'activated'} successfully` };
+  setUserStatus(userId: string, isSuspended: boolean): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/admin/user-status`, { userId, isSuspended });
   }
 
 
   // Change Password
   changePassword(email: string, oldPassword: string, newPassword: string): Observable<any> {
-    const token = localStorage.getItem('wastezero_token');
-    const headers = { 'Authorization': `Bearer ${token}` };
-
-    return this.http.put<any>(`${this.apiUrl}/change-password`, { oldPassword, newPassword }, { headers })
+    return this.http.put<any>(`${this.apiUrl}/change-password`, { oldPassword, newPassword })
       .pipe(
         tap(response => {
           // Success handled in component
@@ -210,10 +219,7 @@ export class AuthService {
 
   // Update User Details
   updateUserDetails(email: string, details: Partial<User>): Observable<any> {
-    const token = localStorage.getItem('wastezero_token');
-    const headers = { 'Authorization': `Bearer ${token}` };
-
-    return this.http.put<any>(`${this.apiUrl}/profile`, details, { headers })
+    return this.http.put<any>(`${this.apiUrl}/profile`, details)
       .pipe(
         tap(response => {
           if (response && response.user) {
@@ -223,7 +229,7 @@ export class AuthService {
               if (response.user.role) {
                 updatedUser.role = this.mapRole(response.user.role);
               }
-              if (typeof localStorage !== 'undefined') {
+              if (isPlatformBrowser(this.platformId)) {
                 localStorage.setItem('wastezero_user', JSON.stringify(updatedUser));
               }
               this.currentUserSubject.next(updatedUser);
@@ -235,14 +241,79 @@ export class AuthService {
 
   // Delete Account
   deleteAccount(): Observable<any> {
-    const token = localStorage.getItem('wastezero_token');
-    const headers = { 'Authorization': `Bearer ${token}` };
-
-    return this.http.delete<any>(`${this.apiUrl}/profile`, { headers })
+    return this.http.delete<any>(`${this.apiUrl}/profile`)
       .pipe(
         tap(() => {
           this.logout();
         })
       );
+  }
+
+  getUserById(id: string): Observable<User> {
+    return this.http.get<any>(`${this.apiUrl}/users/${id}`).pipe(
+      map(response => ({
+        ...response,
+        id: response.id || response._id,
+        role: this.mapRole(response.role)
+      }))
+    );
+  }
+
+  refreshCurrentUser(): void {
+    this.http.get<User>(`${this.apiUrl}/me`).subscribe({
+      next: (user) => {
+        if (user) {
+          const formattedUser = {
+            ...user,
+            id: (user as any)._id || user.id,
+            role: this.mapRole(user.role)
+          };
+          this.currentUserSubject.next(formattedUser);
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('wastezero_user', JSON.stringify(formattedUser));
+          }
+        }
+      },
+      error: (err) => {
+        // Prevent accidental logout on transient network errors or server downtime
+        if (err.status === 401) {
+          console.error('🔓 [AUTH] Session invalid (401). Logging out.');
+          this.logout();
+        } else if (err.status === 0) {
+          console.warn('⚠️ [AUTH] Network error during refresh. Maintaining existing session.');
+        } else {
+          console.error('❌ [AUTH] Background refresh failed:', err);
+        }
+      }
+    });
+  }
+
+  uploadProfileImage(file: File): Observable<any> {
+    return new Observable(observer => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Image = reader.result as string;
+        this.http.post<any>(`${this.apiUrl}/upload-profile-image`, { profileImage: base64Image })
+          .subscribe({
+            next: (response) => {
+              const currentUser = this.currentUserValue;
+              if (currentUser && response.profileImage) {
+                const updatedUser = { ...currentUser, profileImage: response.profileImage };
+                if (isPlatformBrowser(this.platformId)) {
+                  localStorage.setItem('wastezero_user', JSON.stringify(updatedUser));
+                }
+                this.currentUserSubject.next(updatedUser);
+              }
+              observer.next(response);
+              observer.complete();
+            },
+            error: (err) => {
+              observer.error(err);
+            }
+          });
+      };
+      reader.onerror = (error) => observer.error(error);
+      reader.readAsDataURL(file);
+    });
   }
 }

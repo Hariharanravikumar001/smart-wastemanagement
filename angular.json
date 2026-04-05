@@ -79,7 +79,8 @@
               "buildTarget": "smartwaste:build:production"
             },
             "development": {
-              "buildTarget": "smartwaste:build:development"
+              "buildTarget": "smartwaste:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

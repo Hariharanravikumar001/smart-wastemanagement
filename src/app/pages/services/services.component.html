@@ -1,55 +1,145 @@
-<div class="services-container">
+<div class="services-premium-container">
   <!-- Hero Section -->
-  <section class="hero-section text-center py-5">
+  <section class="services-hero text-center py-5">
     <div class="container py-lg-5">
-      <h1 class="display-3 fw-bold mb-3 animate-fade-in text-gradient">Our Smart Services</h1>
-      <p class="lead text-secondary mx-auto mb-5 animate-slide-up" style="max-width: 700px;">
-        WasteZero leverages cutting-edge technology to revolutionize waste management. From intelligent sorting to community-driven action, we provide tools for a cleaner tomorrow.
-      </p>
-      <div class="d-flex justify-content-center gap-3 animate-slide-up delay-1">
-        <a routerLink="/register" class="btn btn-success btn-lg px-4 rounded-pill shadow-sm">Get Started</a>
-        <a href="#how-it-works" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">How it Works</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Grid -->
-  <section class="py-5 bg-light-soft">
-    <div class="container">
-      <div class="row g-4">
-        <div class="col-lg-6" *ngFor="let service of services; let i = index">
-          <div class="service-card h-100 p-4 p-md-5 rounded-4 shadow-sm animate-slide-up" [style.border-top]="'5px solid ' + service.color" [style.animation-delay]="(i * 0.1) + 's'">
-            <div class="icon-box mb-4" [style.background-color]="service.color + '15'" [style.color]="service.color">
-              <i class="bi" [ngClass]="service.icon"></i>
-            </div>
-            <h3 class="fw-bold mb-3">{{ service.title }}</h3>
-            <p class="text-secondary mb-4">{{ service.description }}</p>
-            <ul class="list-unstyled">
-              <li class="mb-2 d-flex align-items-center" *ngFor="let detail of service.details">
-                <i class="bi bi-check2-circle text-success me-3"></i>
-                <span>{{ detail }}</span>
-              </li>
-            </ul>
+      <div class="row justify-content-center">
+        <div class="col-lg-8 animate-fade-in">
+          <span class="badge bg-success bg-opacity-10 text-success mb-3 px-3 py-2 rounded-pill fw-bold">OUR CAPABILITIES</span>
+          <h1 class="display-3 fw-bold mb-4 text-gradient">Sustainable Services for a <span class="text-dark">Greener Future</span></h1>
+          <p class="lead text-secondary mx-auto mb-5" style="max-width: 700px;">
+            WasteZero combines advanced logistics, community participation, and data analytics to provide a holistic ecosystem for efficient waste management and environmental stewardship.
+          </p>
+          <div class="d-flex justify-content-center gap-3">
+            <a routerLink="/register" class="btn btn-success btn-lg px-5 rounded-pill shadow-sm fw-bold">Get Started</a>
+            <a href="#solutions" class="btn btn-outline-dark btn-lg px-5 rounded-pill fw-bold">View Solutions</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- How It Works Section -->
-  <section id="how-it-works" class="py-5 overflow-hidden">
-    <div class="container">
+  <!-- Solutions Grid -->
+  <section id="solutions" class="py-5 bg-light-soft">
+    <div class="container py-lg-5">
       <div class="text-center mb-5">
-        <h2 class="fw-bold display-5">How It Works</h2>
-        <div class="mx-auto bg-success rounded-pill" style="height: 4px; width: 60px;"></div>
+        <h2 class="fw-bold display-5 mb-3">Enterprise-Grade Waste Solutions</h2>
+        <p class="text-secondary mx-auto mb-4" style="max-width: 600px;">We Provide specialized tools and services for every member of the circular economy ecosystem.</p>
       </div>
 
-      <div class="row g-4 justify-content-center">
-        <div class="col-md-3" *ngFor="let step of howItWorks; let i = index">
-          <div class="step-item text-center p-3 animate-fade-in" [style.animation-delay]="(i * 0.15) + 's'">
-            <div class="step-number mb-4 mx-auto">{{ step.step }}</div>
-            <h5 class="fw-bold">{{ step.title }}</h5>
-            <p class="text-secondary small">{{ step.description }}</p>
+      <div class="row g-4">
+        <div class="col-lg-6" *ngFor="let service of services; let i = index">
+          <div class="service-card h-100 p-4 p-md-5 rounded-4 shadow-sm animate-slide-up" [style.border-top]="'6px solid ' + service.color" [style.animation-delay]="(i * 0.15) + 's'">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+              <div class="icon-box shadow-sm" [style.background-color]="service.color + '20'" [style.color]="service.color">
+                <i class="bi" [ngClass]="service.icon"></i>
+              </div>
+              <span class="badge rounded-pill bg-light text-dark px-3 mt-1 border">Active Service</span>
+            </div>
+            
+            <h3 class="fw-bold mb-3">{{ service.title }}</h3>
+            <p class="text-secondary mb-4">{{ service.description }}</p>
+            
+            <div class="service-features mb-4">
+              <div class="row g-2">
+                <div class="col-sm-6 d-flex align-items-center mb-2" *ngFor="let detail of service.details">
+                  <i class="bi bi-patch-check-fill text-success me-3"></i>
+                  <span class="small fw-semibold text-muted">{{ detail }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-auto pt-3 border-top border-light">
+              <button class="btn btn-link text-success fw-bold p-0 text-decoration-none">
+                Explore Documentation <i class="bi bi-arrow-right ms-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works & Process -->
+  <section class="py-5 bg-white border-top border-bottom">
+    <div class="container py-lg-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-5">
+          <span class="badge bg-success bg-opacity-10 text-success mb-3 px-3 py-2 rounded-pill fw-bold">EASY PROCESS</span>
+          <h2 class="fw-bold display-5 mb-4">A simple journey for <span class="text-success">real impact.</span></h2>
+          <p class="text-secondary mb-4">Everything we do is designed to be frictionless for the end-user while maintaining high operational efficiency in the background.</p>
+          <ul class="list-unstyled mt-5">
+            <li class="mb-4 d-flex align-items-start" *ngFor="let step of howItWorks; let i = index">
+              <div class="step-number me-4 flex-shrink-0">{{ step.step }}</div>
+              <div>
+                <h5 class="fw-bold mb-1">{{ step.title }}</h5>
+                <p class="text-secondary mb-0 small">{{ step.description }}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="col-lg-7">
+          <div class="position-relative p-4">
+            <img src="https://images.unsplash.com/photo-1591193113735-86f393f64c63?auto=format&fit=crop&q=80&w=1000" alt="Process Visualization" class="img-fluid rounded-5 shadow-2xl">
+            <div class="position-absolute bottom-0 end-0 p-4 mb-4 me-4 bg-white rounded-4 shadow-lg animate-slide-up delay-2 d-none d-md-block" style="max-width: 280px;">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-success p-2 rounded-circle me-3"><i class="bi bi-lightning-charge-fill text-white"></i></div>
+                <h6 class="fw-bold mb-0">99.9% Efficiency</h6>
+              </div>
+              <p class="text-muted extra-small mb-0">Our AI-driven routing ensures that pickups are never late and resources are never wasted.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service specific FAQ Section -->
+  <section class="py-5 bg-light-soft">
+    <div class="container py-lg-5">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold display-5 mb-3">Frequently Asked Questions</h2>
+        <p class="text-secondary mx-auto mb-5" style="max-width: 600px;">Getting started with WasteZero is easy, but here are some things you might want to know.</p>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="accordion accordion-flush premium-accordion shadow-sm rounded-4 overflow-hidden" id="faqAccordion">
+            <div class="accordion-item border-bottom">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                  What types of waste do you handle?
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body p-4 text-secondary">
+                  We handle recyclable materials (plastics, paper, glass, metals), organic/compostable waste, and even certain hazardous household items like batteries and e-waste. Specific guidelines are available when you schedule a pickup.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item border-bottom">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                  Is there a fee for waste collection?
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body p-4 text-secondary">
+                  Standard recycling pickups for citizens are currently free, supported by our partnerships with sustainable organizations. Premium/commercial bulk pickups may incur a small maintenance fee.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item border-bottom">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                  How are volunteers verified?
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body p-4 text-secondary">
+                  Every volunteer undergoes a brief background check and an orientation session before being allowed to handle pickups or participate in community drives. We prioritize safety and professionalism.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -57,11 +147,18 @@
   </section>
 
   <!-- CTA Section -->
-  <section class="py-5 bg-success text-white">
-    <div class="container py-4 text-center">
-      <h2 class="fw-bold mb-4">Ready to Make an Impact?</h2>
-      <p class="mb-5 opacity-75 mx-auto" style="max-width: 600px;">Join thousands of citizens and volunteers already using WasteZero to build more sustainable communities.</p>
-      <a routerLink="/register" class="btn btn-light btn-lg px-5 rounded-pill fw-bold text-success shadow">Join Now</a>
+  <section class="py-5 bg-dark text-white">
+    <div class="container py-lg-5 text-center">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <h2 class="fw-bold display-5 mb-4">Ready to Optimize Your Waste?</h2>
+          <p class="mb-5 opacity-75 lead px-md-5">Join our platform today and start experiencing the most advanced waste management tools in the industry.</p>
+          <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a routerLink="/register" class="btn btn-success btn-lg px-5 rounded-pill shadow fw-bold">Sign Up Free</a>
+            <a routerLink="/contact" class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold">Request a Demo</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </div>

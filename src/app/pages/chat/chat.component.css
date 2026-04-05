@@ -2,28 +2,48 @@
   height: 80vh;
 }
 
+.max-w-800px {
+  max-width: 800px;
+  width: 100%;
+}
+
+.chat-main-container {
+  width: 100%;
+  max-width: 900px;
+  height: 85vh;
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
 .chat-messages {
   scroll-behavior: smooth;
   display: flex;
   flex-direction: column;
-}
-
-.max-w-75 {
-  max-width: 75%;
+  gap: 12px;
+  background-color: #f8f9fa !important;
 }
 
 .message-bubble {
   position: relative;
   word-wrap: break-word;
   transition: transform 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  max-width: 85%;
 }
 
 .message-bubble:hover {
-  transform: scale(1.02);
+  transform: translateY(-2px);
+}
+
+.content {
+  margin-bottom: 2px;
 }
 
 .bg-success {
   border-bottom-right-radius: 4px !important;
+  color: white;
 }
 
 .bg-light {
@@ -46,4 +66,180 @@
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
   background: rgba(0,0,0,0.2);
+}
+
+/* WhatsApp style ticks */
+.status-ticks {
+  margin-left: 6px;
+  font-size: 14px;
+}
+
+.tick-gray {
+  color: #8696a0;
+}
+
+.tick-blue {
+  color: #53bdeb;
+}
+
+.unread-count-badge {
+  background-color: #25d366;
+  color: white;
+  min-width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex !important;
+}
+
+/* Redesigned Input Styles */
+.chat-input-wrapper {
+  position: relative;
+  z-index: 10;
+}
+
+.options-bubble {
+  background: white;
+  border-radius: 16px;
+  position: absolute;
+  bottom: 80px;
+  left: 15px;
+  right: 15px;
+  z-index: 100;
+}
+
+.option-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-icon:hover {
+  transform: scale(1.1);
+}
+
+.input-group .form-control:focus {
+  box-shadow: none;
+}
+
+.btn-floating {
+  transition: all 0.2s ease;
+}
+
+.btn-floating:active {
+  transform: scale(0.9);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Camera Overlay */
+.camera-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: black;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.camera-container {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.camera-controls {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.capture-btn {
+  width: 70px;
+  height: 70px;
+  background: white;
+  border: 5px solid rgba(255,255,255,0.3);
+  padding: 0;
+}
+
+.capture-btn:active {
+  transform: scale(0.9);
+  background: #f8f9fa;
+}
+
+.object-fit-cover {
+  object-fit: cover;
+}
+
+/* Deletion Styles */
+.deleted-bubble {
+  background: #f0f2f5 !important;
+  border-radius: 12px !important;
+  color: #667781 !important;
+}
+
+.delete-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+.delete-menu {
+  background: white;
+  width: 280px;
+  border-radius: 16px;
+  padding: 20px 0;
+  animation: slideUp 0.2s ease-out;
+}
+
+.delete-option {
+  padding: 12px 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.delete-option:hover {
+  background: #f8f9fa;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

@@ -36,7 +36,7 @@
       <div class="db-list-item">
         <div class="db-list-icon">{{ getCategoryIcon(actives[0].wasteCategory) }}</div>
         <div class="db-list-info">
-          <div class="db-list-title">{{ actives[0].wasteCategory }} — {{ actives[0].description }}</div>
+          <div class="db-list-title">{{ formatCategories(actives[0].wasteCategory) }} — {{ actives[0].description }}</div>
           <div class="db-list-meta">Scheduled for: {{ (actives[0].scheduledDate | date:'medium') || 'Awaiting Schedule' }}</div>
         </div>
         <span class="db-status-chip scheduled">{{ actives[0].status }}</span>
@@ -68,8 +68,8 @@
       <div class="db-category-grid">
         <button *ngFor="let cat of categories"
                 class="db-category-btn"
-                [class.selected]="newRequest.wasteCategory === cat"
-                (click)="newRequest.wasteCategory = cat"
+                [class.selected]="newRequest.wasteCategory?.includes(cat)"
+                (click)="toggleCategory(cat)"
                 type="button">
           <span class="db-cat-icon">{{ getCategoryIcon(cat) }}</span>
           <span class="db-cat-name">{{ cat }}</span>
@@ -111,14 +111,21 @@
         <div class="db-pickup-row">
           <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
           <div class="db-list-info">
-            <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
+            <div class="db-list-title">{{ formatCategories(req.wasteCategory) }} — {{ req.description }}</div>
             <div class="db-list-meta">📍 {{ req.location }}</div>
             <div class="db-list-meta" *ngIf="req.volunteerName">👤 Volunteer: {{ req.volunteerName }}</div>
           </div>
-          <span class="db-status-chip"
-                [class.pending]="req.status === 'Pending'"
-                [class.scheduled]="req.status === 'Scheduled'"
-                [class.inprogress]="req.status === 'In Progress'">{{ req.status }}</span>
+          <div class="d-flex align-items-center gap-2">
+            <button *ngIf="req.volunteerId" 
+                    [routerLink]="['/chat', req.volunteerId, req.volunteerName]" 
+                    class="btn btn-sm btn-outline-success rounded-pill">
+              💬 Message
+            </button>
+            <span class="db-status-chip"
+                  [class.pending]="req.status === 'Pending'"
+                  [class.scheduled]="req.status === 'Scheduled'"
+                  [class.inprogress]="req.status === 'In Progress'">{{ req.status }}</span>
+          </div>
         </div>
         <div class="db-pickup-timeline">
           <div class="db-timeline-step" [class.done]="true">
@@ -142,16 +149,65 @@
     <h3 class="db-sub-title">🧾 Pickup History</h3>
     <div *ngIf="(historyRequests$ | async) as history">
       <div *ngIf="history.length === 0" class="db-empty">No past pickups found.</div>
-      <div *ngFor="let req of history" class="db-card db-list-item">
+      <div *ngFor="let req of history" class="db-card db-list-item clickable" (click)="showDetails(req)">
         <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
         <div class="db-list-info">
-          <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
+          <div class="db-list-title">{{ formatCategories(req.wasteCategory) }} — {{ req.description }}</div>
           <div class="db-list-meta">📍 {{ req.location }} · {{ req.scheduledDate | date:'mediumDate' }}</div>
         </div>
         <span class="db-status-chip" 
               [class.completed]="req.status === 'Completed'"
               [class.cancelled]="req.status === 'Cancelled'">{{ req.status }}</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PICKUP DETAILS MODAL ===== -->
+<div class="db-modal-overlay" *ngIf="selectedRequest" (click)="closeDetails()">
+  <div class="db-modal-card" (click)="$event.stopPropagation()">
+    <div class="db-modal-header">
+      <h3 class="db-modal-title">📦 Pickup Details</h3>
+      <button class="db-modal-close" (click)="closeDetails()">&times;</button>
+    </div>
+    <div class="db-modal-body">
+      <div class="db-detail-item">
+        <label>👤 Pickup By</label>
+        <p>{{ selectedRequest.volunteerName || 'Community Collection Service' }}</p>
+      </div>
+      <div class="db-detail-grid">
+        <div class="db-detail-item">
+          <label>📅 Date</label>
+          <p>{{ selectedRequest.scheduledDate | date:'longDate' }}</p>
+        </div>
+        <div class="db-detail-item">
+          <label>⏰ Time</label>
+          <p>{{ selectedRequest.scheduledDate | date:'shortTime' }}</p>
+        </div>
+      </div>
+      <div class="db-detail-item">
+        <label>📍 Place</label>
+        <p>{{ selectedRequest.location }}</p>
+      </div>
+      <div class="db-detail-item">
+        <label>⚖️ Waste Weight</label>
+        <p>{{ selectedRequest.weight ? (selectedRequest.weight + ' kg') : 'Not weighed' }}</p>
+      </div>
+      <div class="db-detail-item">
+        <label>🛠️ Pickup Product Details</label>
+        <div class="db-product-box">
+          <span class="db-product-cat">{{ getCategoryIcon(selectedRequest.wasteCategory) }} {{ formatCategories(selectedRequest.wasteCategory) }}</span>
+          <p class="db-product-desc">{{ selectedRequest.description }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="db-modal-footer">
+      <button *ngIf="selectedRequest.volunteerId" 
+              class="db-action-btn neutral me-auto" 
+              [routerLink]="['/chat', selectedRequest.volunteerId, selectedRequest.volunteerName]">
+        💬 Message Volunteer
+      </button>
+      <button class="db-action-btn" (click)="closeDetails()">Close</button>
     </div>
   </div>
 </div>

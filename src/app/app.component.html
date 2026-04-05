@@ -1,5 +1,6 @@
 <app-navbar *ngIf="showNavbar"></app-navbar>
-<main [class.full-page]="!showNavbar" class="min-vh-100 d-flex flex-column">
+<main [class.full-page]="!showNavbar" [class.has-bottom-nav]="showNavbar" class="min-vh-100 d-flex flex-column">
   <router-outlet></router-outlet>
 </main>
+<app-bottom-navbar *ngIf="showNavbar"></app-bottom-navbar>
 <app-footer *ngIf="showFooter"></app-footer>

@@ -2,6 +2,19 @@
   <h1 class="db-page-title">🚛 Pickup Tracking</h1>
   <p class="db-page-sub">Manage your active requests and view your history of waste collections</p>
 
+  <div class="db-search-wrap mb-4">
+    <div class="input-group">
+      <span class="input-group-text bg-dark border-light border-opacity-10 text-muted">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text" 
+        class="form-control bg-dark border-light border-opacity-10 text-white" 
+        placeholder="Search requests by description or location..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()">
+    </div>
+  </div>
+
   <div class="db-tabs-internal">
     <!-- Active Requests Section -->
     <div class="db-section">
@@ -16,8 +29,8 @@
           <div class="db-pickup-header">
             <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
             <div class="db-list-info">
-              <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
-              <div class="db-list-meta">📍 {{ req.location }}</div>
+              <div class="db-list-title">{{ formatCategories(req.wasteCategory) }} — {{ req.description }}</div>
+              <div class="db-list-meta">📍 {{ formatLocation(req.location) }}</div>
               <div class="db-list-meta" *ngIf="req.volunteerName">👤 Volunteer: {{ req.volunteerName }}</div>
             </div>
             <span class="db-status-chip" [ngClass]="getStatusClass(req.status)">
@@ -56,9 +69,9 @@
           <div *ngFor="let req of history" class="db-card db-list-item">
             <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
             <div class="db-list-info">
-              <div class="db-list-title">{{ req.wasteCategory }} — {{ req.description }}</div>
+              <div class="db-list-title">{{ formatCategories(req.wasteCategory) }} — {{ req.description }}</div>
               <div class="db-list-meta">
-                📍 {{ req.location }} · {{ (req.scheduledDate | date:'mediumDate') || 'N/A' }} 
+                📍 {{ formatLocation(req.location) }} · {{ (req.scheduledDate | date:'mediumDate') || 'N/A' }} 
                 <span *ngIf="req.weight">· ⚖️ {{ req.weight }}kg</span>
               </div>
             </div>

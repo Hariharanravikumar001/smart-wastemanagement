@@ -1,109 +1,218 @@
-<div class="db-body">
-  <h1 class="db-page-title">Welcome back, Volunteer Agent {{ currentUser?.name }} 🚚</h1>
-  <p class="db-page-sub">Operational overview of your waste collection tasks</p>
+<div class="db-body animate-fade-in p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold gradient-text mb-1">Agent {{ currentUser?.name }} 🚚</h1>
+      <p class="text-muted small mb-0">Operational intelligence for your waste collection route</p>
+    </div>
+    <div class="glass border rounded-pill px-3 py-2 shadow-sm d-flex align-items-center gap-2">
+      <div class="bg-success rounded-circle" style="width: 8px; height: 8px;"></div>
+      <span class="extra-small fw-bold text-uppercase ls-wide">Online & Ready</span>
+    </div>
+  </div>
 
-  <div class="db-stats-row">
-    <div class="db-stat-card primary">
-      <div class="db-stat-icon-wrap blue">🌍</div>
-      <div>
-        <div class="db-stat-value">{{ (availableNGOProjects$ | async)?.length || 0 }}</div>
-        <div class="db-stat-label">Real Opportunities</div>
+  <div class="row g-4 mb-5">
+    <div class="col-md-3">
+      <div class="premium-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted fw-bold extra-small text-uppercase ls-wide">NGO Matches</span>
+          <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-stars"></i></div>
+        </div>
+        <h2 class="fw-bold mb-1">{{ (availableNGOProjects$ | async)?.length || 0 }}</h2>
+        <div class="extra-small text-primary fw-bold">Intelligent Matches</div>
       </div>
     </div>
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap purple">🚛</div>
-      <div>
-        <div class="db-stat-value">{{ (assignments$ | async)?.length || 0 }}</div>
-        <div class="db-stat-label">My Active Tasks</div>
+    <div class="col-md-3">
+      <div class="premium-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted fw-bold extra-small text-uppercase ls-wide">My Active Tasks</span>
+          <div class="stat-icon bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-truck"></i></div>
+        </div>
+        <h2 class="fw-bold mb-1">{{ (assignments$ | async)?.length || 0 }}</h2>
+        <div class="extra-small text-info fw-bold">Accepted Assignments</div>
       </div>
     </div>
-    <div class="db-stat-card text-muted opacity-75">
-      <div class="db-stat-icon-wrap gray">📦</div>
-      <div>
-        <div class="db-stat-value">{{ (availablePickups$ | async)?.length || 0 }}</div>
-        <div class="db-stat-label">Citizen Pickups</div>
+    <div class="col-md-3">
+      <div class="premium-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted fw-bold extra-small text-uppercase ls-wide">Citizen Pickups</span>
+          <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-box-seam"></i></div>
+        </div>
+        <h2 class="fw-bold mb-1">{{ (availablePickups$ | async)?.length || 0 }}</h2>
+        <div class="extra-small text-warning fw-bold">Near Your Location</div>
       </div>
     </div>
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap orange">💬</div>
-      <div>
-        <div class="db-stat-value">{{ (unreadMessages$ | async) || 0 }}</div>
-        <div class="db-stat-label">Unread Messages</div>
+    <div class="col-md-3">
+      <div class="premium-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted fw-bold extra-small text-uppercase ls-wide">Recycled Total</span>
+          <div class="stat-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-recycle"></i></div>
+        </div>
+        <h2 class="fw-bold mb-1">{{ (totalWeight$ | async) || 0 }}<span class="small ms-1">kg</span></h2>
+        <div class="extra-small text-success fw-bold">Total Impact</div>
       </div>
     </div>
   </div>
 
-
-
-  <div class="db-grid-content">
-    <!-- Active Assignments Glance -->
-    <div class="db-card">
-      <h3 class="db-card-title">🕒 Current Assignments</h3>
-      <div *ngIf="(assignments$ | async) as assignments">
-        <div *ngIf="assignments.length === 0" class="db-empty">
-          You have no active assignments. 
-          <a routerLink="/volunteer/opportunities" class="db-link">Accept new tasks →</a>
+  <div class="row g-4">
+    <!-- NGO Assignments & Recommended -->
+    <div class="col-lg-8">
+      <!-- NGO Project Assignments Summary -->
+      <div class="premium-card mb-4 overflow-hidden shadow-md" *ngIf="(acceptedNGOProjects$ | async) as assignments" [class.d-none]="assignments.length === 0">
+        <div class="card-header bg-transparent border-0 p-4 pb-0">
+          <h5 class="fw-bold mb-1 gradient-text"><i class="bi bi-lightning-charge-fill me-2"></i>Active NGO Projects</h5>
+          <p class="text-muted extra-small">Priority coordination required for these projects</p>
         </div>
-        
-        <div *ngFor="let req of assignments" class="db-list-item">
-          <div class="db-list-icon">{{ getCategoryIcon(req.wasteCategory) }}</div>
-          <div class="db-list-info">
-            <div class="db-list-title">{{ req.wasteCategory }} — {{ req.citizenName }}</div>
-            <div class="db-list-meta">📍 {{ req.location }}</div>
-          </div>
-          <span class="db-status-chip" 
-                [class.pending]="req.status === 'Pending'"
-                [class.scheduled]="req.status === 'Scheduled'"
-                [class.inprogress]="req.status === 'In Progress'">{{ req.status }}</span>
-        </div>
-      </div>
-      <div class="db-footer-link" *ngIf="(assignments$ | async)?.length">
-        <a routerLink="/volunteer/my-pickups">Manage all assignments →</a>
-      </div>
-    </div>
-
-    <!-- Impact/Efficiency Summary -->
-    <div class="db-card impact-card">
-      <h3 class="db-card-title">📉 Recycling Contribution</h3>
-      <div class="db-impact-stat">
-        <div class="db-impact-value">{{ (totalWeight$ | async) || 0 }} kg</div>
-        <div class="db-impact-label">Total Waste Collected</div>
-      </div>
-      <div class="db-impact-bar">
-        <div class="db-impact-fill" [style.width.%]="85"></div>
-      </div>
-    </div>
-
-    <!-- Available Real Opportunities -->
-    <div class="db-card">
-      <h3 class="db-card-title">🌍 Available Real Opportunities</h3>
-      <div *ngIf="(availableNGOProjects$ | async) as projects">
-        <div *ngIf="projects.length === 0" class="db-empty">
-          No new NGO projects at the moment.
-        </div>
-        <div *ngFor="let project of projects | slice:0:3" class="db-list-item">
-          <div class="db-list-icon">🌱</div>
-          <div class="db-list-info">
-            <div class="db-list-title">{{ project.title }}</div>
-            <div class="db-list-meta">
-              <span>📍 {{ project.location }}</span>
-              <span class="db-applicant-tag ms-2" *ngIf="project.applicantCount! > 0">
-                👥 {{ project.applicantCount }} Applicants: {{ project.applicantNames?.join(', ') }}
-              </span>
-              <span class="db-applicant-tag ms-2 text-muted" *ngIf="project.applicantCount === 0">
-                No applicants yet
-              </span>
+        <div class="card-body p-4">
+          <div class="glass border rounded-4 p-3 mb-3 d-flex align-items-center justify-content-between transition-all hover-translate" *ngFor="let app of assignments">
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;">
+                <i class="bi bi-building"></i>
+              </div>
+              <div>
+                <div class="fw-bold small">{{ app.opportunity_id?.title || 'Active Project' }}</div>
+                <div class="extra-small text-muted"><i class="bi bi-geo-alt me-1"></i>{{ app.opportunity_id?.location || 'Assigned' }}</div>
+              </div>
             </div>
-
+            <div class="d-flex align-items-center gap-2">
+              <button [routerLink]="['/chat', app.opportunity_id?.ngo_id?._id || app.opportunity_id?.ngo_id || 'org', app.opportunity_id?.title || 'Organization']" 
+                      [queryParams]="{ opportunityId: app.opportunity_id?._id || app.opportunity_id?.id || app.opportunity_id }"
+                      class="btn btn-sm btn-light glass border rounded-circle shadow-sm" title="Chat">
+                <i class="bi bi-chat-dots-fill text-primary"></i>
+              </button>
+              <button (click)="completeProject(app)" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold shadow-sm">
+                Mark Done
+              </button>
+            </div>
           </div>
-          <a routerLink="/volunteer/opportunities" class="db-btn-sm">View</a>
         </div>
-
       </div>
-      <div class="db-footer-link" *ngIf="(availableNGOProjects$ | async)?.length">
-        <a routerLink="/volunteer/opportunities">See all opportunities →</a>
+
+      <!-- Recommended Projects (Matches) -->
+      <div class="premium-card mb-4 overflow-hidden">
+        <div class="card-header bg-transparent border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="fw-bold mb-1 gradient-text"><i class="bi bi-bullseye me-2"></i>Intelligent Matches</h5>
+            <p class="text-muted extra-small">Based on your location ({{ currentUser?.location || 'Unset' }}) and profile</p>
+          </div>
+          <button routerLink="/volunteer/opportunities" class="btn btn-sm btn-light glass border rounded-pill px-3 extra-small fw-bold">Explore All</button>
+        </div>
+        <div class="card-body p-4">
+          <div *ngIf="(availableNGOProjects$ | async) as projects">
+            <div *ngIf="projects.length === 0" class="text-center py-5 glass rounded-4 border-dashed">
+              <i class="bi bi-search fs-1 opacity-25 mb-2 d-block"></i>
+              <p class="text-muted small">Searching for projects matching your skill set...</p>
+            </div>
+            
+            <div class="row g-3">
+              <div *ngFor="let project of projects | slice:0:4" class="col-md-6">
+                <div class="glass border rounded-4 p-3 h-100 transition-all hover-glow overflow-hidden position-relative">
+                  <div class="position-absolute top-0 end-0 p-2" *ngIf="project.totalScore">
+                    <span class="badge bg-warning bg-opacity-25 text-warning extra-small border border-warning border-opacity-25 rounded-pill">
+                      Match Focus: {{ project.totalScore >= 15 ? 'High' : 'Targeted' }}
+                    </span>
+                  </div>
+                  
+                  <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-info bg-opacity-10 text-info rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;">
+                      {{ getCategoryIcon(project.wasteType) }}
+                    </div>
+                    <div class="min-width-0">
+                      <h6 class="fw-bold mb-0 text-truncate small">{{ project.title }}</h6>
+                      <div class="extra-small text-muted"><i class="bi bi-geo-alt me-1"></i>{{ project.location }}</div>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-auto pt-2 border-top">
+                    <button class="btn btn-sm w-100 rounded-pill transition-all fw-bold py-2 shadow-sm"
+                        [class.btn-primary]="!hasApplied(project._id || project.id)"
+                        [class.btn-light]="hasApplied(project._id || project.id)"
+                        [class.glass]="hasApplied(project._id || project.id)"
+                        [class.border]="hasApplied(project._id || project.id)"
+                        [disabled]="hasApplied(project._id || project.id)"
+                        (click)="applyForProject(project)">
+                      <i class="bi me-2" 
+                         [class.bi-plus-circle]="!hasApplied(project._id || project.id)"
+                         [class.bi-hourglass-split]="getApplicationStatus(project._id || project.id) === 'pending'"
+                         [class.bi-check-circle-fill]="getApplicationStatus(project._id || project.id) === 'accepted'"></i>
+                      {{ !hasApplied(project._id || project.id) ? 'Apply Now' : 
+                         getApplicationStatus(project._id || project.id) === 'pending' ? 'Reviewing' :
+                         getApplicationStatus(project._id || project.id) === 'accepted' ? 'Assigned' : 'Rejected' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Citizen Pickups & Messaging -->
+    <div class="col-lg-4">
+      <!-- Active Citizen Pickups -->
+      <div class="premium-card mb-4">
+        <div class="card-header bg-transparent border-0 p-4 pb-0">
+          <h5 class="fw-bold mb-1 gradient-text"><i class="bi bi-person-heart me-2"></i>Citizen Pickups</h5>
+          <p class="text-muted extra-small">Accepted collection requests</p>
+        </div>
+        <div class="card-body p-4 pt-2">
+          <div *ngIf="(assignments$ | async) as assignments">
+            <div *ngIf="assignments.length === 0" class="text-center py-4 glass rounded-4 border-dashed mb-3">
+              <p class="text-muted extra-small mb-0">No active pickup routes</p>
+            </div>
+            
+            <div *ngFor="let req of assignments" class="glass border rounded-4 p-3 mb-3 shadow-sm border-start border-4"
+                 [class.border-success]="req.status === 'Completed'"
+                 [class.border-warning]="req.status === 'In Progress'"
+                 [class.border-primary]="req.status === 'Scheduled'">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="extra-small fw-bold text-uppercase ls-wide text-primary">{{ req.status }}</span>
+                <span class="extra-small text-muted">{{ req.createdAt | date:'shortTime' }}</span>
+              </div>
+              <div class="fw-bold small mb-1">{{ req.citizenName }}</div>
+              <div class="extra-small text-muted mb-3"><i class="bi bi-geo-alt me-1"></i>{{ req.location }}</div>
+              
+              <div class="d-flex gap-2">
+                <button [routerLink]="['/chat', req.citizenId, req.citizenName]" class="btn btn-sm btn-light glass border rounded-pill flex-grow-1 extra-small fw-bold">
+                  <i class="bi bi-chat-text text-primary me-2"></i>Coordinate
+                </button>
+                <button *ngIf="req.status === 'Scheduled'" (click)="startPickup(req)" 
+                        class="btn btn-sm btn-primary rounded-pill flex-grow-1 extra-small fw-bold shadow-sm">
+                  Start Route
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Support/Messaging -->
+      <div class="premium-card mb-4 h-auto">
+        <div class="card-header bg-transparent border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0 small">Live Support</h5>
+          <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-10 rounded-pill py-1 px-2 extra-small">Live</span>
+        </div>
+        <div class="card-body p-4 pt-3">
+          <div *ngIf="(recentConversations$ | async) as convs">
+            <div *ngIf="convs.length === 0" class="text-center py-3 opacity-50">
+              <p class="extra-small mb-0">No active support threads</p>
+            </div>
+            <div *ngFor="let convo of convs" class="d-flex align-items-center gap-2 mb-3 cursor-pointer hover-translate transition-all" [routerLink]="['/chat', convo.partnerId, convo.partnerName]">
+              <div class="avatar-extra-small bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm cyber-avatar-xs" style="flex-shrink: 0;">
+                {{ convo.partnerName.charAt(0).toUpperCase() }}
+              </div>
+              <div class="min-width-0 flex-grow-1">
+                <div class="d-flex justify-content-between">
+                  <div class="fw-bold extra-small text-truncate">{{ convo.partnerName }}</div>
+                  <span class="extra-small opacity-50">{{ convo.lastMessageTime | date:'shortTime' }}</span>
+                </div>
+                <div class="extra-small text-muted text-truncate">{{ convo.lastMessage }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
 </div>
+

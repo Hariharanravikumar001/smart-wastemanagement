@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService, User } from '../../../services/auth.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -27,26 +29,44 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: any
   ) {}
 
   ngOnInit() {
+    // Load cached user synchronously for immediate display
+    const cached = this.authService.currentUserValue;
+    if (cached) {
+      this.currentUser = cached;
+      this.editUser = { ...cached };
+    }
+
+    // Subscribe to future updates (e.g. after profile image upload)
     this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
       if (user) {
-        this.editUser = { ...user };
+        this.currentUser = user;
+        if (!this.isEditMode) {
+          this.editUser = { ...user };
+        }
       }
     });
+
+    // Refresh in background after subscribing
+    this.authService.refreshCurrentUser();
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.editUser.profileImage = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+      this.authService.uploadProfileImage(file).subscribe({
+        next: (response) => {
+          this.profileSuccess = 'Profile image updated successfully';
+          setTimeout(() => this.profileSuccess = '', 3000);
+        },
+        error: (err) => {
+          this.profileError = err.error?.message || 'Failed to upload image';
+        }
+      });
     }
   }
 
@@ -70,7 +90,9 @@ export class ProfileComponent implements OnInit {
         setTimeout(() => {
           this.profileSuccess = '';
           this.router.navigate(['/citizen/profile']).then(() => {
-            window.scrollTo(0, 0);
+            if (isPlatformBrowser(this.platformId)) {
+               window.scrollTo(0, 0);
+            }
           });
         }, 1500); // Short delay so they see the success message
       },
@@ -107,16 +129,27 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteAccount() {
-    if (confirm('Are you SURE you want to delete your account? This action is permanent and all your data (pickup requests, messages) will be removed forever.')) {
-      this.authService.deleteAccount().subscribe({
-        next: () => {
-          alert('Your account has been successfully deleted.');
-          this.router.navigate(['/login']);
-        },
-        error: (err) => {
-          this.profileError = err.error?.message || 'Failed to delete account. Please try again later.';
-        }
-      });
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Are you SURE you want to delete your account? This action is permanent and all your data (pickup requests, messages) will be removed forever.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#10b981',
+      cancelButtonColor: '#ef4444',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.deleteAccount().subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'Your account has been successfully deleted.', 'success');
+            this.router.navigate(['/login']);
+          },
+          error: (err) => {
+            this.profileError = err.error?.message || 'Failed to delete account. Please try again later.';
+            Swal.fire('Error!', this.profileError, 'error');
+          }
+        });
+      }
+    });
   }
 }

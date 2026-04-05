@@ -9,4 +9,8 @@ export interface Message {
   timestamp: Date;
   isAdmin?: boolean;
   isRead?: boolean;
+  isDelivered?: boolean;
+  isDeletedForEveryone?: boolean;
+  deletedFor?: string[];
+  opportunityId?: string;
 }

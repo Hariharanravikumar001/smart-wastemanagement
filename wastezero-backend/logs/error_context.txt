@@ -1,0 +1,13 @@
+﻿
+  dev_log.txt:43:src/co
+ntrollers/message
+  dev_log.txt:44:Contro
+ller.ts(240,20): 
+> dev_log.txt:45:error 
+TS2345: Argument 
+  dev_log.txt:46:of 
+type 'string | 
+  dev_log.txt:47:string
+[]' is not 
+
+

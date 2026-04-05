@@ -2,13 +2,29 @@
   <h1 class="db-page-title">🛰️ Available Pickup Opportunities</h1>
   <p class="db-page-sub">Browse and accept waste collection requests from citizens in your area</p>
 
-  <div class="db-tabs mb-4">
-    <button class="db-tab-btn" [class.active]="activeTab === 'pickups'" (click)="setTab('pickups')">
-      📦 Pickup Requests
-    </button>
-    <button class="db-tab-btn" [class.active]="activeTab === 'projects'" (click)="setTab('projects')">
-      🌱 NGO Projects
-    </button>
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    <div class="db-tabs">
+      <button class="db-tab-btn" [class.active]="activeTab === 'pickups'" (click)="setTab('pickups')">
+        📦 Pickup Requests
+      </button>
+      <button class="db-tab-btn" [class.active]="activeTab === 'projects'" (click)="setTab('projects')">
+        🌱 NGO Projects
+      </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="db-search-wrap w-100 w-md-auto">
+      <div class="input-group">
+        <span class="input-group-text bg-dark border-light border-opacity-10 text-muted">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" 
+          class="form-control bg-dark border-light border-opacity-10 text-white" 
+          placeholder="Search location or title..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()">
+      </div>
+    </div>
   </div>
 
   <div class="db-card-grid">
@@ -24,7 +40,7 @@
           <div *ngFor="let opp of opportunities" class="db-card db-opp-card">
             <div class="db-opp-header">
               <div class="db-opp-icon">{{ getCategoryIcon(opp.wasteCategory) || '📦' }}</div>
-              <div class="db-opp-type">{{ opp.wasteCategory }}</div>
+              <div class="db-opp-type">{{ formatCategories(opp.wasteCategory) }}</div>
               <span class="db-status-chip pending">New</span>
             </div>
 
@@ -46,39 +62,43 @@
       </div>
     </div>
 
-    <!-- NGO Projects Tab -->
+    <!-- Premium NGO Projects Tab -->
     <div *ngIf="activeTab === 'projects'">
       <div *ngIf="(ngoOpportunities$ | async) as projects">
         <div *ngIf="projects.length === 0" class="db-empty">
-          <div class="db-empty-icon">🌱</div>
-          <p>No NGO projects available for application right now.</p>
+          <div class="db-empty-icon">🌍</div>
+          <p>No NGO projects available for application right now. Check back soon!</p>
         </div>
 
-        <div class="db-opportunity-grid">
-          <div *ngFor="let project of projects" class="db-card db-opp-card ngo-project">
-            <div class="db-opp-header">
-              <div class="db-opp-icon">🏢</div>
-              <div class="db-opp-type">NGO Project</div>
-              <span class="db-status-chip active">Open</span>
+        <div class="ngo-project-premium-grid">
+          <div *ngFor="let project of projects" class="ngo-card-v2">
+            <div class="ngo-card-v2-icon">🏢</div>
+            <h3 class="ngo-card-v2-title">{{ project.title }}</h3>
+            <p class="ngo-card-v2-desc">{{ project.description }}</p>
+            
+            <div class="ngo-card-v2-meta">
+              <span>📍 {{ project.location }}</span>
+              <span>⏱️ {{ project.duration }}</span>
+              <span *ngIf="project.applicantCount! > 0">👥 {{ project.applicantCount }} Applicants</span>
             </div>
 
-            <div class="db-opp-body">
-              <h3 class="db-opp-citizen">{{ project.title }}</h3>
-              <p class="db-opp-desc">{{ project.description }}</p>
-              <div class="db-opp-meta">
-                <span class="db-meta-item">📍 {{ project.location }}</span>
-                <span class="db-meta-item">⏱️ {{ project.duration }}</span>
-              </div>
-              <div class="db-skills-wrap mt-2">
-                <span *ngFor="let skill of project.skills" class="badge bg-light text-dark me-1">{{ skill }}</span>
-              </div>
+            <div class="db-skills-wrap mb-4">
+              <span *ngFor="let skill of project.skills" class="badge bg-light text-dark opacity-75">{{ skill }}</span>
             </div>
 
-            <div class="ngo-project-footer">
-            <button class="db-btn-apply" 
-                    [disabled]="hasApplied(project._id || project.id)"
-                    (click)="applyForProject(project)">
-              {{ hasApplied(project._id || project.id) ? 'Applied' : 'Apply for Project' }}
+            <button class="ngo-btn-v2"
+                [class.primary]="!hasApplied(project._id || project.id)"
+                [class.pending]="hasApplied(project._id || project.id) && getApplicationStatus(project._id || project.id) === 'pending'"
+                [class.accepted]="hasApplied(project._id || project.id) && getApplicationStatus(project._id || project.id) === 'accepted'"
+                [disabled]="hasApplied(project._id || project.id)"
+                (click)="applyForProject(project)">
+              <i class="bi" 
+                 [class.bi-plus-circle]="!hasApplied(project._id || project.id)"
+                 [class.bi-hourglass-split]="hasApplied(project._id || project.id) && getApplicationStatus(project._id || project.id) === 'pending'"
+                 [class.bi-check-circle-fill]="hasApplied(project._id || project.id) && getApplicationStatus(project._id || project.id) === 'accepted'"></i>
+              {{ !hasApplied(project._id || project.id) ? 'Apply for Project' : 
+                 getApplicationStatus(project._id || project.id) === 'pending' ? 'Pending Approval' :
+                 getApplicationStatus(project._id || project.id) === 'accepted' ? 'Assigned' : 'Rejected' }}
             </button>
           </div>
         </div>

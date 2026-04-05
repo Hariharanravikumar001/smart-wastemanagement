@@ -1,1 +1,368 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  /* Premium HSL Color Palette - Emerald Theme */
+  --primary-h: 161;
+  --primary-s: 84%;
+  --primary-l: 39%;
+  
+  --primary: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+  --primary-light: hsl(var(--primary-h), var(--primary-s), 95%);
+  --primary-dark: hsl(var(--primary-h), var(--primary-s), 30%);
+  
+  --accent: #3b82f6;
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: rgba(226, 232, 240, 0.8);
+  
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 2rem;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+/* Dark Mode Overrides */
+body.dark-mode, .admin-dark-mode {
+  --bg-main: #0f172a;               /* Requested color */
+  --bg-card: #1e293b;               /* Harmonized card background */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: rgba(51, 65, 85, 0.5);
+  --glass-bg: rgba(15, 23, 42, 0.85); /* Based on requested color */
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --profile-text: #e2e8f0;
+  --profile-text-muted: #64748b;
+}
+
+body.dark-mode .text-dark, .admin-dark-mode .text-dark {
+  color: var(--text-main) !important;
+}
+
+body.dark-mode .text-muted, .admin-dark-mode .text-muted {
+  color: var(--text-muted) !important;
+}
+
+body.dark-mode .bg-light, .admin-dark-mode .bg-light {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-main);
+}
+
+body.dark-mode .btn-light, .admin-dark-mode .btn-light {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--text-main) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-mode .btn-light:hover, .admin-dark-mode .btn-light:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .bg-white, .admin-dark-mode .bg-white {
+  background-color: var(--bg-card) !important;
+}
+
+/* Profile dark mode — targeting hardcoded backgrounds */
+body.dark-mode .profile-value-box, .admin-dark-mode .profile-value-box {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
+}
+
+body.dark-mode .profile-input, .admin-dark-mode .profile-input {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-mode .profile-input:focus, .admin-dark-mode .profile-input:focus {
+  background: #020617 !important;
+  border-color: #10b981 !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-mode .profile-input::placeholder, .admin-dark-mode .profile-input::placeholder {
+  color: rgba(241, 245, 249, 0.3) !important;
+}
+
+body.dark-mode .profile-card, .admin-dark-mode .profile-card {
+  background: var(--bg-card) !important;
+  border-color: var(--border) !important;
+  color: var(--text-main) !important;
+}
+
+body.dark-mode .form-select, .admin-dark-mode .form-select {
+  background-color: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-mode .form-select option, .admin-dark-mode .form-select option {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-mode .dropdown-menu, .admin-dark-mode .dropdown-menu {
+  background-color: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+body.dark-mode .dropdown-item, .admin-dark-mode .dropdown-item {
+  color: #e2e8f0 !important;
+}
+
+body.dark-mode .dropdown-item:hover, .admin-dark-mode .dropdown-item:hover {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+}
+
+/* Base resets & typography */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Premium Utilities */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.premium-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+
+.profile-premium-wrapper {
+  background-color: var(--bg-main);
+  min-height: 100%;
+}
+
+.profile-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.profile-avatar-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: white;
+  margin: 0 auto 1.5rem;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 8px 16px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.2);
+}
+
+.profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cyber-avatar-xs {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+}
+
+.cyber-brand-icon {
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+}
+
+.profile-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--profile-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.profile-value-box {
+  background: #f1f5f9;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  color: var(--profile-text);
+  margin-bottom: 1.25rem;
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #f8fafb;
+  transition: all 0.2s ease;
+}
+
+.profile-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-light);
+  background: var(--bg-card);
+}
+
+.profile-btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.2);
+}
+
+.profile-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.3);
+  filter: brightness(1.1);
+}
+
+.profile-btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.profile-btn-secondary:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.avatar-edit-badge {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 32px;
+  height: 32px;
+  background: var(--primary);
+  color: white;
+  border: 3px solid var(--bg-card);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+/* --- Emergency Responsiveness Fix --- */
+@media (max-width: 992px) {
+  .db-grid-inputs, .db-category-grid, .db-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .db-card, .db-schedule-card {
+    padding: 1rem !important;
+    margin: 0.5rem 0 !important;
+  }
+  .db-page-title {
+    font-size: 1.5rem !important;
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+@media (max-width: 576px) {
+  .db-body {
+    padding: 0.5rem !important;
+  }
+  .db-action-btn {
+    width: 100% !important;
+    margin: 0.25rem 0 !important;
+  }
+  .db-sidebar {
+    width: 0 !important;
+    overflow: hidden;
+  }
+  .db-main-content {
+    margin-left: 0 !important;
+  }
+  .db-page-title {
+    font-size: 1.25rem !important;
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* Global text wrapping for titles */
+.db-page-title, .db-page-sub {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Base Dashboard Resets */
+.db-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.db-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}

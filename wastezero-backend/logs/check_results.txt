@@ -1,0 +1,4 @@
+﻿[dotenv@17.3.1] injecting env (7) from .env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+--- CHECKING USERS ---
+
+--- CHECKING OPPORTUNITIES ---

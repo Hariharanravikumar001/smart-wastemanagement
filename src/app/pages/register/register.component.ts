@@ -18,7 +18,7 @@ export class RegisterComponent {
   password = '';
   confirmPassword = '';
   location = '';
-  role: 'User' | 'Volunteer' | 'Admin' | 'Citizen' | '' = '';
+  role: 'User' | 'Volunteer' | 'Admin' | 'Citizen' | 'NGO' | '' = '';
   passwordMismatch = false;
 
   errorMessage = '';
@@ -50,7 +50,7 @@ export class RegisterComponent {
         },
         error: (err) => {
            console.error('Registration error', err);
-           this.errorMessage = err.error?.message || 'Error occurred during registration';
+           this.errorMessage = err.error?.message || err.message || 'Error occurred during registration';
         }
       });
     } else {

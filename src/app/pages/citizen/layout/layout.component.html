@@ -4,13 +4,27 @@
     <div class="d-flex align-items-center w-100 justify-content-between">
       <div class="d-flex align-items-center">
         <div class="db-brand">
-          <div class="db-brand-icon-wrap" style="width: 30px; height: 30px; font-size: 14px;">♻️</div>
+          <div class="db-brand-icon-wrap cyber-brand-icon">♻️</div>
           <span class="db-brand-name" style="font-size: 16px;">WasteZero</span>
         </div>
       </div>
-      <div class="db-avatar shadow-sm" style="width: 32px; height: 32px; font-size: 12px;" *ngIf="currentUser as user" routerLink="/citizen/profile">
-        <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
-        <span *ngIf="!user.profileImage">{{ user.name.charAt(0) }}</span>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Mobile Notif Bell -->
+        <div class="position-relative cursor-pointer" (click)="toggleNotifDrawer()">
+          <span style="font-size: 18px;">🔔</span>
+          <span class="badge rounded-pill bg-danger border border-white position-absolute top-0 start-100 translate-middle" 
+                style="font-size: 9px; padding: 2px 4px;"
+                *ngIf="(unreadNotifications$ | async) as count">
+            {{ count }}
+          </span>
+        </div>
+        <div class="position-relative cursor-pointer me-2" (click)="toggleTheme()" style="font-size: 18px;">
+          {{ (isDarkMode$ | async) ? '☀️' : '🌙' }}
+        </div>
+        <div class="db-avatar shadow-sm cyber-avatar-xs" *ngIf="currentUser as user" routerLink="/citizen/profile">
+          <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
+          <span *ngIf="!user.profileImage">{{ user.name.charAt(0) }}</span>
+        </div>
       </div>
     </div>
   </nav>
@@ -58,6 +72,14 @@
       <button class="db-toggle-btn" (click)="toggleSidebar()">
         {{ sidebarCollapsed ? '→' : '←' }}
       </button>
+
+      <!-- Desktop Notif Bell -->
+      <div class="db-notif-bell-wrap" *ngIf="!sidebarCollapsed" (click)="toggleNotifDrawer()">
+        <span class="db-notif-icon">🔔</span>
+        <span class="db-badge" *ngIf="(unreadNotifications$ | async) as count" [class.d-none]="count === 0">
+          {{ count }}
+        </span>
+      </div>
     </div>
 
     <!-- User Profile Summary in Sidebar -->
@@ -141,4 +163,32 @@
   <main class="db-content">
     <router-outlet></router-outlet>
   </main>
+
+  <!-- NOTIFICATION DRAWER -->
+  <div class="db-notif-overlay" *ngIf="showNotifDrawer" (click)="toggleNotifDrawer()"></div>
+  <div class="db-notif-drawer" [class.open]="showNotifDrawer">
+    <div class="db-notif-header">
+      <h3>Notifications</h3>
+      <button class="db-notif-close" (click)="toggleNotifDrawer()">✕</button>
+    </div>
+    
+    <div class="db-notif-list">
+      <div *ngIf="((notifications$ | async) || []).length === 0" class="db-notif-empty">
+        <div class="db-notif-empty-icon">🔔</div>
+        <p>No new notifications</p>
+      </div>
+      
+      <div *ngFor="let n of (notifications$ | async)" 
+           class="db-notif-item" 
+           [class.unread]="!n.read"
+           (click)="markNotifAsRead(n.id)">
+        <div class="db-notif-dot" [class]="n.type"></div>
+        <div class="db-notif-content">
+          <div class="db-notif-title">{{ n.title }}</div>
+          <div class="db-notif-msg">{{ n.message }}</div>
+          <div class="db-notif-time">{{ n.timestamp | date:'short' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -4,7 +4,7 @@ import Opportunity from '../models/Opportunity';
 
 export const verifyOwnership = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const opportunityId = req.params.id || req.body.opportunity_id;
+        const opportunityId = req.params['id'] || req.body.opportunity_id;
 
         if (!opportunityId) {
             res.status(400).json({ message: 'Opportunity ID is required' });
@@ -18,16 +18,21 @@ export const verifyOwnership = async (req: AuthRequest, res: Response, next: Nex
             return;
         }
 
+        const creatorId = opportunity.ngo_id ? opportunity.ngo_id.toString() : '';
+
         console.log('Final Ownership Decision:', {
-            oppCreator: opportunity.ngo_id.toString(),
-            userId: req.user.id,
-            userRole: req.user.role,
-            isCreator: opportunity.ngo_id.toString() === req.user.id,
-            isAdmin: req.user.role?.toLowerCase() === 'admin'
+            oppCreator: creatorId,
+            userId: req.user!.id,
+            userRole: req.user!.role,
+            isCreator: creatorId === req.user!.id,
+            isAdmin: req.user!.role?.toLowerCase() === 'admin'
         });
 
-        if (opportunity.ngo_id.toString() !== req.user.id && req.user.role?.toLowerCase() !== 'admin') {
-            const msg = `Access denied: You are not the creator and your role is ${req.user.role}. (User ID: ${req.user.id}, Creator ID: ${opportunity.ngo_id})`;
+        const isAdmin = req.user!.role?.toLowerCase() === 'admin';
+        const isCreator = creatorId === req.user!.id;
+
+        if (!isCreator && !isAdmin) {
+            const msg = `Access denied: You are not the creator. (User ID: ${req.user!.id}, Creator ID: ${creatorId})`;
             console.log(msg);
             res.status(403).json({ message: msg });
             return;

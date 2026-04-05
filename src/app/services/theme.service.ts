@@ -1,4 +1,5 @@
-import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { Injectable, Renderer2, RendererFactory2, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -9,15 +10,20 @@ export class ThemeService {
   private isDarkModeSubject = new BehaviorSubject<boolean>(false);
   isDarkMode$ = this.isDarkModeSubject.asObservable();
 
-  constructor(rendererFactory: RendererFactory2) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: any,
+    rendererFactory: RendererFactory2
+  ) {
     this.renderer = rendererFactory.createRenderer(null, null);
-    this.loadTheme();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadTheme();
+    }
   }
 
   private loadTheme() {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       const savedTheme = localStorage.getItem('wastezero_theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const prefersDark = typeof window !== 'undefined' ? window.matchMedia('(prefers-color-scheme: dark)').matches : false;
       
       const darkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
       this.setTheme(darkMode);
@@ -30,14 +36,16 @@ export class ThemeService {
 
   private setTheme(isDark: boolean) {
     this.isDarkModeSubject.next(isDark);
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('wastezero_theme', isDark ? 'dark' : 'light');
     }
 
-    if (isDark) {
-      this.renderer.addClass(document.body, 'dark-mode');
-    } else {
-      this.renderer.removeClass(document.body, 'dark-mode');
+    if (isPlatformBrowser(this.platformId)) {
+      if (isDark) {
+        this.renderer.addClass(document.body, 'dark-mode');
+      } else {
+        this.renderer.removeClass(document.body, 'dark-mode');
+      }
     }
   }
 }

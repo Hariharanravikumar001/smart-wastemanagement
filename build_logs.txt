@@ -1,0 +1,285 @@
+
+> smartwaste@0.0.0 build
+> ng build
+
+- Building...
+
+ERROR st {
+  headers: e {
+    normalizedNames: Map(8) {
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyUpdate: null,
+    headers: Map(8) {
+      'access-control-allow-origin' => [Array],
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'x-powered-by' => [Array]
+    }
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:5000/api/opportunities',
+  ok: false,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:5000/api/opportunities: 401 Unauthorized',
+  error: { message: 'No token, authorization denied' }
+}
+ERROR st {
+  headers: e {
+    normalizedNames: Map(8) {
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyUpdate: null,
+    headers: Map(8) {
+      'access-control-allow-origin' => [Array],
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'x-powered-by' => [Array]
+    }
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:5000/api/opportunities',
+  ok: false,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:5000/api/opportunities: 401 Unauthorized',
+  error: { message: 'No token, authorization denied' }
+}
+ERROR ReferenceError: localStorage is not defined
+    at s.getHeaders (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-FWBEMGLV.mjs:13:51091)
+    at s.getConversations (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-FWBEMGLV.mjs:13:51976)
+    at e.loadConversations (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-LZH65ELZ.mjs:4:87833)
+    at e.ngOnInit (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-LZH65ELZ.mjs:4:87776)
+    at Ou (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-TK5272RJ.mjs:8:20070)
+    at rm (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-TK5272RJ.mjs:8:20216)
+    at nd (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-TK5272RJ.mjs:8:19977)
+    at Wr (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-TK5272RJ.mjs:8:19705)
+    at Ky (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-TK5272RJ.mjs:8:50612)
+    at Ss (file:///E:/project/b/smart-wastemanagement/.angular/prerender-root/4009f63b-f84f-4caa-82a4-491e557b5963/chunk-TK5272RJ.mjs:8:51666)
+Failed to load opportunities: st {
+  headers: e {
+    normalizedNames: Map(8) {
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'connection' => 'connection',
+      'content-length' => 'content-length',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'etag' => 'etag',
+      'keep-alive' => 'keep-alive',
+      'x-powered-by' => 'x-powered-by'
+    },
+    lazyUpdate: null,
+    headers: Map(8) {
+      'access-control-allow-origin' => [Array],
+      'connection' => [Array],
+      'content-length' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'etag' => [Array],
+      'keep-alive' => [Array],
+      'x-powered-by' => [Array]
+    }
+  },
+  status: 401,
+  statusText: 'Unauthorized',
+  url: 'http://localhost:5000/api/opportunities',
+  ok: false,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for http://localhost:5000/api/opportunities: 401 Unauthorized',
+  error: { message: 'No token, authorization denied' }
+}
+Browser bundles        
+Initial chunk files     | Names                    |  Raw size | Estimated transfer size
+styles-6F4LKW65.css     | styles                   | 310.92 kB |                32.86 kB
+chunk-TSUMXK2K.js       | -                        | 278.51 kB |                74.74 kB
+chunk-T2OPFYFZ.js       | -                        | 212.92 kB |                60.65 kB
+main-TRV4EJFO.js        | main                     | 202.24 kB |                37.86 kB
+chunk-RF5RT4XY.js       | -                        |  86.75 kB |                21.67 kB
+scripts-SQ7W6IC7.js     | scripts                  |  78.53 kB |                21.12 kB
+chunk-55AHNA6W.js       | -                        |  47.04 kB |                13.11 kB
+chunk-MOBMATC4.js       | -                        |  35.17 kB |                 7.15 kB
+polyfills-FFHMD2TL.js   | polyfills                |  33.71 kB |                11.02 kB
+chunk-7MDFY4YO.js       | -                        |   3.40 kB |               912 bytes
+chunk-BAQNW7R4.js       | -                        |   1.61 kB |               581 bytes
+chunk-ZFWSZS2T.js       | -                        | 879 bytes |               879 bytes
+
+                        | Initial total            |   1.26 MB |               282.49 kB
+
+Lazy chunk files        | Names                    |  Raw size | Estimated transfer size
+chunk-N2ZP56EC.js       | dashboard-component      |  20.94 kB |                 5.02 kB
+chunk-2EGIMBLT.js       | my-pickups-component     |  16.88 kB |                 3.86 kB
+chunk-I7BQLZKK.js       | layout-component         |  15.44 kB |                 3.70 kB
+chunk-UX7XEECX.js       | layout-component         |  15.02 kB |                 3.67 kB
+chunk-NHSBHUC4.js       | opportunities-component  |  14.46 kB |                 3.56 kB
+chunk-ZU7ITPT7.js       | dashboard-component      |  14.45 kB |                 3.56 kB
+chunk-JSQ7SHF5.js       | profile-component        |  13.17 kB |                 3.59 kB
+chunk-TXLUP6PL.js       | profile-component        |  11.90 kB |                 3.20 kB
+chunk-EXHLKOB7.js       | messages-component       |  11.03 kB |                 3.14 kB
+chunk-L7CYXMOB.js       | messages-component       |  10.96 kB |                 3.10 kB
+chunk-ALHSOFMF.js       | pickup-history-component |   9.39 kB |                 2.43 kB
+chunk-FH7LCRJP.js       | pickup-request-component |   8.54 kB |                 2.53 kB
+chunk-JHBCJE5S.js       | statistics-component     |   8.45 kB |                 2.49 kB
+chunk-JOROV6QU.js       | dashboard-component      | 269 bytes |               269 bytes
+
+
+Server bundles         
+Initial chunk files     | Names                    |  Raw size
+server.mjs              | server                   |   1.05 MB |                        
+chunk-GNX3PNUY.mjs      | -                        | 299.89 kB |                        
+chunk-LZH65ELZ.mjs      | -                        | 278.61 kB |                        
+polyfills.server.mjs    | polyfills.server         | 262.30 kB |                        
+chunk-TK5272RJ.mjs      | -                        | 215.17 kB |                        
+chunk-LE6SOJ4W.mjs      | -                        | 202.50 kB |                        
+chunk-FWBEMGLV.mjs      | -                        | 114.12 kB |                        
+chunk-VCQV676R.mjs      | -                        |  86.62 kB |                        
+chunk-IB5GFLPX.mjs      | -                        |  35.23 kB |                        
+chunk-TQGVATVL.mjs      | -                        |   4.60 kB |                        
+chunk-SOPOTJQM.mjs      | -                        |   3.50 kB |                        
+chunk-VVCT4QZE.mjs      | -                        |   2.48 kB |                        
+chunk-FZQCV3I2.mjs      | -                        |   1.64 kB |                        
+render-utils.server.mjs | render-utils.server      |   1.50 kB |                        
+chunk-NGPASCMA.mjs      | -                        | 913 bytes |                        
+main.server.mjs         | main.server              | 410 bytes |                        
+
+Lazy chunk files        | Names                    |  Raw size
+chunk-WD5PDPTK.mjs      | dashboard-component      |  21.04 kB |                        
+chunk-ZVG55L42.mjs      | my-pickups-component     |  16.97 kB |                        
+chunk-6CR2JZA7.mjs      | layout-component         |  15.53 kB |                        
+chunk-5CCONBFY.mjs      | layout-component         |  15.12 kB |                        
+chunk-KUAGIZ6N.mjs      | dashboard-component      |  14.55 kB |                        
+chunk-ADWYHZ42.mjs      | opportunities-component  |  14.55 kB |                        
+chunk-ZE6UPG5C.mjs      | profile-component        |  13.27 kB |                        
+chunk-H2UC3DTJ.mjs      | profile-component        |  11.99 kB |                        
+chunk-QZP2S7SI.mjs      | xhr2                     |  11.79 kB |                        
+chunk-2QCBOLR6.mjs      | messages-component       |  11.13 kB |                        
+chunk-MP2B2UPB.mjs      | messages-component       |  11.05 kB |                        
+chunk-GQZEUX6W.mjs      | pickup-history-component |   9.48 kB |                        
+chunk-V623XA2Y.mjs      | pickup-request-component |   8.64 kB |                        
+chunk-QBJONNJE.mjs      | statistics-component     |   8.54 kB |                        
+chunk-5MUHIDFK.mjs      | dashboard-component      | 368 bytes |                        
+
+Prerendered 28 static routes.
+Output location: E:\project\b\smart-wastemanagement\dist\smartwaste
+
+Application bundle generation complete. [45.508 seconds]
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/pages/admin/admin.component.html:755:77:
+      755 │ ...   [class.justify-content-end]="msg.senderId === currentUser?.id"
+          ╵                                                                  ~~
+
+  Error occurs in the template of component AdminComponent.
+
+    src/app/pages/admin/admin.component.ts:22:15:
+      22 │   templateUrl: './admin.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/pages/admin/admin.component.html:756:79:
+      756 │ ...[class.justify-content-start]="msg.senderId !== currentUser?.id">
+          ╵                                                                 ~~
+
+  Error occurs in the template of component AdminComponent.
+
+    src/app/pages/admin/admin.component.ts:22:15:
+      22 │   templateUrl: './admin.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/pages/admin/admin.component.html:759:70:
+      759 │ ...            [class.bg-primary]="msg.senderId === currentUser?.id"
+          ╵                                                                  ~~
+
+  Error occurs in the template of component AdminComponent.
+
+    src/app/pages/admin/admin.component.ts:22:15:
+      22 │   templateUrl: './admin.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/pages/admin/admin.component.html:760:70:
+      760 │ ...            [class.text-white]="msg.senderId === currentUser?.id"
+          ╵                                                                  ~~
+
+  Error occurs in the template of component AdminComponent.
+
+    src/app/pages/admin/admin.component.ts:22:15:
+      22 │   templateUrl: './admin.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/pages/admin/admin.component.html:761:68:
+      761 │ ...              [class.bg-white]="msg.senderId !== currentUser?.id"
+          ╵                                                                  ~~
+
+  Error occurs in the template of component AdminComponent.
+
+    src/app/pages/admin/admin.component.ts:22:15:
+      22 │   templateUrl: './admin.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/pages/admin/admin.component.html:762:69:
+      762 │ ...            [class.text-dark]="msg.senderId !== currentUser?.id">
+          ╵                                                                 ~~
+
+  Error occurs in the template of component AdminComponent.
+
+    src/app/pages/admin/admin.component.ts:22:15:
+      22 │   templateUrl: './admin.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+▲ [WARNING] bundle initial exceeded maximum budget. Budget 1.00 MB was not met by 267.65 kB with a total of 1.26 MB.
+
+
+▲ [WARNING] Module 'debug' used by 'node_modules/socket.io-client/build/esm-debug/index.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+
+▲ [WARNING] Module 'xmlhttprequest-ssl' used by 'node_modules/engine.io-client/build/esm-debug/transports/polling-xhr.node.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+
+▲ [WARNING] 1 rules skipped due to selector errors:
+  .form-floating>~label -> Did not expect successive traversals.
+
+

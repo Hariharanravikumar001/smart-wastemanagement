@@ -26,7 +26,7 @@ const WasteRequestSchema: Schema = new Schema({
   },
   scheduledDate: { type: Date },
   completedAt: { type: Date },
-  weight: { type: number },
+  weight: { type: Number },
   createdAt: { type: Date, default: Date.now }
 });
 

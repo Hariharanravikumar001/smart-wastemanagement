@@ -1,26 +1,37 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+import { Observable, catchError, throwError } from 'rxjs';
 import { Application } from '../models/application.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApplicationService {
-    private apiUrl = 'http://localhost:5000/api/applications';
+    private apiUrl = '/api/applications';
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        @Inject(PLATFORM_ID) private platformId: any,
+        private http: HttpClient
+    ) { }
 
     private getHeaders(): HttpHeaders {
         let token = '';
-        if (typeof localStorage !== 'undefined') {
+        if (isPlatformBrowser(this.platformId)) {
             token = localStorage.getItem('wastezero_token') || '';
         }
         return new HttpHeaders({ Authorization: `Bearer ${token}` });
     }
 
     applyForOpportunity(opportunity_id: string): Observable<Application> {
-        return this.http.post<Application>(this.apiUrl, { opportunity_id }, { headers: this.getHeaders() });
+        return this.http.post<Application>(this.apiUrl, { opportunity_id }, { headers: this.getHeaders() }).pipe(
+            catchError(err => {
+                if (err.status === 0) {
+                    console.error('Connection refuse: Please ensure your backend server is running on port 5000.');
+                }
+                return throwError(() => err);
+            })
+        );
     }
 
     getAdminApplications(): Observable<Application[]> {

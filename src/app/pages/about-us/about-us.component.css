@@ -1,4 +1,143 @@
-/* about-us.component.css */
-p {
+/* About Us Premium Styles */
+.about-hero {
+  position: relative;
+  padding: 120px 0;
+  background: linear-gradient(135deg, #1a2a1b 0%, #2e7d32 100%);
+  color: white;
+  overflow: hidden;
+}
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.about-hero .display-3 {
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.lead-text {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  max-width: 800px;
   line-height: 1.6;
 }
+
+.section-tag {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.premium-card {
+  border: none;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.premium-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.vision-card {
+  border-left: 5px solid #2e7d32;
+}
+
+.mission-card {
+  border-left: 5px solid #1a2a1b;
+}
+
+.team-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+  border: 4px solid #f8f9fa;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.team-member-card {
+  text-align: center;
+  padding: 30px;
+}
+
+.social-links a {
+  color: #adb5bd;
+  font-size: 1.2rem;
+  margin: 0 8px;
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: #2e7d32;
+}
+
+.stat-box {
+  padding: 40px;
+  border-radius: 20px;
+  background: white;
+  border: 1px solid #f1f1f1;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.stat-box:hover {
+  transform: scale(1.05);
+  border-color: #2e7d32;
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #2e7d32;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: #6c757d;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }

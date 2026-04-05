@@ -1,0 +1,47 @@
+﻿src/app/pages/volunteer/opportunities/opportunities.component.ts(19,3): error TS1146: Declaration expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(20,38): error TS1011: An element access expression should take an argument.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(23,3): error TS1128: Declaration or statement expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(24,3): error TS1128: Declaration or statement expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(27,13): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(27,24): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(28,13): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(28,25): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(29,13): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(29,28): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(30,13): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(30,31): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(31,5): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(33,14): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(118,17): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(122,19): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(122,40): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(122,42): error TS1434: Unexpected keyword or identifier.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(133,29): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(133,50): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(133,52): error TS1434: Unexpected keyword or identifier.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(145,23): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(145,39): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(156,26): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(156,40): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(157,9): error TS1003: Identifier expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(157,14): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(157,26): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(157,34): error TS1005: ':' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(158,9): error TS1005: ':' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(164,7): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(167,13): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(167,38): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(168,9): error TS1005: ':' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(168,25): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(171,13): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(172,9): error TS1005: ':' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(172,46): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(175,22): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(175,40): error TS1011: An element access expression should take an argument.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(175,42): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(175,44): error TS1434: Unexpected keyword or identifier.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(186,23): error TS1005: ',' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(186,41): error TS1011: An element access expression should take an argument.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(186,43): error TS1005: ';' expected.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(186,45): error TS1434: Unexpected keyword or identifier.
+src/app/pages/volunteer/opportunities/opportunities.component.ts(192,1): error TS1128: Declaration or statement expected.

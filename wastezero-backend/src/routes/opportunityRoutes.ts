@@ -5,7 +5,8 @@ import {
     deleteOpportunity,
     getOpportunities,
     getOpportunityById,
-    getMatchedOpportunities
+    getMatchedOpportunities,
+    completeOpportunity
 } from '../controllers/opportunityController';
 import { authProtect } from '../middleware/authMiddleware';
 import { requireRole } from '../middleware/roleMiddleware';
@@ -13,17 +14,18 @@ import { verifyOwnership } from '../middleware/ownershipMiddleware';
 
 const router = express.Router();
 
-// Publicly readable? Usually yes, but spec says "listing API must... All opportunity and application APIs must require JWT"
-router.use(authProtect);
-
+// Publicly readable routes
 // @route   GET /api/opportunities
-router.get('/', requireRole(['admin', 'volunteer', 'ngo']), getOpportunities);
+router.get('/', getOpportunities);
+
+// @route   GET /api/opportunities/:id
+router.get('/:id', getOpportunityById);
+
+// Protected routes below
+router.use(authProtect);
 
 // @route   GET /api/opportunities/matches
 router.get('/matches', requireRole(['volunteer']), getMatchedOpportunities);
-
-// @route   GET /api/opportunities/:id
-router.get('/:id', requireRole(['admin', 'volunteer', 'ngo']), getOpportunityById);
 
 // @route   POST /api/opportunities
 router.post('/', requireRole(['admin', 'ngo']), createOpportunity);
@@ -33,5 +35,8 @@ router.put('/:id', requireRole(['admin', 'ngo']), verifyOwnership, updateOpportu
 
 // @route   DELETE /api/opportunities/:id
 router.delete('/:id', requireRole(['admin', 'ngo']), verifyOwnership, deleteOpportunity);
+
+// @route   PATCH /api/opportunities/:id/complete
+router.patch('/:id/complete', requireRole(['admin', 'volunteer']), completeOpportunity);
 
 export default router;

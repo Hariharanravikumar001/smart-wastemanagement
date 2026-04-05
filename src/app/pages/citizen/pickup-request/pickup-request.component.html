@@ -5,20 +5,56 @@
   <div *ngIf="submitSuccess" class="db-alert success db-success-anim">
     ✅ Pickup request submitted successfully! Redirecting to dashboard...
   </div>
+  
+  <div *ngIf="errorMessage" class="db-alert danger">
+    ❌ {{ errorMessage }}
+  </div>
 
   <div class="db-card db-schedule-card">
     <h3 class="db-card-title">🗑️ New Pickup Details</h3>
+
+    <div class="db-form-group" style="margin-bottom: 1.5rem;">
+      <label class="db-form-label" style="display: flex; justify-content: space-between; align-items: center;">
+        <span><i class="bi bi-camera me-2"></i>AI Waste Classification (Optional)</span>
+        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill mb-1 border border-primary border-opacity-25" *ngIf="isAnalyzing" style="font-size: 0.75rem;"><i class="spinner-border spinner-border-sm me-2" style="width: 0.8rem; height: 0.8rem; vertical-align: middle;"></i>Analyzing...</span>
+      </label>
+      <div class="glass border rounded-4 p-4 text-center position-relative overflow-hidden transition-all" [class.border-primary]="isAnalyzing || hasAiPrediction()" style="background: rgba(255,255,255,0.02)">
+        <input type="file" id="aiImageUpload" class="d-none" accept="image/*" (change)="onImageSelected($event)" [disabled]="isAnalyzing" style="display: none;">
+        
+        <!-- Upload State -->
+        <label for="aiImageUpload" style="cursor: pointer; display: block;" *ngIf="!hasAiPrediction() && !isAnalyzing">
+          <i class="bi bi-cloud-arrow-up text-primary mb-2" style="font-size: 2.5rem; opacity: 0.6;"></i>
+          <p class="text-muted small mb-0 fw-bold" style="color: var(--text-color);">Tap to upload a photo</p>
+          <p class="text-muted opacity-75" style="font-size: 0.75rem;">Our AI model will automatically classify your waste.</p>
+        </label>
+        
+        <!-- Prediction State -->
+        <div *ngIf="hasAiPrediction() && !isAnalyzing" style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+          <div class="rounded-3 shadow-sm" style="width: 70px; height: 70px; border: 2px solid var(--primary-color); overflow: hidden; background: #000;">
+            <img [src]="$any(newRequest).imageUrl" style="width: 100%; height: 100%; object-fit: cover;" alt="Uploaded waste">
+          </div>
+          <div style="text-align: left;">
+            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 border border-success border-opacity-25 mb-1" style="font-size: 0.65rem; font-weight: bold;"><i class="bi bi-robot me-1"></i>AI CLASSIFIED</span>
+            <div class="fw-bold" style="font-size: 1.1rem; color: var(--text-color);">{{ $any(newRequest).aiPredictedCategory }} Detected!</div>
+            <a href="javascript:void(0)" class="text-primary text-decoration-none" style="font-size: 0.8rem;" (click)="clearAiPrediction()">Re-upload Photo</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="db-form-group">
       <label class="db-form-label">Select Waste Category</label>
       <div class="db-category-grid">
         <button *ngFor="let cat of categories"
                 class="db-category-btn"
-                [class.selected]="newRequest.wasteCategory === cat"
-                (click)="newRequest.wasteCategory = cat"
+                [class.selected]="newRequest.wasteCategory?.includes(cat)"
+                (click)="onCategoryToggle(cat)"
                 type="button">
           <span class="db-cat-icon">{{ getCategoryIcon(cat) }}</span>
           <span class="db-cat-name">{{ cat }}</span>
+          <div class="db-cat-check" *ngIf="newRequest.wasteCategory?.includes(cat)">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
         </button>
       </div>
     </div>
@@ -35,9 +71,31 @@
       </div>
 
       <div class="db-form-group">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="db-form-label">Estimated Weight (kg)</label>
+            <div class="db-input-wrap">
+              <span class="db-input-icon">⚖️</span>
+              <input type="number" class="db-input db-input-with-icon" 
+                     [(ngModel)]="newRequest.estimatedWeight" 
+                     placeholder="0.0" min="0" step="0.5" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="db-form-label">Preferred Date</label>
+            <div class="db-input-wrap">
+              <span class="db-input-icon">📅</span>
+              <input type="date" class="db-input db-input-with-icon" 
+                     [(ngModel)]="newRequest.pickupDate" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="db-form-group">
         <label class="db-form-label">Description / Details</label>
         <textarea class="db-input db-textarea" 
-                  [(ngModel)]="newRequest.description" rows="4"
+                  [(ngModel)]="newRequest.description" rows="3"
                   placeholder="E.g., 3 bags of plastic bottles, old keyboard, etc."></textarea>
       </div>
     </div>

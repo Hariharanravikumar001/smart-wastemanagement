@@ -21,6 +21,7 @@
           <div *ngIf="!loading && conversations.length > 0" class="list-group list-group-flush">
             <a *ngFor="let convo of conversations" 
                [routerLink]="['/chat', convo.partnerId]" 
+               [queryParams]="{ opportunityId: convo.opportunityId }"
                class="list-group-item list-group-item-action p-4 border-bottom hover-bg-light transition">
               <div class="d-flex align-items-center">
                 <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0" style="width: 50px; height: 50px; font-size: 1.2rem;">
@@ -28,13 +29,21 @@
                 </div>
                 <div class="flex-grow-1 overflow-hidden">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <h6 class="mb-0 fw-bold text-dark">{{ convo.partnerName }}</h6>
+                    <div>
+                      <h6 class="mb-0 fw-bold text-dark">{{ convo.partnerName }}</h6>
+                      <div class="extra-small text-primary fw-bold mt-1" *ngIf="convo.opportunityTitle">
+                        <i class="bi bi-briefcase me-1"></i>{{ convo.opportunityTitle }}
+                      </div>
+                    </div>
                     <small class="text-muted">{{ convo.lastMessageTime | date:'shortDate' }}</small>
                   </div>
                   <p class="mb-0 text-muted text-truncate fw-500">{{ convo.lastMessage }}</p>
                 </div>
-                <div class="ms-3 text-success">
-                  <i class="bi bi-chevron-right"></i>
+                <div class="ms-3 d-flex align-items-center">
+                  <span *ngIf="convo.unreadCount > 0" class="badge unread-count-badge rounded-pill align-items-center justify-content-center me-2">{{ convo.unreadCount }}</span>
+                  <div class="text-success">
+                    <i class="bi bi-chevron-right"></i>
+                  </div>
                 </div>
               </div>
             </a>

@@ -22,13 +22,13 @@
           </select>
         </div>
         <div class="of-field">
-          <label class="of-label">Duration</label>
-          <input class="of-input" type="text" [(ngModel)]="form.duration" name="duration" placeholder="e.g. 4 hours" />
+          <label class="of-label">Duration <span class="text-danger">*</span></label>
+          <input class="of-input" type="text" [(ngModel)]="form.duration" name="duration" required placeholder="e.g. 4 hours" />
         </div>
       </div>
 
       <div class="of-field">
-        <label class="of-label">Location</label>
+        <label class="of-label">Location <span class="text-danger">*</span></label>
         <input class="of-input" type="text" [(ngModel)]="form.location" name="location" required placeholder="e.g. California, USA" />
       </div>
 
@@ -37,7 +37,9 @@
         <input class="of-input" type="text" [(ngModel)]="form.skillsRequired" name="skillsRequired" placeholder="e.g. Physical Fitness, Teamwork" />
       </div>
 
-      <button type="submit" class="of-submit-btn">{{ isEditMode ? 'Update Opportunity' : 'Create Opportunity' }}</button>
+      <button type="submit" class="of-submit-btn" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Processing...' : (isEditMode ? 'Update Opportunity' : 'Create Opportunity') }}
+      </button>
     </form>
   </div>
 </div>

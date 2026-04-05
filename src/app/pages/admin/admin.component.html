@@ -23,11 +23,19 @@
         <i class="bi bi-briefcase"></i>
         <span>Tasks</span>
       </a>
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'messages'" (click)="setActiveMenu('messages')">
+        <i class="bi bi-chat-dots"></i>
+        <span>Messages</span>
+      </a>
       <a class="nav-link-bottom" [class.active]="activeMenu === 'reports'" (click)="setActiveMenu('reports')">
         <i class="bi bi-file-earmark-bar-graph"></i>
         <span>Reports</span>
       </a>
-      <a class="nav-link-bottom" (click)="logout()">
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'profile'" (click)="setActiveMenu('profile')">
+        <i class="bi bi-person-circle"></i>
+        <span>Profile</span>
+      </a>
+      <a class="nav-link-bottom text-danger" (click)="logout()">
         <i class="bi bi-box-arrow-right"></i>
         <span>Logout</span>
       </a>
@@ -35,27 +43,26 @@
   </nav>
 
   <!-- Sidebar -->
-  <aside class="admin-sidebar shadow">
-    <div class="sidebar-header d-flex align-items-center px-4 py-3">
-      <div class="brand-icon-wrap me-2">♻️</div>
-      <span class="fs-4 fw-bold logo-text">WasteZero</span>
+  <aside class="admin-sidebar glass border-end">
+    <div class="sidebar-header d-flex align-items-center px-4 py-4">
+      <div class="brand-icon-wrap me-2 bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">♻️</div>
+      <span class="fs-4 fw-bold gradient-text">WasteZero</span>
     </div>
 
     <div class="sidebar-user p-4 mb-2 text-center border-bottom border-light border-opacity-10">
-      <div class="avatar shadow-sm mb-3 mx-auto overflow-hidden">
+      <div class="avatar shadow-md mb-3 mx-auto overflow-hidden premium-card" style="width: 80px; height: 80px;">
         <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
-        <span *ngIf="!user.profileImage">{{ user.name.charAt(0).toUpperCase() }}</span>
+        <span *ngIf="!user.profileImage" class="fs-2 fw-bold text-primary">{{ user.name.charAt(0).toUpperCase() }}</span>
       </div>
       <div class="user-info">
         <h6 class="fw-bold mb-0 text-truncate">{{ user.name }}</h6>
         <span
-          class="badge bg-success bg-opacity-25 text-success small border border-success border-opacity-25">{{ isAdmin ? 'Admin' : 'NGO' }}</span>
-        <div class="extra-small text-muted mt-1 opacity-50" style="font-size: 10px;">ID: {{ user.id }}</div>
+          class="badge bg-primary bg-opacity-10 text-primary small border border-primary border-opacity-10 mt-1 px-3 py-1">Management</span>
       </div>
     </div>
 
     <nav class="sidebar-nav flex-grow-1 py-3 px-2">
-      <div class="nav-label px-3 mb-2 text-muted small text-uppercase fw-bold">Main Menu</div>
+      <div class="nav-label px-3 mb-2 text-muted extra-small text-uppercase fw-bold ls-wide">Main Menu</div>
       <ul class="list-unstyled">
         <li *ngFor="let item of menuItems">
           <a (click)="setActiveMenu(item.id)"
@@ -70,15 +77,15 @@
 
     <div class="sidebar-footer p-3 mt-auto">
       <button
-        class="btn w-100 theme-toggle-btn rounded-pill mb-3 d-flex align-items-center justify-content-center gap-2"
+        class="btn w-100 btn-light glass rounded-pill mb-3 d-flex align-items-center justify-content-center gap-2 border shadow-sm py-2"
         (click)="toggleTheme()">
         <i class="bi" [class.bi-moon-stars-fill]="!isDarkMode" [class.bi-sun-fill]="isDarkMode"></i>
-        <span>{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
+        <span class="small fw-bold">{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
       </button>
-      <button class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center gap-2"
+      <button class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center gap-2 py-2"
         (click)="logout()">
         <i class="bi bi-box-arrow-right"></i>
-        <span>Logout</span>
+        <span class="small fw-bold">Logout</span>
       </button>
     </div>
   </aside>
@@ -86,25 +93,27 @@
   <!-- Main Content Area -->
   <main class="admin-content-area">
     <header
-      class="content-header p-4 d-flex justify-content-between align-items-center sticky-top bg-white shadow-sm border-bottom">
+      class="content-header p-4 d-flex justify-content-between align-items-center sticky-top glass border-bottom">
       <div class="header-left d-flex align-items-center">
-        <button class="btn btn-light rounded-circle me-3" (click)="toggleSidebar()">
+        <button class="btn btn-light rounded-circle shadow-sm me-3" (click)="toggleSidebar()">
           <i class="bi bi-list fs-5"></i>
         </button>
-        <h4 class="fw-bold mb-0 text-capitalize">{{ activeMenu.replace('-', ' ') }}</h4>
+        <h4 class="fw-bold mb-0 text-capitalize gradient-text">{{ activeMenu.replace('-', ' ') }}</h4>
       </div>
       <div class="header-right d-flex align-items-center gap-3">
-        <div class="search-box d-none d-md-flex">
-          <div class="input-group">
-            <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control bg-light border-0" placeholder="Search...">
+        <div class="search-box d-flex">
+          <div class="input-group glass rounded-pill px-2 border">
+            <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" class="form-control bg-transparent border-0 shadow-none" placeholder="Search Oversight..." [(ngModel)]="globalSearchTerm" (input)="filterOpportunities()">
           </div>
         </div>
-        <button class="btn btn-light rounded-circle position-relative">
-          <i class="bi bi-bell"></i>
+        <button class="btn btn-white shadow-sm rounded-circle position-relative border" (click)="toggleNotifDrawer()">
+          <i class="bi bi-bell text-primary"></i>
           <span
-            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white p-1">
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white p-1"
+            *ngIf="(unreadNotifications$ | async) as count" [class.d-none]="count === 0">
             <span class="visually-hidden">unread notifications</span>
+            {{ count }}
           </span>
         </button>
       </div>
@@ -115,44 +124,51 @@
       <div *ngIf="activeMenu === 'dashboard'">
         <div class="row g-4 mb-4">
           <div class="col-md-3">
-            <div class="stat-card p-4 rounded-4 shadow-sm h-100 bg-white border">
+            <div class="premium-card p-4 h-100">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted fw-bold small text-uppercase">Active Users</span>
-                <div class="stat-icon bg-blue-light text-blue rounded p-2"><i class="bi bi-people"></i></div>
+                <span class="text-muted fw-bold small text-uppercase ls-wide">Active Users</span>
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-people fs-5"></i></div>
               </div>
               <h2 class="fw-bold mb-1">{{ stats.activeUsers | number }}</h2>
-              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.activeUsersChange }}</div>
+              <div class="small text-success d-flex align-items-center gap-1">
+                <i class="bi bi-graph-up-arrow"></i> 
+                <span>{{ stats.activeUsersChange }}</span>
+              </div>
             </div>
           </div>
           <div class="col-md-3">
-            <div class="stat-card p-4 rounded-4 shadow-sm h-100 bg-white border">
+            <div class="premium-card p-4 h-100">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted fw-bold small text-uppercase">Total Volunteers</span>
-                <div class="stat-icon bg-green-light text-green rounded p-2"><i class="bi bi-heart"></i></div>
+                <span class="text-muted fw-bold small text-uppercase ls-wide">Total Volunteers</span>
+                <div class="stat-icon bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-heart-fill fs-5"></i></div>
               </div>
               <h2 class="fw-bold mb-1">{{ stats.totalVolunteers | number }}</h2>
-              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.totalVolunteersChange }}
+              <div class="small text-success d-flex align-items-center gap-1">
+                <i class="bi bi-graph-up-arrow"></i> 
+                <span>{{ stats.totalVolunteersChange }}</span>
               </div>
             </div>
           </div>
           <div class="col-md-3">
-            <div class="stat-card p-4 rounded-4 shadow-sm h-100 bg-white border">
+            <div class="premium-card p-4 h-100">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted fw-bold small text-uppercase">Completed Pickups</span>
-                <div class="stat-icon bg-orange-light text-orange rounded p-2"><i class="bi bi-truck"></i></div>
+                <span class="text-muted fw-bold small text-uppercase ls-wide">Pickups Done</span>
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-truck fs-5"></i></div>
               </div>
               <h2 class="fw-bold mb-1">{{ stats.completedPickups | number }}</h2>
-              <div class="small text-success"><i class="bi bi-arrow-up-short"></i> {{ stats.completedPickupsChange }}
+              <div class="small text-success d-flex align-items-center gap-1">
+                <i class="bi bi-check-circle-fill"></i> 
+                <span>Verified</span>
               </div>
             </div>
           </div>
           <div class="col-md-3">
-            <div class="stat-card p-4 rounded-4 shadow-sm h-100 bg-white border">
+            <div class="premium-card p-4 h-100">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted fw-bold small text-uppercase">System Health</span>
-                <div class="stat-icon bg-purple-light text-purple rounded p-2"><i class="bi bi-activity"></i></div>
+                <span class="text-muted fw-bold small text-uppercase ls-wide">System Health</span>
+                <div class="stat-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-shield-check fs-5"></i></div>
               </div>
-              <h2 class="fw-bold mb-1">{{ stats.systemHealth }}</h2>
+              <h2 class="fw-bold mb-1 text-success">{{ stats.systemHealth }}</h2>
               <div class="small text-muted">{{ stats.systemHealthStatus }}</div>
             </div>
           </div>
@@ -160,18 +176,18 @@
 
         <div class="row g-4">
           <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden bg-white">
+            <div class="premium-card h-100 overflow-hidden">
               <div
-                class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold mb-0">Pickup Requests Trends</h5>
+                class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">System Performance Trends</h5>
                 <div class="dropdown">
-                  <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    {{ selectedRange === '1day' ? 'Last 24 Hours' : 
-                       selectedRange === '3days' ? 'Last 3 Days' : 
-                       selectedRange === '1week' ? 'Last 7 Days' : 'Last 30 Days' }}
+                  <button class="btn btn-sm btn-light glass border dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">
+                    {{ selectedRange === '1day' ? 'Today' : 
+                       selectedRange === '3days' ? 'Last 3D' : 
+                       selectedRange === '1week' ? 'Last 7D' : 'Last 30D' }}
                   </button>
-                  <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
-                    <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('1day')">Last 24 Hours</a></li>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3">
+                    <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('1day')">Today</a></li>
                     <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('3days')">Last 3 Days</a></li>
                     <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('1week')">Last 7 Days</a></li>
                     <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('1month')">Last 30 Days</a></li>
@@ -179,50 +195,50 @@
                 </div>
               </div>
               <div class="card-body">
-              <div style="height: 250px; position: relative;">
-                <canvas id="engagementChart"></canvas>
+                <div style="height: 250px; position: relative;">
+                  <canvas id="engagementChart"></canvas>
+                </div>
               </div>
-            </div>
             </div>
           </div>
           <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
-              <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
-                <h5 class="fw-bold mb-0">Recent Activity</h5>
+            <div class="premium-card h-100">
+              <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 text-center">
+                <h5 class="fw-bold mb-0">Live Activity Stream</h5>
               </div>
               <div class="card-body p-4">
                 <div class="activity-timeline">
                   <div class="activity-item d-flex gap-3 mb-4">
-                    <div class="activity-icon bg-success bg-opacity-10 text-success rounded-circle p-2"
-                      style="width: 40px; height: 40px;">
+                    <div class="activity-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                      style="width: 40px; height: 40px; flex-shrink: 0;">
                       <i class="bi bi-check2"></i>
                     </div>
-                    <div>
-                      <h6 class="mb-1 fw-bold">Pickup Completed</h6>
-                      <p class="small text-muted mb-0">Region: North | 12kg Plastic</p>
-                      <span class="text-muted x-small">2 mins ago</span>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-bold small">Pickup Completed</h6>
+                      <p class="extra-small text-muted mb-0">Region: North | 12kg Plastic</p>
+                      <span class="text-muted extra-small opacity-75">2 mins ago</span>
                     </div>
                   </div>
                   <div class="activity-item d-flex gap-3 mb-4">
-                    <div class="activity-icon bg-primary bg-opacity-10 text-primary rounded-circle p-2"
-                      style="width: 40px; height: 40px;">
-                      <i class="bi bi-person-plus"></i>
+                    <div class="activity-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                      style="width: 40px; height: 40px; flex-shrink: 0;">
+                      <i class="bi bi-person-plus-fill"></i>
                     </div>
-                    <div>
-                      <h6 class="mb-1 fw-bold">New Volunteer Joined</h6>
-                      <p class="small text-muted mb-0">Welcome, Sarah Jenkins!</p>
-                      <span class="text-muted x-small">1 hour ago</span>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-bold small">New Volunteer Onboarded</h6>
+                      <p class="extra-small text-muted mb-0">Welcome, Sarah Jenkins!</p>
+                      <span class="text-muted extra-small opacity-75">1 hour ago</span>
                     </div>
                   </div>
                   <div class="activity-item d-flex gap-3">
-                    <div class="activity-icon bg-warning bg-opacity-10 text-warning rounded-circle p-2"
-                      style="width: 40px; height: 40px;">
-                      <i class="bi bi-exclamation-triangle"></i>
+                    <div class="activity-icon bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                      style="width: 40px; height: 40px; flex-shrink: 0;">
+                      <i class="bi bi-clock-history"></i>
                     </div>
-                    <div>
-                      <h6 class="mb-1 fw-bold">System Maintenance</h6>
-                      <p class="small text-muted mb-0">Scheduled for tonight at 2 AM</p>
-                      <span class="text-muted x-small">5 hours ago</span>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-bold small">Audit Log Access</h6>
+                      <p class="extra-small text-muted mb-0">Admin reviewed user reports</p>
+                      <span class="text-muted extra-small opacity-75">3 hours ago</span>
                     </div>
                   </div>
                 </div>
@@ -233,187 +249,169 @@
       </div>
 
       <!-- Profile View -->
-      <div *ngIf="activeMenu === 'profile'" class="profile-view animate-fade-in">
-        <div class="row g-4">
-          <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white">
-              <div
-                class="avatar-large shadow-sm mb-4 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold overflow-hidden position-relative"
-                style="width: 100px; height: 100px; font-size: 2.5rem; border-radius: 50%;">
-                <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
-                <span *ngIf="!user.profileImage">{{ user.name.charAt(0).toUpperCase() }}</span>
-                <div class="avatar-edit-badge" (click)="toggleEditProfile()" style="position: absolute; bottom: 0; right: 0; width: 30px; height: 30px; background: #0d6efd; color: white; border-radius: 10px 0 0 0; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; opacity: 0.8;">
-                  <i class="bi bi-camera-fill"></i>
+      <div *ngIf="activeMenu === 'profile' && currentUser" class="profile-premium-wrapper animate-fade-in shadow-none bg-transparent p-0">
+        <div class="container-fluid p-0" *ngIf="currentUser as user">
+          <div class="row g-4">
+            <!-- Left Column: Summary Card -->
+            <div class="col-lg-4">
+              <div class="profile-card text-center h-100">
+                <div class="profile-avatar-large shadow-sm bg-primary bg-opacity-10 text-primary fw-bold overflow-hidden position-relative">
+                  <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="profile-avatar-img" />
+                  <span *ngIf="!user.profileImage">{{ user.name.charAt(0).toUpperCase() }}</span>
+                  <div class="position-absolute bottom-0 end-0 bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center cursor-pointer"
+                    style="width: 32px; height: 32px; margin: 2px;" (click)="toggleEditProfile()">
+                    <i class="bi bi-camera-fill text-primary small"></i>
+                  </div>
                 </div>
-              </div>
-              <h4 class="fw-bold mb-1">{{ user.name }}</h4>
-              <p class="text-muted small mb-3">System Administrator</p>
+                
+                <h4 class="fw-bold mb-1">{{ user.name }}</h4>
+                <p class="text-muted small mb-3">Organization Management</p>
+                
+                <div class="d-flex justify-content-center gap-2 mb-4">
+                  <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 border border-success border-opacity-10">Verified</span>
+                  <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">Manager</span>
+                </div>
 
-              <div class="d-flex justify-content-center gap-2 mb-4">
-                <span
-                  class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 border border-success border-opacity-10">Verified</span>
-                <span
-                  class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">Root</span>
-              </div>
+                <div class="d-grid gap-2 mb-4">
+                  <button (click)="toggleEditProfile()" class="profile-btn-primary"
+                    [class.profile-btn-outline]="isEditingProfile">
+                    {{ isEditingProfile ? 'Cancel Edit' : 'Edit Profile' }}
+                  </button>
+                </div>
 
-              <div class="d-grid gap-2 mb-4">
-                <button (click)="toggleEditProfile()" class="btn rounded-pill fw-bold"
-                  [class.btn-outline-primary]="!isEditingProfile" [class.btn-secondary]="isEditingProfile">
-                  {{ isEditingProfile ? 'Cancel Editing' : 'Edit Profile' }}
-                </button>
-              </div>
-
-              <hr class="my-4 opacity-5">
-
-              <div class="row g-2 text-center">
-                <div class="col-4">
-                  <h6 class="fw-bold mb-0 small">{{ stats.activeUsers }}</h6>
-                  <p class="text-muted extra-small">Users</p>
-                </div>
-                <div class="col-4">
-                  <h6 class="fw-bold mb-0 small">99.9%</h6>
-                  <p class="text-muted extra-small">Uptime</p>
-                </div>
-                <div class="col-4">
-                  <h6 class="fw-bold mb-0 small">24/7</h6>
-                  <p class="text-muted extra-small">Support</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-8">
-            <!-- Personal Details Card -->
-            <div class="card border-0 shadow-sm rounded-4 bg-white mb-4 p-4">
-              <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0">Personal Details</h5>
-                <span *ngIf="profileDetailsMessage && !isEditingProfile"
-                  class="badge bg-success animate-fade-in">{{ profileDetailsMessage }}</span>
-              </div>
-
-              <div *ngIf="!isEditingProfile" class="row g-3">
-                <div class="col-md-6">
-                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Full Name</label>
-                  <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ user.name }}</p>
-                </div>
-                <div class="col-md-6">
-                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Username</label>
-                  <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ "@" }}{{ user.username }}</p>
-                </div>
-                <div class="col-md-6">
-                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Email Address</label>
-                  <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ user.email }}</p>
-                </div>
-                <div class="col-md-6">
-                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Location</label>
-                  <p class="bg-light p-3 rounded-4 mb-0 fw-medium">{{ user.location || 'Not Specified' }}</p>
-                </div>
-                <div class="col-12 mt-3">
-                  <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Administrative
-                    Skills</label>
-                  <div class="d-flex flex-wrap gap-2 pt-1">
-                    <span *ngFor="let skill of user.skills"
-                      class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2">
-                      {{ skill }}
-                    </span>
-                    <span *ngIf="!user.skills || user.skills.length === 0"
-                      class="text-muted small italic bg-light p-2 rounded-3 w-100">No technical skills documented</span>
+                <!-- Summary Info -->
+                <div class="row g-2 pt-3 border-top mt-2">
+                  <div class="col-6 text-start">
+                    <h6 class="fw-bold mb-0 small text-success"><i class="bi bi-patch-check-fill me-1"></i>Status</h6>
+                    <p class="text-muted extra-small mb-0">Verified Manager</p>
+                  </div>
+                  <div class="col-6 text-start">
+                    <h6 class="fw-bold mb-0 small text-primary"><i class="bi bi-calendar-check me-1"></i>Joined</h6>
+                    <p class="text-muted extra-small mb-0">{{ (user.created_at | date:'MMM yyyy') || 'Mar 2026' }}</p>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Edit Form -->
-              <form (ngSubmit)="saveProfileDetails()" *ngIf="isEditingProfile" class="row g-3">
-                <div *ngIf="profileDetailsMessage" class="col-12 alert mb-3 py-2 small"
-                  [class.alert-danger]="profileDetailsIsError" [class.alert-success]="!profileDetailsIsError">
-                  {{ profileDetailsMessage }}
+            <!-- Right Column: Details & Security -->
+            <div class="col-lg-8">
+              <!-- Personal Details Card -->
+              <div class="profile-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h5 class="fw-bold mb-0">Administrative Details</h5>
+                  <span *ngIf="profileDetailsMessage && !isEditingProfile"
+                    class="badge bg-success animate-fade-in">{{ profileDetailsMessage }}</span>
                 </div>
 
-                <div class="col-12 mb-4">
-                  <div class="d-flex align-items-center gap-4">
-                    <div class="avatar-large shadow-sm overflow-hidden" style="width: 80px; height: 80px; border-radius: 50%; background: #f8fafb; display: flex; align-items: center; justify-content: center;">
-                      <img *ngIf="editUser.profileImage" [src]="editUser.profileImage" alt="Preview" class="avatar-img" />
-                      <span *ngIf="!editUser.profileImage" class="text-primary fw-bold fs-4">{{ editUser.name?.charAt(0) || 'A' }}</span>
-                    </div>
-                    <div>
-                      <label class="small fw-bold text-muted d-block mb-1">Profile Picture</label>
-                      <input type="file" (change)="onFileSelected($event)" accept="image/*" class="form-control form-control-sm border-0 bg-light">
-                      <small class="text-muted">Square image, max 2MB</small>
+                <div *ngIf="!isEditingProfile" class="row g-3">
+                  <div class="col-md-6">
+                    <span class="profile-label">Full Name</span>
+                    <div class="profile-value-box mb-0">{{ user.name }}</div>
+                  </div>
+                  <div class="col-md-6">
+                    <span class="profile-label">Username</span>
+                    <div class="profile-value-box mb-0">{{ "@" }}{{ user.username }}</div>
+                  </div>
+                  <div class="col-md-6">
+                    <span class="profile-label">Email Address</span>
+                    <div class="profile-value-box mb-0">{{ user.email }}</div>
+                  </div>
+                  <div class="col-md-6">
+                    <span class="profile-label">Location</span>
+                    <div class="profile-value-box mb-0">{{ user.location || 'Not Specified' }}</div>
+                  </div>
+                  <div class="col-12 mt-3">
+                    <span class="profile-label">Administrative Skills</span>
+                    <div class="d-flex flex-wrap gap-2 pt-1">
+                      <span *ngFor="let skill of user.skills"
+                        class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2">
+                        {{ skill }}
+                      </span>
+                      <span *ngIf="!user.skills || user.skills.length === 0"
+                        class="text-muted small italic">No technical skills documented</span>
                     </div>
                   </div>
                 </div>
 
-                <div class="col-md-6">
-                  <label class="small fw-bold text-muted mb-1">Full Name</label>
-                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="editUser.name" name="name" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="small fw-bold text-muted mb-1">Username</label>
-                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="editUser.username" name="username" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="small fw-bold text-muted mb-1">Email Address</label>
-                  <input type="email" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="editUser.email" name="email" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="small fw-bold text-muted mb-1">Location</label>
-                  <input type="text" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="editUser.location" name="location">
-                </div>
-                <div class="col-12">
-                  <label class="small fw-bold text-muted mb-1">Skills (comma separated)</label>
-                  <textarea class="form-control rounded-4 border-0 bg-light p-3" [(ngModel)]="editUser.skills"
-                    name="skills" rows="2" placeholder="Management, Database, Security..."></textarea>
-                </div>
-                <div class="col-12 mt-4 text-end">
-                  <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold py-2 shadow-sm">Save
-                    Profile</button>
-                </div>
-              </form>
-            </div>
+                <!-- Edit Form -->
+                <form (ngSubmit)="saveProfileDetails()" *ngIf="isEditingProfile" class="row g-3">
+                  <div *ngIf="profileDetailsMessage" class="col-12 alert mb-3 py-2 small"
+                    [class.alert-danger]="profileDetailsIsError" [class.alert-success]="!profileDetailsIsError">
+                    {{ profileDetailsMessage }}
+                  </div>
 
-            <!-- Security Section -->
-            <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
-              <h5 class="fw-bold mb-4">Security & Access</h5>
+                  <div class="col-12 mb-4">
+                    <div class="d-flex align-items-center gap-4">
+                      <div class="profile-avatar-large m-0" style="width: 80px; height: 80px; font-size: 1.5rem;">
+                        <img *ngIf="editUser.profileImage" [src]="editUser.profileImage" alt="Preview" class="profile-avatar-img" />
+                        <span *ngIf="!editUser.profileImage">{{ editUser.name?.charAt(0) || 'A' }}</span>
+                      </div>
+                      <div class="flex-grow-1">
+                        <span class="profile-label">Profile Picture</span>
+                        <input type="file" (change)="onFileSelected($event)" accept="image/*" class="form-control form-control-sm border-0 bg-light">
+                        <small class="text-muted">Square image, max 2MB</small>
+                      </div>
+                    </div>
+                  </div>
 
-              <div *ngIf="profileForm.message" class="alert mb-4 py-2 small" [class.alert-danger]="profileForm.isError"
-                [class.alert-success]="!profileForm.isError">
-                {{ profileForm.message }}
+                  <div class="col-md-6">
+                    <label class="profile-label">Full Name</label>
+                    <input type="text" class="profile-input" [(ngModel)]="editUser.name" name="name" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="profile-label">Username</label>
+                    <input type="text" class="profile-input" [(ngModel)]="editUser.username" name="username" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="profile-label">Email Address</label>
+                    <input type="email" class="profile-input" [(ngModel)]="editUser.email" name="email" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="profile-label">Location</label>
+                    <input type="text" class="profile-input" [(ngModel)]="editUser.location" name="location">
+                  </div>
+                  <div class="col-12">
+                    <label class="profile-label">Skills (comma separated)</label>
+                    <textarea class="profile-input" [(ngModel)]="editUser.skills" name="skills" rows="2" placeholder="Management, Database, Security..."></textarea>
+                  </div>
+                  <div class="col-12 mt-4 text-end">
+                    <button type="submit" class="profile-btn-primary px-5">Save Profile</button>
+                  </div>
+                </form>
               </div>
 
-              <form (ngSubmit)="updatePassword()" class="row g-3">
-                <div class="col-md-4">
-                  <label class="small fw-bold text-muted mb-1">Old Password</label>
-                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="profileForm.oldPassword" name="oldPassword" required placeholder="••••••••">
-                </div>
-                <div class="col-md-4">
-                  <label class="small fw-bold text-muted mb-1">New Password</label>
-                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="profileForm.newPassword" name="newPassword" required placeholder="••••••••">
-                </div>
-                <div class="col-md-4">
-                  <label class="small fw-bold text-muted mb-1">Confirm New</label>
-                  <input type="password" class="form-control rounded-4 border-0 bg-light p-3"
-                    [(ngModel)]="profileForm.confirmPassword" name="confirmPassword" required placeholder="••••••••">
-                </div>
-                <div class="col-12 mt-4">
-                  <button (click)="updatePassword()" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm"
-                  [disabled]="!profileForm.oldPassword || !profileForm.newPassword || !profileForm.confirmPassword">
-                  Update Password
-                </button>
-              </div>
-              </form>
+              <!-- Security Section -->
+              <div class="profile-card">
+                <h5 class="fw-bold mb-4">Security & Access</h5>
 
-              <div class="mt-5 pt-4 border-top text-center">
-                <p class="text-muted small mb-3">Danger Zone</p>
-                <button (click)="deleteAccount()" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">
-                  🗑️ Delete Administrator Account
-                </button>
-                <p class="extra-small text-danger mt-2 opacity-75">Warning: This will permanently remove your account and cannot be recovered.</p>
+                <div *ngIf="profileForm.message" class="alert mb-4 py-2 small" [class.alert-danger]="profileForm.isError"
+                  [class.alert-success]="!profileForm.isError">
+                  {{ profileForm.message }}
+                </div>
+
+                <form (ngSubmit)="updatePassword()" class="row g-3">
+                  <div class="col-md-4">
+                    <label class="profile-label">Old Password</label>
+                    <input type="password" class="profile-input" [(ngModel)]="profileForm.oldPassword" name="oldPassword" required placeholder="••••••••">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="profile-label">New Password</label>
+                    <input type="password" class="profile-input" [(ngModel)]="profileForm.newPassword" name="newPassword" required placeholder="••••••••">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="profile-label">Confirm New</label>
+                    <input type="password" class="profile-input" [(ngModel)]="profileForm.confirmPassword" name="confirmPassword" required placeholder="••••••••">
+                  </div>
+                  <div class="col-12 mt-4 d-flex justify-content-between align-items-center">
+                    <button type="submit" class="profile-btn-primary"
+                      [disabled]="!profileForm.oldPassword || !profileForm.newPassword || !profileForm.confirmPassword">
+                      Update Password
+                    </button>
+                    <a href="javascript:void(0)" class="text-danger small fw-bold text-decoration-none" (click)="deleteAccount()">
+                      🗑️ Delete Account
+                    </a>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -424,127 +422,108 @@
       <div *ngIf="activeMenu === 'all-opportunities'">
 
         <!-- Opportunity Form View -->
-        <div *ngIf="showOpportunityForm" class="card border-0 shadow-sm rounded-4 bg-white mb-4">
-          <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0">{{ editingOpportunityId ? 'Edit' : 'Create' }} Opportunity</h5>
-            <button class="btn btn-sm btn-light rounded-circle" (click)="closeOpportunityForm()">
+        <div *ngIf="showOpportunityForm" class="premium-card mb-4 animate-fade-in overflow-hidden">
+          <div class="card-header bg-transparent border-0 p-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 gradient-text">{{ editingOpportunityId ? 'Edit' : 'Create' }} Opportunity</h5>
+            <button class="btn btn-sm btn-light glass rounded-circle" (click)="closeOpportunityForm()">
               <i class="bi bi-x-lg"></i>
             </button>
           </div>
           <div class="card-body p-4 pt-0">
-            <form (submit)="saveOpportunity()" class="row g-3">
+            <form (ngSubmit)="saveOpportunity()" class="row g-3">
               <div class="col-md-6">
                 <label class="form-label small fw-bold text-muted">Title *</label>
-                <input type="text" class="form-control rounded-3" [(ngModel)]="opportunityForm.title" name="title"
+                <input type="text" class="form-control glass border rounded-3 py-2" [(ngModel)]="opportunityForm.title" name="title"
                   required>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-bold text-muted">Duration *</label>
-                <input type="text" class="form-control rounded-3" [(ngModel)]="opportunityForm.duration" name="duration"
+                <input type="text" class="form-control glass border rounded-3 py-2" [(ngModel)]="opportunityForm.duration" name="duration"
                   placeholder="e.g. 2 hours" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-bold text-muted">Location *</label>
-                <input type="text" class="form-control rounded-3" [(ngModel)]="opportunityForm.location" name="location"
+                <input type="text" class="form-control glass border rounded-3 py-2" [(ngModel)]="opportunityForm.location" name="location"
                   required>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-bold text-muted">Status</label>
-                <select class="form-select rounded-3" [(ngModel)]="opportunityForm.status" name="status">
+                <select class="form-select glass border rounded-3 py-2" [(ngModel)]="opportunityForm.status" name="status">
                   <option value="open">Open</option>
                   <option value="closed">Closed</option>
                   <option value="in-progress">In Progress</option>
                 </select>
               </div>
               <div class="col-12">
-                <label class="form-label small fw-bold text-muted">Skills Required (comma separated)</label>
-                <input type="text" class="form-control rounded-3" [(ngModel)]="opportunityForm.skills" name="skills"
-                  placeholder="Teamwork, Heavy Lifting...">
-              </div>
-              <div class="col-12">
                 <label class="form-label small fw-bold text-muted">Description *</label>
-                <textarea class="form-control rounded-3" [(ngModel)]="opportunityForm.description" name="description"
-                  rows="3" required></textarea>
+                <textarea class="form-control glass border rounded-3 py-2" [(ngModel)]="opportunityForm.description" name="description" 
+                  rows="3" placeholder="Describe the opportunity..." required></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold text-muted">Waste Type *</label>
+                <select class="form-select glass border rounded-3 py-2" [(ngModel)]="opportunityForm.wasteType" name="wasteType" required>
+                  <option value="">Select Category</option>
+                  <option value="Plastic">Plastic</option>
+                  <option value="Paper">Paper</option>
+                  <option value="Metal">Metal</option>
+                  <option value="Electronic">Electronic</option>
+                  <option value="Organic">Organic</option>
+                  <option value="Glass">Glass</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
               <div class="col-12 text-end mt-4">
-                <button type="button" class="btn btn-light me-2 rounded-pill px-4"
-                  (click)="closeOpportunityForm()">Cancel</button>
-                <button type="submit" class="btn btn-primary rounded-pill px-4">{{ editingOpportunityId ? 'Update' :
-                  'Create' }}</button>
+                <button type="button" class="btn btn-light glass border rounded-pill px-4 me-2"
+                  (click)="closeOpportunityForm()" [disabled]="isSubmittingOpportunity">Cancel</button>
+                <button type="submit" class="btn btn-primary rounded-pill px-5 shadow-sm" [disabled]="isSubmittingOpportunity">
+                  {{ isSubmittingOpportunity ? 'Processing...' : (editingOpportunityId ? 'Update' : 'Create') }}
+                </button>
               </div>
             </form>
           </div>
         </div>
 
         <!-- Viewing Applications View -->
-        <div *ngIf="viewingApplicationsFor" class="card border-0 shadow-sm rounded-4 bg-white mb-4">
-          <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center border-bottom">
+        <div *ngIf="viewingApplicationsFor" class="premium-card mb-4 animate-fade-in overflow-hidden">
+          <div class="card-header bg-transparent border-0 p-4 d-flex justify-content-between align-items-center border-bottom">
             <div>
-              <h5 class="fw-bold mb-1">Applications for Opportunity</h5>
-              <p class="text-muted small mb-0" *ngIf="currentOpportunity">
-                <i class="bi bi-info-circle me-1"></i> Managing applicants for "{{ currentOpportunity.title }}"
+              <h5 class="fw-bold mb-1 gradient-text">Application Oversight</h5>
+              <p class="text-muted extra-small mb-0" *ngIf="currentOpportunity">
+                <i class="bi bi-info-circle me-1 text-primary"></i> Reviewing candidates for "{{ currentOpportunity.title }}"
               </p>
             </div>
-            <button class="btn btn-sm btn-light rounded-circle" (click)="closeApplicationsView()">
+            <button class="btn btn-sm btn-light glass rounded-circle" (click)="closeApplicationsView()">
               <i class="bi bi-x-lg"></i>
             </button>
           </div>
           
-          <!-- Opportunity Details Summary -->
-          <div class="bg-light bg-opacity-50 p-3 p-md-4 border-bottom" *ngIf="currentOpportunity">
-            <div class="row g-3">
-              <div class="col-md-8">
-                <label class="extra-small fw-bold text-muted text-uppercase ls-wide mb-1">Description</label>
-                <p class="small mb-0">{{ currentOpportunity.description }}</p>
-              </div>
-              <div class="col-md-4">
-                <div class="d-flex flex-row flex-md-column gap-3 gap-md-2 flex-wrap">
-                  <div class="d-flex align-items-center small">
-                    <i class="bi bi-geo-alt me-2 text-primary"></i>
-                    <span>{{ currentOpportunity.location }}</span>
-                  </div>
-                  <div class="d-flex align-items-center small">
-                    <i class="bi bi-clock me-2 text-primary"></i>
-                    <span>{{ currentOpportunity.duration }}</span>
-                  </div>
-                  <div class="d-flex align-items-center small">
-                    <span class="badge bg-opacity-10 rounded-pill" 
-                      [class.bg-success]="currentOpportunity.status === 'open'"
-                      [class.text-success]="currentOpportunity.status === 'open'"
-                      [class.bg-warning]="currentOpportunity.status === 'in-progress'"
-                      [class.text-warning]="currentOpportunity.status === 'in-progress'">
-                      {{ currentOpportunity.status | titlecase }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="card-body p-0">
             <!-- Desktop Table View -->
-            <div class="table-responsive d-none d-md-block">
+            <div class="table-responsive">
               <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
+                <thead class="bg-light bg-opacity-50">
                   <tr>
-                    <th class="px-4 py-3 border-0">Volunteer</th>
-                    <th class="py-3 border-0">Status</th>
-                    <th class="py-3 border-0 text-end px-4">Actions</th>
+                    <th class="px-4 py-3 border-0 small text-muted text-uppercase">Volunteer</th>
+                    <th class="py-3 border-0 small text-muted text-uppercase text-center">Status</th>
+                    <th class="px-4 py-3 border-0 small text-muted text-uppercase text-end">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let app of getApplicationsForCurrentView()">
                     <td class="px-4 py-3">
                       <div class="fw-bold text-dark">{{ app.volunteer_id?.name || app.volunteer_id }}</div>
-                      <div class="small text-muted">{{ app.volunteer_id?.email }}</div>
+                      <div class="extra-small text-muted">{{ app.volunteer_id?.email }}</div>
                     </td>
-                    <td>
-                      <span class="badge rounded-pill" [class.bg-warning]="app.status === 'pending'"
-                        [class.bg-success]="app.status === 'accepted'" [class.bg-danger]="app.status === 'rejected'">
+                    <td class="text-center">
+                      <span class="badge rounded-pill border py-1 px-3 bg-opacity-10" 
+                        [class.bg-warning]="app.status === 'pending'" [class.text-warning]="app.status === 'pending'" [class.border-warning]="app.status === 'pending'"
+                        [class.bg-success]="app.status === 'accepted'" [class.text-success]="app.status === 'accepted'" [class.border-success]="app.status === 'accepted'"
+                        [class.bg-danger]="app.status === 'rejected'" [class.text-danger]="app.status === 'rejected'" [class.border-danger]="app.status === 'rejected'">
                         {{ app.status | titlecase }}
                       </span>
                     </td>
                     <td class="px-4 text-end">
-                      <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-success rounded-pill me-2 px-3"
+                      <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-success rounded-pill me-2 px-3 shadow-sm border-0"
                         (click)="updateApplicationStatus(app._id || app.id, 'accepted')">Accept</button>
                       <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-outline-danger rounded-pill px-3"
                         (click)="updateApplicationStatus(app._id || app.id, 'rejected')">Reject</button>
@@ -556,43 +535,18 @@
                 </tbody>
               </table>
             </div>
-
-            <!-- Mobile Card View -->
-            <div class="d-md-none">
-              <div *ngFor="let app of getApplicationsForCurrentView()" class="application-mobile-card p-3 border-bottom">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                    <div class="fw-bold text-dark">{{ app.volunteer_id?.name || app.volunteer_id }}</div>
-                    <div class="extra-small text-muted">{{ app.volunteer_id?.email }}</div>
-                  </div>
-                  <span class="badge rounded-pill extra-small" [class.bg-warning]="app.status === 'pending'"
-                    [class.bg-success]="app.status === 'accepted'" [class.bg-danger]="app.status === 'rejected'">
-                    {{ app.status | titlecase }}
-                  </span>
-                </div>
-                <div class="d-flex justify-content-end gap-2 mt-3" *ngIf="app.status === 'pending'">
-                  <button class="btn btn-sm btn-success rounded-pill px-3"
-                    (click)="updateApplicationStatus(app._id || app.id, 'accepted')">Accept</button>
-                  <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
-                    (click)="updateApplicationStatus(app._id || app.id, 'rejected')">Reject</button>
-                </div>
-              </div>
-              <div *ngIf="getApplicationsForCurrentView().length === 0" class="text-center py-5 text-muted small">
-                No applications found.
-              </div>
-            </div>
           </div>
         </div>
 
         <!-- Main Opportunities List View -->
         <div *ngIf="!showOpportunityForm && !viewingApplicationsFor"
-          class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
-          <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0">Global Opportunity Oversight</h5>
-            <div>
-              <span class="badge bg-primary rounded-pill px-3 me-3">{{ allOpportunities.length }} Total</span>
+          class="premium-card overflow-hidden">
+          <div class="card-header bg-transparent border-0 p-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 gradient-text">Global Opportunity Oversight</h5>
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">{{ filteredOpportunities.length }} Active Tasks</span>
               <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" (click)="openCreateOpportunityForm()">
-                <i class="bi bi-plus-lg me-1"></i> New Opportunity
+                <i class="bi bi-plus-lg me-1"></i> New Project
               </button>
             </div>
           </div>
@@ -600,27 +554,27 @@
             <!-- Desktop Table View -->
             <div class="table-responsive d-none d-md-block">
               <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
+                <thead class="bg-light bg-opacity-50">
                   <tr>
-                    <th class="px-4 py-3 border-0">Opportunity</th>
-                    <th class="py-3 border-0">Applicants</th>
-                    <th class="py-3 border-0">Status</th>
-                    <th class="py-3 border-0">Location</th>
-                    <th class="px-4 py-3 border-0 text-end">Actions</th>
+                    <th class="px-4 py-3 border-0 small text-muted text-uppercase ls-wide">Project Details</th>
+                    <th class="py-3 border-0 small text-muted text-uppercase ls-wide">Applicants</th>
+                    <th class="py-3 border-0 small text-muted text-uppercase ls-wide">Status</th>
+                    <th class="py-3 border-0 small text-muted text-uppercase ls-wide">Location</th>
+                    <th class="px-4 py-3 border-0 text-end small text-muted text-uppercase ls-wide">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let opp of allOpportunities">
+                  <tr *ngFor="let opp of filteredOpportunities" class="transition-all">
                     <td class="px-4 py-3">
                       <div class="fw-bold text-dark">{{ opp.title }}</div>
-                      <div class="extra-small text-primary mt-1">
-                        <i class="bi bi-people-fill me-1"></i>
-                        {{ (opp.applicantNames && opp.applicantNames.length > 0) ? opp.applicantNames.join(', ') : getApplicantNames(opp._id || opp.id) }}
+                      <div class="extra-small text-muted mt-1">
+                        <i class="bi bi-tag-fill me-1 text-primary opacity-50"></i>
+                        {{ opp.wasteType }}
                       </div>
                     </td>
                     <td>
                       <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3">
-                        {{ (opp.applicantCount !== undefined) ? opp.applicantCount : getApplicantCount(opp._id || opp.id) }}
+                        {{ opp.applicantCount || 0 }}
                       </span>
                     </td>
                     <td>
@@ -651,7 +605,7 @@
                     </td>
                   </tr>
 
-                  <tr *ngIf="allOpportunities.length === 0">
+                  <tr *ngIf="filteredOpportunities.length === 0">
                     <td colspan="4" class="text-center py-5 text-muted">No opportunities yet. Click 'New Opportunity' to
                       create your first one.</td>
                   </tr>
@@ -661,12 +615,12 @@
 
             <!-- Mobile Card View -->
             <div class="d-md-none">
-              <div *ngFor="let opp of allOpportunities" class="opportunity-mobile-card p-3 border-bottom">
+              <div *ngFor="let opp of filteredOpportunities" class="opportunity-mobile-card p-3 border-bottom">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                   <div class="flex-grow-1">
                     <div class="fw-bold text-dark mb-1">{{ opp.title }}</div>
                     <div class="badge bg-info bg-opacity-10 text-info rounded-pill extra-small px-3">
-                      {{ (opp.applicantCount !== undefined) ? opp.applicantCount : getApplicantCount(opp._id || opp.id) }} Applicants
+                      {{ opp.applicantCount || 0 }} Applicants
                     </div>
                   </div>
                   <span class="badge border bg-opacity-10 rounded-pill extra-small"
@@ -686,7 +640,7 @@
                   </div>
                   <div class="extra-small text-primary text-truncate flex-grow-1">
                     <i class="bi bi-people-fill me-1"></i>
-                    {{ (opp.applicantNames && opp.applicantNames.length > 0) ? opp.applicantNames.join(', ') : getApplicantNames(opp._id || opp.id) }}
+                    {{ opp.applicantNames && opp.applicantNames.length > 0 ? opp.applicantNames.join(', ') : 'No applicants yet' }}
                   </div>
                 </div>
 
@@ -706,9 +660,191 @@
                 </div>
               </div>
               
-              <div *ngIf="allOpportunities.length === 0" class="text-center py-5 text-muted small">
+              <div *ngIf="filteredOpportunities.length === 0" class="text-center py-5 text-muted small">
                 No opportunities yet.
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Management Oversight -->
+      <div *ngIf="activeMenu === 'users'" class="premium-card animate-fade-in overflow-hidden">
+        <div class="card-header bg-transparent border-0 p-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="fw-bold mb-1 gradient-text">Global User Oversight</h5>
+            <p class="text-muted extra-small mb-0">Monitor and manage platform participants</p>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">
+              {{ filteredUsers.length }} Total Entities
+            </span>
+          </div>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light bg-opacity-50">
+                <tr>
+                  <th class="px-4 py-3 border-0 small text-muted text-uppercase ls-wide">User Profile</th>
+                  <th class="py-3 border-0 small text-muted text-uppercase ls-wide">Role</th>
+                  <th class="py-3 border-0 small text-muted text-uppercase ls-wide">Location</th>
+                  <th class="py-3 border-0 small text-muted text-uppercase ls-wide text-center">Status</th>
+                  <th class="px-4 py-3 border-0 text-end small text-muted text-uppercase ls-wide">Controls</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of filteredUsers" [class.opacity-50]="user.isSuspended" class="transition-all">
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="avatar-sm bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 40px; height: 40px;">
+                        {{ user.name.charAt(0).toUpperCase() }}
+                      </div>
+                      <div>
+                        <div class="fw-bold text-dark">{{ user.name }}</div>
+                        <div class="extra-small text-muted">{{ user.email }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill px-3 py-1 border"
+                      [class.bg-danger]="user.role === 'Admin'" [class.text-danger]="user.role === 'Admin'" [class.border-danger]="user.role === 'Admin'" [class.bg-opacity-10]="user.role === 'Admin'"
+                      [class.bg-primary]="user.role === 'NGO'" [class.text-primary]="user.role === 'NGO'" [class.border-primary]="user.role === 'NGO'" [class.bg-opacity-10]="user.role === 'NGO'"
+                      [class.bg-info]="user.role === 'Volunteer'" [class.text-info]="user.role === 'Volunteer'" [class.border-info]="user.role === 'Volunteer'" [class.bg-opacity-10]="user.role === 'Volunteer'"
+                      [class.bg-success]="user.role === 'Citizen'" [class.text-success]="user.role === 'Citizen'" [class.border-success]="user.role === 'Citizen'" [class.bg-opacity-10]="user.role === 'Citizen'">
+                      {{ user.role }}
+                    </span>
+                  </td>
+                  <td><span class="small"><i class="bi bi-geo-alt me-1 text-muted"></i>{{ user.location || 'N/A' }}</span></td>
+                  <td class="text-center">
+                    <div class="form-check form-switch d-inline-block">
+                      <input class="form-check-input cursor-pointer" type="checkbox" role="switch" 
+                             [checked]="!user.isSuspended" (change)="toggleUserStatus(user)"
+                             [title]="user.isSuspended ? 'Click to Activate' : 'Click to Suspend'">
+                    </div>
+                    <div class="extra-small mt-1" [class.text-success]="!user.isSuspended" [class.text-danger]="user.isSuspended">
+                      {{ user.isSuspended ? 'Suspended' : 'Active' }}
+                    </div>
+                  </td>
+                  <td class="px-4 text-end">
+                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1"
+                            (click)="toggleUserStatus(user)">
+                      <i class="bi" [class.bi-slash-circle]="!user.isSuspended" [class.bi-check-circle]="user.isSuspended"></i>
+                      {{ user.isSuspended ? 'Restore' : 'Suspend' }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messaging System -->
+      <div *ngIf="activeMenu === 'messages'" class="messages-view animate-fade-in premium-card overflow-hidden h-100 mb-4">
+        <div class="row g-0 h-100" style="min-height: 600px;">
+          <!-- Conversations List -->
+          <div class="col-md-4 col-lg-3 border-end h-100 conversation-sidebar bg-white bg-opacity-75 glass">
+            <div class="p-3 border-bottom bg-transparent">
+              <h6 class="fw-bold mb-0">Conversations</h6>
+            </div>
+            <div class="conversation-list overflow-auto" style="height: 550px;">
+              <div *ngFor="let conv of conversations" 
+                (click)="selectConversation(conv)"
+                class="conversation-item p-3 border-bottom cursor-pointer transition-all mx-2 my-1 rounded-3"
+                [class.active]="selectedPartner?.partnerId === conv.partnerId"
+                [class.bg-primary]="selectedPartner?.partnerId === conv.partnerId"
+                [class.bg-opacity-10]="selectedPartner?.partnerId === conv.partnerId">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="avatar-sm bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 40px; height: 40px; flex-shrink: 0;">
+                    {{ conv.partnerName.charAt(0).toUpperCase() }}
+                  </div>
+                  <div class="flex-grow-1 min-width-0">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <h6 class="mb-0 fw-bold text-truncate extra-small" [class.text-primary]="selectedPartner?.partnerId === conv.partnerId">{{ conv.partnerName }}</h6>
+                      <span class="extra-small text-muted">{{ conv.lastMessageTime | date:'shortTime' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <p class="text-muted extra-small mb-0 text-truncate">{{ conv.lastMessage }}</p>
+                      <span *ngIf="conv.unreadCount > 0" class="badge bg-danger rounded-pill extra-small">{{ conv.unreadCount }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="conversations.length === 0" class="p-4 text-center text-muted small">
+                No active conversations.
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Chat Window -->
+          <div class="col-md-8 col-lg-9 d-flex flex-column h-100 bg-white">
+            <div *ngIf="selectedPartner" class="h-100 d-flex flex-column">
+              <!-- Chat Header -->
+              <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white sticky-top">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="avatar-sm bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px;">
+                    {{ selectedPartner.partnerName.charAt(0).toUpperCase() }}
+                  </div>
+                  <div>
+                    <h6 class="fw-bold mb-0 text-dark">{{ selectedPartner.partnerName }}</h6>
+                    <small class="text-primary extra-small fw-bold" *ngIf="selectedPartner.opportunityTitle">
+                      <i class="bi bi-briefcase me-1"></i>{{ selectedPartner.opportunityTitle }}
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Messages -->
+              <div class="chat-messages-container flex-grow-1 p-4 overflow-auto bg-light bg-opacity-25" style="height: 440px;">
+                <div *ngIf="isChatLoading" class="text-center py-5">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                </div>
+                
+                <div *ngFor="let msg of activeChatMessages" class="mb-3 d-flex" 
+                  [class.justify-content-end]="msg.senderId === currentUser.id"
+                  [class.justify-content-start]="msg.senderId !== currentUser.id">
+                  <div class="message-bubble p-3 rounded-4 shadow-sm" 
+                    [style.max-width]="'75%'"
+                    [class.bg-primary]="msg.senderId === currentUser.id"
+                    [class.text-white]="msg.senderId === currentUser.id"
+                    [class.bg-white]="msg.senderId !== currentUser.id"
+                    [class.text-dark]="msg.senderId !== currentUser.id">
+                    <p class="mb-1 small">{{ msg.content }}</p>
+                    <div class="text-end" style="font-size: 0.6rem; opacity: 0.7;">
+                      {{ msg.timestamp | date:'shortTime' }}
+                      <i *ngIf="msg.senderId === currentUser.id" class="bi ms-1" 
+                        [class.bi-check]="!msg.isRead" [class.bi-check-all]="msg.isRead"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Input -->
+              <div class="p-3 border-top bg-white">
+                <form (ngSubmit)="sendAdminMessage()" class="d-flex gap-2">
+                  <input type="text" 
+                    [(ngModel)]="newMessageContent" 
+                    name="newMessage"
+                    class="form-control rounded-pill px-4 border-0 bg-light" 
+                    placeholder="Type your message..."
+                    autocomplete="off">
+                  <button type="submit" 
+                    [disabled]="!newMessageContent.trim()"
+                    class="btn btn-primary rounded-circle p-2 d-flex align-items-center justify-content-center" 
+                    style="width: 40px; height: 40px;">
+                    <i class="bi bi-send-fill text-white"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!selectedPartner" class="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-muted p-5">
+              <div class="display-1 mb-4 opacity-25 text-primary"><i class="bi bi-chat-quote"></i></div>
+              <h5 class="text-dark">Select a conversation to start chatting</h5>
+              <p class="small">Messages from volunteers will appear here.</p>
             </div>
           </div>
         </div>
@@ -788,6 +924,19 @@
                   </div>
                 </button>
 
+                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all"
+                  (click)="downloadApplicationReport()">
+                  <div class="d-flex align-items-center">
+                    <div class="bg-purple-light text-purple rounded-circle p-3 me-3" style="background: rgba(139,92,246,0.1); color: #7c3aed;">
+                      <i class="bi bi-file-earmark-check-fill fs-4"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-bold mb-1">Application Report</h6>
+                      <small class="text-muted">Total, accepted & rejected applications</small>
+                    </div>
+                  </div>
+                </button>
+
                 <div class="alert bg-warning bg-opacity-10 border-warning border-opacity-25 mt-3">
                   <i class="bi bi-info-circle-fill me-2 text-warning"></i>
                   <small>Reports are generated in real-time from the current database state.</small>
@@ -800,4 +949,31 @@
     </div>
   </main>
 
+  <!-- NOTIFICATION DRAWER -->
+  <div class="db-notif-overlay" *ngIf="showNotifDrawer" (click)="toggleNotifDrawer()"></div>
+  <div class="db-notif-drawer" [class.open]="showNotifDrawer">
+    <div class="db-notif-header">
+      <h3>Notifications</h3>
+      <button class="db-notif-close" (click)="toggleNotifDrawer()">✕</button>
+    </div>
+    
+    <div class="db-notif-list">
+      <div *ngIf="((notifications$ | async) || []).length === 0" class="db-notif-empty">
+        <div class="db-notif-empty-icon">🔔</div>
+        <p>No new notifications</p>
+      </div>
+      
+      <div *ngFor="let n of (notifications$ | async)" 
+           class="db-notif-item" 
+           [class.unread]="!n.read"
+           (click)="markNotifAsRead(n.id)">
+        <div class="db-notif-dot" [class]="n.type"></div>
+        <div class="db-notif-content">
+          <div class="db-notif-title">{{ n.title }}</div>
+          <div class="db-notif-msg">{{ n.message }}</div>
+          <div class="db-notif-time">{{ n.timestamp | date:'short' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

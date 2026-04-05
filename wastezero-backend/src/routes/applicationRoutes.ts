@@ -21,6 +21,9 @@ router.get('/admin', requireRole(['admin', 'ngo']), getAdminApplications);
 // @route   GET /api/applications/volunteer
 router.get('/volunteer', requireRole(['volunteer']), getVolunteerApplications);
 
+// @route   GET /api/applications (all — for admin CSV export)
+router.get('/', requireRole(['admin', 'ngo']), getAdminApplications);
+
 // @route   PUT /api/applications/:id/status
 router.put('/:id/status', requireRole(['admin', 'ngo']), updateApplicationStatus);
 

@@ -14,27 +14,25 @@
           <p class="lead mb-5 text-light opacity-75 pe-lg-5" style="font-size: 1.25rem;">Join WasteZero today. Schedule
             pickups, categorize recyclables, and contribute to a greener planet. Our intelligent platform connects you
             with the right pickup agents seamlessly.</p>
-          <div class="d-flex flex-wrap gap-3">
+          <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-start">
             <a routerLink="/register" class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow-sm fw-semibold">Get
               Started Free <i class="bi bi-arrow-right ms-2"></i></a>
             <a href="#how-it-works" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-semibold">Learn
               More</a>
-            <a routerLink="/login"
-              class="btn btn-light btn-lg px-5 py-3 rounded-pill shadow-sm fw-semibold text-success ms-md-2">Login</a>
           </div>
           <div class="mt-5 d-flex align-items-center gap-4 text-light opacity-75">
             <div>
-              <h3 class="fw-bold text-white mb-0">10k+</h3>
+              <h3 class="fw-bold text-white mb-0">{{ displayUsers }}k+</h3>
               <small>Active Users</small>
             </div>
             <div class="vr"></div>
             <div>
-              <h3 class="fw-bold text-white mb-0">50k+</h3>
+              <h3 class="fw-bold text-white mb-0">{{ displayPickups }}k+</h3>
               <small>Pickups Completed</small>
             </div>
             <div class="vr"></div>
             <div>
-              <h3 class="fw-bold text-white mb-0">100+</h3>
+              <h3 class="fw-bold text-white mb-0">{{ displayNGOs }}+</h3>
               <small>NGO Partners</small>
             </div>
           </div>

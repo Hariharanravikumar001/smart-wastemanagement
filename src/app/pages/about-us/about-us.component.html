@@ -1,65 +1,190 @@
-<div class="container py-5 my-5">
-  <div class="row align-items-center mb-5">
-    <div class="col-lg-6 mb-4 mb-lg-0">
-      <h1 class="display-4 fw-bold text-success mb-3">About WasteZero</h1>
-      <p class="lead text-secondary mb-4">We are on a mission to transform waste management through technology, community engagement, and intelligent scheduling.</p>
-      <p class="mb-4">WasteZero connects citizens who want to dispose of waste responsibly with volunteers and organizations dedicated to processing it. Our platform ensures that recyclable, organic, and even hazardous waste finds its way to the right facilities, minimizing environmental impact.</p>
-      <div class="d-flex gap-3">
-        <div class="bg-success text-white p-3 rounded text-center" style="min-width: 120px;">
-          <h2 class="fw-bold mb-0">10K+</h2>
-          <small>Pickups</small>
-        </div>
-        <div class="bg-dark text-white p-3 rounded text-center" style="min-width: 120px;">
-          <h2 class="fw-bold mb-0">5K+</h2>
-          <small>Volunteers</small>
+<div class="about-premium-container">
+  <!-- Hero Section -->
+  <header class="about-hero text-center position-relative">
+    <div class="container animate-fade-in">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <span class="badge bg-success bg-opacity-25 text-white mb-3 px-3 py-2 rounded-pill fw-bold">EST. 2026</span>
+          <h1 class="display-3 fw-bold mb-4">Pioneering Sustainable <span class="text-white-50">Waste Management</span></h1>
+          <p class="lead-text mx-auto mb-5">
+            WasteZero is a community-driven technology platform dedicated to solving the global waste crisis through intelligent coordination, behavioral science, and real-time logistics.
+          </p>
         </div>
       </div>
     </div>
-    <div class="col-lg-6">
-      <div class="bg-light rounded p-5 text-center shadow-sm h-100 d-flex flex-column justify-content-center align-items-center">
-        <i class="bi bi-globe-americas text-success" style="font-size: 8rem; opacity: 0.8;"></i>
-        <h3 class="mt-4 fw-bold">Connecting Communities</h3>
-        <p class="text-secondary mt-2">Making it easier for everyone to play a part in a cleaner world.</p>
-      </div>
-    </div>
-  </div>
+  </header>
 
-  <div class="row g-4 mb-5">
-    <div class="col-12 text-center mb-4">
-      <h2 class="fw-bold text-dark">Our Values</h2>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body p-4 text-center">
-          <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-            <i class="bi bi-tree fs-4"></i>
+  <!-- Our Story Section -->
+  <section class="py-5 my-5">
+    <div class="container py-lg-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6 animate-slide-up">
+          <div class="pe-lg-5">
+            <span class="section-tag">Our Collective Story</span>
+            <h2 class="fw-bold display-5 mb-4">Born from a vision, <br><span class="text-success">scaled by community.</span></h2>
+            <p class="text-secondary mb-4">
+              WasteZero began as a small pilot project aimed at reducing landfill dependency in urban neighborhoods. We realized that the biggest barrier to effective recycling wasn't a lack of will, but a lack of infrastructure and coordination.
+            </p>
+            <p class="text-secondary mb-4">
+              By leveraging mobile technology and a passionate community of volunteers, we've built an ecosystem where every piece of waste is tracked, sorted, and redirected to its optimal end-point—whether that's a recycling plant, a composting facility, or a creative reuse center.
+            </p>
+            <div class="d-flex align-items-center gap-4 mt-5">
+              <div class="d-flex flex-column">
+                <span class="stat-number">{{ displayCities }}+</span>
+                <span class="stat-label">Cities Reached</span>
+              </div>
+              <div class="vr mx-3"></div>
+              <div class="d-flex flex-column">
+                <span class="stat-number">{{ displayAccuracy }}%</span>
+                <span class="stat-label">Sorting Accuracy</span>
+              </div>
+            </div>
           </div>
-          <h5 class="fw-bold">Sustainability</h5>
-          <p class="text-secondary small">We prioritize long-term environmental health over short-term convenience.</p>
+        </div>
+        <div class="col-lg-6 animate-slide-up delay-1">
+          <div class="position-relative p-4">
+            <div class="bg-success position-absolute top-0 start-0 w-100 h-100 rounded-5 opacity-10" style="z-index: -1;"></div>
+            <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800" alt="Sustainability Team" class="img-fluid rounded-5 shadow-lg">
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body p-4 text-center">
-          <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-            <i class="bi bi-people fs-4"></i>
+  </section>
+
+  <!-- Vision & Mission Section -->
+  <section class="py-5 bg-light-soft my-5">
+    <div class="container py-lg-5">
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+          <div class="premium-card vision-card h-100 p-5 animate-slide-up delay-2">
+            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+              <i class="bi bi-eye fs-3"></i>
+            </div>
+            <h3 class="fw-bold mb-3">Our Vision</h3>
+            <p class="text-secondary mb-0">
+              A future where "waste" as a concept no longer exists—replaced by a circular economy where every material is recognized as a valuable resource and handled with precision and care.
+            </p>
           </div>
-          <h5 class="fw-bold">Community</h5>
-          <p class="text-secondary small">Real change happens when neighbors and volunteers work together.</p>
+        </div>
+        <div class="col-md-5">
+          <div class="premium-card mission-card h-100 p-5 animate-slide-up delay-3">
+            <div class="bg-dark text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
+              <i class="bi bi-rocket-takeoff fs-3"></i>
+            </div>
+            <h3 class="fw-bold mb-3">Our Mission</h3>
+            <p class="text-secondary mb-0">
+              To empower communities with the technical tools and coordination systems needed to achieve zero-waste goals efficiently, transparently, and rewardingly.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body p-4 text-center">
-          <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-            <i class="bi bi-lightbulb fs-4"></i>
+  </section>
+
+  <!-- Impact Section -->
+  <section class="py-5 my-5">
+    <div class="container text-center">
+      <h2 class="fw-bold display-5 mb-5">Our Global Impact</h2>
+      <div class="row g-4 mt-4">
+        <div class="col-md-3">
+          <div class="stat-box animate-fade-in delay-1">
+            <h2 class="stat-number">{{ displayWaste }}M</h2>
+            <p class="stat-label">Kg of Waste Sorted</p>
           </div>
-          <h5 class="fw-bold">Innovation</h5>
-          <p class="text-secondary small">Leveraging the latest technology to make waste collection efficient and smart.</p>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-box animate-fade-in delay-2">
+            <h2 class="stat-number">{{ displayUsers }}K</h2>
+            <p class="stat-label">Active Users</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-box animate-fade-in delay-3">
+            <h2 class="stat-number">{{ displayVolunteers }}K</h2>
+            <p class="stat-label">Certified Volunteers</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-box animate-fade-in delay-3">
+            <h2 class="stat-number">{{ displayPartners }}</h2>
+            <p class="stat-label">Zero-Waste Partnerships</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="py-5 my-5 bg-white overflow-hidden">
+    <div class="container py-lg-5">
+      <div class="text-center mb-5">
+        <span class="section-tag">Driving the Change</span>
+        <h2 class="fw-bold display-5 mb-3">Meet the Visionaries</h2>
+        <p class="text-secondary mx-auto" style="max-width: 600px;">A diverse collective of environmentalists, engineers, and community leaders dedicated to a greener future.</p>
+      </div>
+
+      <div class="row g-4 mt-4">
+        <div class="col-lg-3 col-md-6 border-0">
+          <div class="team-member-card">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200" alt="Alex Chen" class="team-avatar">
+            <h5 class="fw-bold mb-1">Alex Chen</h5>
+            <p class="text-success small fw-bold mb-3">CEO & Co-Founder</p>
+            <p class="text-muted small">Passionate about circular economy and community-led urban regeneration.</p>
+            <div class="social-links">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-twitter-x"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 border-0">
+          <div class="team-member-card">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200" alt="Sarah Johnson" class="team-avatar">
+            <h5 class="fw-bold mb-1">Sarah Johnson</h5>
+            <p class="text-success small fw-bold mb-3">Head of Sustainability</p>
+            <p class="text-muted small">Expert in global waste logistics and environmental impact assessment.</p>
+            <div class="social-links">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 border-0">
+          <div class="team-member-card">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200" alt="Marcus Rodriguez" class="team-avatar">
+            <h5 class="fw-bold mb-1">Marcus Rodriguez</h5>
+            <p class="text-success small fw-bold mb-3">Chief Technology Officer</p>
+            <p class="text-muted small">Leading the development of our intelligent waste routing and sorting algorithms.</p>
+            <div class="social-links">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-github"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 border-0">
+          <div class="team-member-card">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200" alt="Elena Petrov" class="team-avatar">
+            <h5 class="fw-bold mb-1">Elena Petrov</h5>
+            <p class="text-success small fw-bold mb-3">VP of Operations</p>
+            <p class="text-muted small">Working with municipalities to scale WasteZero across new territories.</p>
+            <div class="social-links">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-globe"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-5 bg-light-soft">
+    <div class="container text-center py-5">
+      <h2 class="fw-bold display-5 mb-4">Be Part of the Solution</h2>
+      <p class="text-secondary mx-auto mb-5 lead" style="max-width: 600px;">Join our growing community and start making a real impact on your environment today.</p>
+      <div class="d-flex justify-content-center gap-3">
+        <a routerLink="/register" class="btn btn-success btn-lg rounded-pill px-5 shadow fw-bold">Sign Up Free</a>
+        <a routerLink="/contact" class="btn btn-outline-dark btn-lg rounded-pill px-5 fw-bold">Work With Us</a>
+      </div>
+    </div>
+  </section>
 </div>

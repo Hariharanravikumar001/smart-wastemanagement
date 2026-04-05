@@ -129,6 +129,9 @@
         [currentUser]="currentUser" [activeTab]="activeTab" (setTab)="setTab($event)">
       </app-volunteer-dashboard>
 
+      <!-- Messages View -->
+      <app-messages *ngIf="activeTab === 'messages'" class="animate-fade-in"></app-messages>
+
       <!-- Profile View Container -->
       <div *ngIf="activeTab === 'profile'" class="db-profile-container animate-fade-in">
 

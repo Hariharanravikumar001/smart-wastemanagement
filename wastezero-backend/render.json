@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm install && npm run build",
+  "startCommand": "npm start",
+  "envVars": [
+    { "key": "MONGODB_URI", "value": "YOUR_MONGODB_ATLAS_URI" },
+    { "key": "JWT_SECRET", "value": "YOUR_JWT_SECRET_HERE" },
+    { "key": "GOOGLE_CLIENT_ID", "value": "YOUR_GOOGLE_CLIENT_ID_HERE" },
+    { "key": "PORT", "value": "4000" },
+    { "key": "NODE_ENV", "value": "production" }
+  ]
+}

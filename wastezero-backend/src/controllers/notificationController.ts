@@ -7,8 +7,8 @@ import Notification from '../models/Notification';
 // @access  Private
 export const getNotifications = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const userId = req.user.id;
-        const notifications = await Notification.find({ recipient_id: userId }).sort({ timestamp: -1 });
+        const userId = req.user!.id;
+        const notifications = await Notification.find({ recipient_id: userId }).sort({ timestamp: -1 }).lean();
         res.status(200).json(notifications);
     } catch (error) {
         console.error('Get notifications error:', error);
@@ -21,8 +21,8 @@ export const getNotifications = async (req: AuthRequest, res: Response): Promise
 // @access  Private
 export const markAsRead = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const userId = req.user.id;
-        const notificationId = req.params.id;
+        const userId = req.user!.id;
+        const notificationId = req.params['id'];
 
         const notification = await Notification.findOneAndUpdate(
             { _id: notificationId, recipient_id: userId },

@@ -1,0 +1,44 @@
+﻿src/app/pages/admin/admin.component.ts(314,24): error TS2532: Object is possibly 'undefined'.
+src/app/pages/admin/admin.component.ts(315,22): error TS2532: Object is possibly 'undefined'.
+src/app/pages/admin/admin.component.ts(333,36): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(o: {}): string[]', gave the following error.
+    Argument of type '{ [key: string]: number; } | undefined' is not assignable to parameter of type '{}'.
+      Type 'undefined' is not assignable to type '{}'.
+  Overload 2 of 2, '(o: object): string[]', gave the following error.
+    Argument of type '{ [key: string]: number; } | undefined' is not assignable to parameter of type 'object'.
+      Type 'undefined' is not assignable to type 'object'.
+src/app/pages/admin/admin.component.ts(334,36): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(o: ArrayLike<number> | { [s: string]: number; }): number[]', gave the following error.
+    Argument of type '{ [key: string]: number; } | undefined' is not assignable to parameter of type 'ArrayLike<number> | { [s: string]: number; }'.
+      Type 'undefined' is not assignable to type 'ArrayLike<number> | { [s: string]: number; }'.
+  Overload 2 of 2, '(o: {}): any[]', gave the following error.
+    Argument of type '{ [key: string]: number; } | undefined' is not assignable to parameter of type '{}'.
+      Type 'undefined' is not assignable to type '{}'.
+src/app/pages/admin/admin.component.ts(703,7): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+wastezero-backend/scripts/check_users.ts(2,18): error TS2307: Cannot find module './src/models/User' or its corresponding type declarations.
+wastezero-backend/scripts/check_users.ts(16,23): error TS7006: Parameter 'u' implicitly has an 'any' type.
+wastezero-backend/scripts/check_users.ts(20,37): error TS7006: Parameter 'u' implicitly has an 'any' type.
+wastezero-backend/scripts/check_users.ts(24,55): error TS7006: Parameter 'a' implicitly has an 'any' type.
+wastezero-backend/scripts/create_admin.ts(3,18): error TS2307: Cannot find module './src/models/User' or its corresponding type declarations.
+wastezero-backend/scripts/debug_db.ts(4,18): error TS2307: Cannot find module './src/models/User' or its corresponding type declarations.
+wastezero-backend/scripts/debug_db.ts(5,25): error TS2307: Cannot find module './src/models/Opportunity' or its corresponding type declarations.
+wastezero-backend/scripts/debug_db.ts(20,45): error TS7006: Parameter 'v' implicitly has an 'any' type.
+wastezero-backend/scripts/debug_db.ts(23,56): error TS7006: Parameter 'o' implicitly has an 'any' type.
+wastezero-backend/scripts/find_test_users.ts(3,18): error TS2307: Cannot find module './src/models/User' or its corresponding type declarations.
+wastezero-backend/scripts/test-matches.ts(3,25): error TS2307: Cannot find module './src/models/Opportunity' or its corresponding type declarations.
+wastezero-backend/scripts/test-matches.ts(4,25): error TS2307: Cannot find module './src/models/Application' or its corresponding type declarations.
+wastezero-backend/scripts/test-matches.ts(5,18): error TS2307: Cannot find module './src/models/User' or its corresponding type declarations.
+wastezero-backend/scripts/test_agg.ts(3,25): error TS2307: Cannot find module './src/models/Opportunity' or its corresponding type declarations.
+wastezero-backend/scripts/test_aggregation.ts(2,21): error TS2307: Cannot find module './src/models/Message' or its corresponding type declarations.
+wastezero-backend/scripts/test_aggregation.ts(3,18): error TS2307: Cannot find module './src/models/User' or its corresponding type declarations.
+wastezero-backend/scripts/test_create_opp_direct.ts(1,19): error TS2307: Cannot find module 'axios' or its corresponding type declarations.
+wastezero-backend/scripts/test_login.ts(1,19): error TS2307: Cannot find module 'axios' or its corresponding type declarations.
+wastezero-backend/scripts/test_visibility.ts(3,18): error TS2307: Cannot find module './src/models/User' or its corresponding type declarations.
+wastezero-backend/scripts/test_visibility.ts(4,25): error TS2307: Cannot find module './src/models/Opportunity' or its corresponding type declarations.
+wastezero-backend/scripts/test_visibility.ts(39,9): error TS7034: Variable 'acceptedApps' implicitly has type 'any[]' in some locations where its type cannot be determined.
+wastezero-backend/scripts/test_visibility.ts(43,23): error TS7005: Variable 'acceptedApps' implicitly has an 'any[]' type.
+wastezero-backend/scripts/test_visibility.ts(67,27): error TS7006: Parameter 'o' implicitly has an 'any' type.
+wastezero-backend/scripts/verify_fix.ts(3,25): error TS2307: Cannot find module './src/models/Opportunity' or its corresponding type declarations.
+wastezero-backend/scripts/verify_fix.ts(4,18): error TS2307: Cannot find module './src/models/User' or its corresponding type declarations.
+wastezero-backend/scripts/verify_volunteer_access.ts(2,19): error TS2307: Cannot find module 'axios' or its corresponding type declarations.

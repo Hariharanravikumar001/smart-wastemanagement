@@ -1,99 +1,185 @@
-<div class="db-body">
-  <h1 class="db-page-title">Welcome back, {{ currentUser?.name }} 👋</h1>
-  <p class="db-page-sub">Here's your environmental impact overview</p>
-
-  <div class="db-stats-row">
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap green">🌿</div>
-      <div>
-        <div class="db-stat-value">{{ (totalWeight$ | async) || 0 }} kg</div>
-        <div class="db-stat-label">Waste Recycled</div>
-      </div>
+<div class="db-body animate-fade-in p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold gradient-text mb-1">Hello, {{ currentUser?.name }} 👋</h1>
+      <p class="text-muted small mb-0">Your personal environmental impact dashboard</p>
     </div>
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap blue">⚡</div>
-      <div>
-        <div class="db-stat-value">{{ (impactScore$ | async) || 0 }}</div>
-        <div class="db-stat-label">Impact Score</div>
-      </div>
-    </div>
-    <div class="db-stat-card">
-      <div class="db-stat-icon-wrap purple">🏆</div>
-      <div>
-        <div class="db-stat-value">{{ (completedCount$ | async) || 0 }}</div>
-        <div class="db-stat-label">Completed Pickups</div>
-      </div>
+    <div class="glass border rounded-pill px-3 py-2 shadow-sm d-flex align-items-center gap-2">
+      <div class="bg-success rounded-circle" style="width: 8px; height: 8px;"></div>
+      <span class="extra-small fw-bold text-uppercase ls-wide">Eco-status: Active</span>
     </div>
   </div>
 
-  <div class="db-grid-two-col">
-    <!-- Next Pickup Summary -->
-    <div class="db-card" *ngIf="(activeRequests$ | async) as actives">
-      <h3 class="db-card-title">🚀 Next Scheduled Pickup</h3>
-      <div *ngIf="actives.length > 0; else noActive">
-        <div class="db-list-item">
-          <div class="db-list-icon">{{ getCategoryIcon(actives[0].wasteCategory) }}</div>
-          <div class="db-list-info">
-            <div class="db-list-title">{{ actives[0].wasteCategory }} — {{ actives[0].description }}</div>
-            <div class="db-list-meta">Scheduled for: {{ (actives[0].scheduledDate | date:'medium') || 'Awaiting Schedule' }}</div>
-            <div class="mt-2 text-start" *ngIf="actives[0].volunteerId">
-              <button class="btn btn-sm btn-outline-primary rounded-pill px-3" 
-                      [routerLink]="['/chat', actives[0].volunteerId, actives[0].volunteerName || 'Volunteer']">
-                <i class="bi bi-person-badge me-1"></i> Message Volunteer
-              </button>
-            </div>
-          </div>
-          <span class="db-status-chip" [class.scheduled]="actives[0].status === 'Scheduled'">{{ actives[0].status }}</span>
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <div class="premium-card p-4 h-100 text-center position-relative overflow-hidden">
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-success bg-opacity-5" style="z-index: 0;"></div>
+        <div class="position-relative" style="z-index: 1;">
+          <div class="stat-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-3" style="width: 50px; height: 50px;"><i class="bi bi-recycle fs-4"></i></div>
+          <h2 class="fw-bold mb-1">{{ (totalWeight$ | async) || 0 }}<span class="small ms-1">kg</span></h2>
+          <div class="text-muted fw-bold extra-small text-uppercase ls-wide">Waste Recycled</div>
         </div>
-
       </div>
-      <ng-template #noActive>
-        <div class="db-empty">
-          No active pickups. 
-          <button class="db-link-btn" routerLink="/citizen/pickup-request">Schedule one now →</button>
-        </div>
-      </ng-template>
     </div>
-
-    <!-- Category Breakdown -->
-    <div class="db-card">
-      <h3 class="db-card-title">📊 Category Breakdown</h3>
-      <div *ngIf="(wasteStats$ | async) as stats">
-        <div *ngIf="stats.length === 0" class="db-empty">Statistics will appear after your first completed collection.</div>
-        <div *ngFor="let stat of stats" class="db-stat-bar-row">
-          <div class="db-stat-bar-label">
-            <span class="db-stat-bar-icon">{{ getCategoryIcon(stat.category) }}</span>
-            <span>{{ stat.category }}</span>
-          </div>
-          <div class="db-stat-bar-track">
-            <div class="db-stat-bar-fill" [style.width.%]="stat.percentage" [style.background]="getCategoryColor(stat.category)"></div>
-          </div>
-          <div class="db-stat-bar-value">{{ stat.weight }} kg</div>
+    <div class="col-md-4">
+      <div class="premium-card p-4 h-100 text-center position-relative overflow-hidden">
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary bg-opacity-5" style="z-index: 0;"></div>
+        <div class="position-relative" style="z-index: 1;">
+          <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-3" style="width: 50px; height: 50px;"><i class="bi bi-lightning-charge-fill fs-4"></i></div>
+          <h2 class="fw-bold mb-1">{{ (impactScore$ | async) || 0 }}</h2>
+          <div class="text-muted fw-bold extra-small text-uppercase ls-wide">Impact Score</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="premium-card p-4 h-100 text-center position-relative overflow-hidden">
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-warning bg-opacity-5" style="z-index: 0;"></div>
+        <div class="position-relative" style="z-index: 1;">
+          <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-3" style="width: 50px; height: 50px;"><i class="bi bi-trophy-fill fs-4"></i></div>
+          <h2 class="fw-bold mb-1">{{ (completedCount$ | async) || 0 }}</h2>
+          <div class="text-muted fw-bold extra-small text-uppercase ls-wide">Pickups Completed</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Recent Activity -->
-  <div class="db-section mt-4">
-    <div class="db-card full-width">
-      <div class="db-card-header">
-        <h3 class="db-card-title">🏁 Recent Activity</h3>
-        <a routerLink="/citizen/pickup-history" class="db-link">Full History →</a>
-      </div>
-      
-      <div *ngIf="(historyRequests$ | async) as history">
-        <div *ngIf="history.length === 0" class="db-empty">No recent activity found.</div>
-        <div class="db-history-list-mini">
-          <div *ngFor="let req of history | slice:0:3" class="db-list-item mini">
-            <div class="db-list-icon small">{{ getCategoryIcon(req.wasteCategory) }}</div>
-            <div class="db-list-info">
-              <div class="db-list-title small">{{ req.wasteCategory }} — {{ req.description }}</div>
-              <div class="db-list-meta small">{{ req.location }} · {{ req.scheduledDate | date:'mediumDate' }}</div>
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="premium-card h-100 overflow-hidden">
+        <div class="card-header bg-transparent border-0 p-4 pb-0">
+          <h5 class="fw-bold mb-1 gradient-text"><i class="bi bi-calendar-event me-2"></i>Scheduling & Status</h5>
+          <p class="text-muted extra-small">Your next collection at a glance</p>
+        </div>
+        <div class="card-body p-4 pt-2">
+          <div *ngIf="(activeRequests$ | async) as actives">
+            <div *ngIf="actives.length > 0; else noActive" class="glass border rounded-4 p-4 shadow-sm h-100 transition-all hover-translate">
+              <div class="d-flex justify-content-between align-items-start mb-4">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 55px; height: 55px;">
+                    <span class="fs-4">{{ getCategoryIcon(actives[0].wasteCategory) }}</span>
+                  </div>
+                  <div>
+                    <div class="fw-bold small">{{ formatCategories(actives[0].wasteCategory) }}</div>
+                    <div class="extra-small text-muted">{{ actives[0].description }}</div>
+                  </div>
+                </div>
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10 extra-small fw-bold">SCHEDULED</span>
+              </div>
+              
+              <div class="mb-4">
+                <div class="text-muted extra-small text-uppercase ls-wide mb-1">Pick-up Info</div>
+                <div class="small fw-bold"><i class="bi bi-clock me-2 text-primary"></i>{{ (actives[0].scheduledDate | date:'medium') || 'Awaiting Schedule' }}</div>
+              </div>
+
+              <div class="d-grid pt-3 border-top" *ngIf="actives[0].volunteerId">
+                <button class="btn btn-primary rounded-pill py-2 fw-bold shadow-sm" 
+                        [routerLink]="['/chat', actives[0].volunteerId, actives[0].volunteerName || 'Volunteer']">
+                  <i class="bi bi-chat-fill me-2 small"></i> Message Collector
+                </button>
+              </div>
             </div>
-            <div class="text-end">
-              <div class="db-list-weight" *ngIf="req.weight">{{ req.weight }} kg</div>
-              <span class="db-status-chip small" [class.completed]="req.status === 'Completed'">{{ req.status }}</span>
+            <ng-template #noActive>
+              <div class="text-center py-5 glass rounded-4 border-dashed h-100">
+                <i class="bi bi-calendar-plus fs-1 opacity-25 mb-2 d-block"></i>
+                <p class="text-muted small mb-3">No active pickups scheduled</p>
+                <button class="btn btn-sm btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" routerLink="/citizen/pickup-request">Request Now</button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="premium-card h-100">
+        <div class="card-header bg-transparent border-0 p-4 pb-0">
+          <h5 class="fw-bold mb-1 gradient-text"><i class="bi bi-pie-chart-fill me-2"></i>Sustainability Mix</h5>
+          <p class="text-muted extra-small">Breakdown of categories you've diverted</p>
+        </div>
+        <div class="card-body p-4 pt-2">
+          <div *ngIf="(wasteStats$ | async) as stats">
+            <div *ngIf="stats.length === 0" class="text-center py-4 opacity-50">
+              <p class="extra-small mb-0">Complete your first collection to see stats</p>
+            </div>
+            <div *ngFor="let stat of stats" class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="small fw-bold d-flex align-items-center gap-2">
+                  <span class="fs-5">{{ getCategoryIcon(stat.category) }}</span>
+                  <span>{{ stat.category }}</span>
+                </div>
+                <div class="small fw-bold">{{ stat.weight }} kg</div>
+              </div>
+              <div class="progress rounded-pill bg-light border" style="height: 10px;">
+                <div class="progress-bar rounded-pill transition-all" role="progressbar" 
+                     [style.width.%]="stat.percentage" [style.background]="getCategoryColor(stat.category)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-4 mb-2">
+    <!-- Gamified Rewards Hub -->
+    <div class="col-lg-12">
+      <div class="premium-card overflow-hidden mb-2 shadow-sm rewards-hub-bg">
+        <div class="card-header bg-transparent border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0" style="color: #2CBD93;"><i class="bi bi-star-fill text-warning me-2"></i>Rewards Hub</h5>
+          <span class="badge bg-warning text-dark rounded-pill px-3 py-2 fw-bold shadow-sm">Level {{ ((currentUser?.rewardPoints || 0) / 100) | number:'1.0-0' }} Citizen</span>
+        </div>
+        <div class="card-body p-4 pt-3">
+          <div class="row align-items-center">
+            <div class="col-md-3 text-center border-end border-secondary border-opacity-10">
+              <div class="fs-1 fw-bold text-warning mb-1">{{ currentUser?.rewardPoints || 0 }}</div>
+              <div class="rewards-hub-subtext extra-small text-uppercase ls-wide">Total Eco-Points</div>
+            </div>
+            <div class="col-md-9 px-4">
+              <h6 class="rewards-hub-text mb-3">Your Earned Badges</h6>
+              <div class="d-flex flex-wrap gap-3">
+                <div *ngIf="!currentUser?.badges || currentUser?.badges?.length === 0" class="rewards-hub-subtext small fs-italic">Complete a pickup to earn your first badge!</div>
+                <div *ngFor="let badge of currentUser?.badges" class="d-flex align-items-center gap-2 rewards-hub-badge px-3 py-2 rounded-pill shadow-sm border">
+                  <i class="bi bi-award-fill text-warning fs-5"></i>
+                  <span class="rewards-hub-text fw-bold small">{{ badge }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-2 mb-2">
+    <div class="col-12">
+      <div class="premium-card overflow-hidden">
+        <div class="card-header bg-transparent border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0 gradient-text"><i class="bi bi-clock-history me-2"></i>Eco-History</h5>
+          <a routerLink="/citizen/pickup-history" class="btn btn-sm btn-light glass border rounded-pill px-3 extra-small fw-bold">Full Journey</a>
+        </div>
+        <div class="card-body p-4 pt-3">
+          <div *ngIf="(historyRequests$ | async) as history">
+            <div *ngIf="history.length === 0" class="text-center py-4 opacity-50">
+              <p class="extra-small mb-0">Your recycling journey starts here.</p>
+            </div>
+            <div class="row g-4">
+              <div *ngFor="let req of history | slice:0:3" class="col-md-4">
+                <div class="glass border rounded-4 p-3 h-100 shadow-sm border-top border-4 border-success-subtle">
+                  <div class="d-flex align-items-center gap-3 mb-2">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px;">
+                      {{ getCategoryIcon(req.wasteCategory) }}
+                    </div>
+                    <div class="min-width-0">
+                      <div class="extra-small opacity-75 mb-0">{{ (req.scheduledDate | date:'mediumDate') || 'Completed' }}</div>
+                      <div class="fw-bold small text-truncate">{{ formatCategories(req.wasteCategory) }}</div>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                    <span class="text-muted extra-small">{{ req.weight || 0 }} kg collected</span>
+                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 extra-small border border-success border-opacity-10">DONE</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -101,3 +187,4 @@
     </div>
   </div>
 </div>
+

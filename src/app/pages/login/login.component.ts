@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AfterViewInit, NgZone } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -11,40 +12,105 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit {
   email = '';
   password = '';
   errorMessage = '';
+  isLoading = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router, 
+    private ngZone: NgZone
+  ) {}
+
+  ngAfterViewInit(): void {
+    // Check if google library is loaded
+    if (typeof (window as any).google !== 'undefined') {
+      try {
+        (window as any).google.accounts.id.initialize({
+          client_id: 'YOUR_GOOGLE_CLIENT_ID_HERE', // User should replace this in production
+          callback: this.handleCredentialResponse.bind(this),
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+
+        (window as any).google.accounts.id.renderButton(
+          document.getElementById('googleBtnContainer'),
+          { 
+            type: 'standard',
+            theme: 'outline', 
+            size: 'large', 
+            text: 'signin_with',
+            shape: 'pill',
+            logo_alignment: 'left',
+            width: '100%'
+          }
+        );
+      } catch (err) {
+        console.error('Google GSI initialization failed:', err);
+      }
+    } else {
+        console.warn('Google GSI library not loaded yet. Retrying...');
+        setTimeout(() => this.ngAfterViewInit(), 1000);
+    }
+  }
+
+  handleCredentialResponse(response: any) {
+    // Run inside NgZone to handle change detection from outside library
+    this.ngZone.run(() => {
+      this.isLoading = true;
+      this.errorMessage = '';
+      
+      this.authService.googleLogin(response.credential).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          console.log('Google login successful, role:', res.role);
+          this.navigateToDashboard(res.role);
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error('Google Login error:', err);
+          this.errorMessage = 'Google Sign-In failed. Please try again.';
+        }
+      });
+    });
+  }
 
   onSubmit() {
     this.errorMessage = '';
-    if (this.email && this.password) {
+    if (this.email && this.password && !this.isLoading) {
+      this.isLoading = true;
       this.authService.login({ email: this.email, password: this.password }).subscribe({
-        next: (user) => {
-           // On successful login, authService.currentUser$ is updated.
-           // Since we tapped and mapped the token in auth.service,
-           // we can check the currentUserValue.
-           const authenticatedUser = this.authService.currentUserValue;
-           
-            if(authenticatedUser) {
-              if (authenticatedUser.role === 'Admin') {
-                this.router.navigate(['/admin']);
-              } else if (authenticatedUser.role === 'Volunteer') {
-                this.router.navigate(['/volunteer/dashboard']);
-              } else if (authenticatedUser.role === 'Citizen' || authenticatedUser.role === 'User') {
-                this.router.navigate(['/citizen/dashboard']);
-              } else {
-                this.router.navigate(['/dashboard']);
-              }
-            }
+        next: (response) => {
+           this.isLoading = false;
+           console.log('Login successful, navigating based on role:', response.role);
+           this.navigateToDashboard(response.role);
         },
         error: (err) => {
-            console.error('Login error', err);
-            this.errorMessage = err.error?.message || 'Invalid email or password';
+            this.isLoading = false;
+            console.error('Login error detailed:', err);
+            this.errorMessage = err.error?.message || err.message || 'Invalid email or password. Please try again.';
         }
       });
+    }
+  }
+
+  private navigateToDashboard(role: string) {
+    if (!role) {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+    
+    const lowerRole = role.toLowerCase();
+    if (lowerRole === 'admin' || lowerRole === 'ngo') {
+      this.router.navigate(['/admin']);
+    } else if (lowerRole === 'volunteer') {
+      this.router.navigate(['/volunteer/dashboard']);
+    } else if (lowerRole === 'citizen' || lowerRole === 'user') {
+      this.router.navigate(['/citizen/dashboard']);
+    } else {
+      this.router.navigate(['/dashboard']);
     }
   }
 }

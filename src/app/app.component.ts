@@ -17,8 +17,8 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        // Hide footer on dashboard, admin, login and register routes
-        const hiddenPaths = ['/register', '/login', '/dashboard', '/admin', '/opportunities', '/citizen', '/volunteer', '/forgot-password'];
+        // Hide footer on dashboard, admin, login, register and messaging routes
+        const hiddenPaths = ['/register', '/login', '/dashboard', '/admin', '/opportunities', '/citizen', '/volunteer', '/forgot-password', '/messages', '/chat'];
         this.showFooter = !hiddenPaths.some(path => event.urlAfterRedirects.includes(path));
         this.checkNavbarVisibility(event.urlAfterRedirects);
       }
@@ -35,6 +35,7 @@ export class AppComponent implements OnInit {
     const isAdminPage = url.includes('/admin') || (role === 'Admin');
     const isDashboard = url.includes('/dashboard') || url.includes('/citizen') || url.includes('/volunteer');
     const isOpportunities = url.includes('/opportunities');
-    this.showNavbar = !isLoginPage && !isAdminPage && !isDashboard && !isOpportunities;
+    const isMessaging = url.includes('/messages') || url.includes('/chat');
+    this.showNavbar = !isLoginPage && !isAdminPage && !isDashboard && !isOpportunities && !isMessaging;
   }
 }
