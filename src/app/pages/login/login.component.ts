@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AfterViewInit, NgZone } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,7 @@ export class LoginComponent implements AfterViewInit {
     if (typeof (window as any).google !== 'undefined') {
       try {
         (window as any).google.accounts.id.initialize({
-          client_id: 'YOUR_GOOGLE_CLIENT_ID_HERE', // User should replace this in production
+          client_id: environment.googleClientId, // User should replace this in production environment.ts
           callback: this.handleCredentialResponse.bind(this),
           auto_select: false,
           cancel_on_tap_outside: true

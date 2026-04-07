@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
+dotenv.config();
+
 import authRoutes from './src/routes/authRoutes';
 import wasteRequestRoutes from './src/routes/wasteRequestRoutes';
 import opportunityRoutes from './src/routes/opportunityRoutes';
@@ -14,8 +16,6 @@ import publicRoutes from './src/routes/publicRoutes';
 
 import { createServer } from 'http';
 import { initSocket } from './src/services/socketService';
-
-dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);

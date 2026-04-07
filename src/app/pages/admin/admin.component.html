@@ -860,20 +860,20 @@
                 <div class="col-sm-6">
                   <div class="p-3 bg-light rounded-4">
                     <small class="text-muted d-block mb-1">Total Impact</small>
-                    <h4 class="fw-bold mb-0">{{ engagementAnalytics.totalImpact }}kg</h4>
-                    <small [class.text-success]="engagementAnalytics.totalImpactChange >= 0" 
-                           [class.text-danger]="engagementAnalytics.totalImpactChange < 0">
-                      {{ engagementAnalytics.totalImpactChange >= 0 ? '+' : '' }}{{ engagementAnalytics.totalImpactChange }}% from last month
+                    <h4 class="fw-bold mb-0">{{ engagementAnalytics.totalImpact ?? 0 }}kg</h4>
+                    <small [class.text-success]="(engagementAnalytics.totalImpactChange ?? 0) >= 0" 
+                           [class.text-danger]="(engagementAnalytics.totalImpactChange ?? 0) < 0">
+                      {{ (engagementAnalytics.totalImpactChange ?? 0) >= 0 ? '+' : '' }}{{ engagementAnalytics.totalImpactChange ?? 0 }}% from last month
                     </small>
                   </div>
                 </div>
                 <div class="col-sm-6">
                   <div class="p-3 bg-light rounded-4">
                     <small class="text-muted d-block mb-1">Volunteer Response Rate</small>
-                    <h4 class="fw-bold mb-0">{{ engagementAnalytics.responseRate }}%</h4>
-                    <small [class.text-success]="engagementAnalytics.responseRateChange >= 0"
-                           [class.text-danger]="engagementAnalytics.responseRateChange < 0">
-                      {{ engagementAnalytics.responseRateChange >= 0 ? '+' : '' }}{{ engagementAnalytics.responseRateChange }}% improvement
+                    <h4 class="fw-bold mb-0">{{ engagementAnalytics.responseRate ?? 0 }}%</h4>
+                    <small [class.text-success]="(engagementAnalytics.responseRateChange ?? 0) >= 0"
+                           [class.text-danger]="(engagementAnalytics.responseRateChange ?? 0) < 0">
+                      {{ (engagementAnalytics.responseRateChange ?? 0) >= 0 ? '+' : '' }}{{ engagementAnalytics.responseRateChange ?? 0 }}% improvement
                     </small>
                   </div>
                 </div>

@@ -1,15 +1,15 @@
 {
   "/api": {
-    "target": "http://127.0.0.1:4000",
+    "target": "http://127.0.0.1:5000",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   },
   "/socket.io": {
-    "target": "http://127.0.0.1:4000",
+    "target": "http://127.0.0.1:5000",
     "secure": false,
     "changeOrigin": true,
-    "ws": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "ws": true
   }
 }

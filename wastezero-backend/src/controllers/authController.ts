@@ -10,7 +10,21 @@ import { AuthRequest } from '../middleware/authMiddleware';
 import { sendEmail } from '../utils/emailService';
 import crypto from 'crypto';
 
-const googleClient = new OAuth2Client(process.env['GOOGLE_CLIENT_ID'] || 'YOUR_GOOGLE_CLIENT_ID_HERE');
+let _googleClient: OAuth2Client | null = null;
+
+const getGoogleClient = () => {
+  if (_googleClient) return _googleClient;
+  
+  const clientId = process.env['GOOGLE_CLIENT_ID'];
+  const clientSecret = process.env['GOOGLE_CLIENT_SECRET'];
+  
+  if (!clientId || clientId === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+    console.warn('⚠️ WARNING: GOOGLE_CLIENT_ID is not configured in backend .env file. Google Login will fail on token verification.');
+  }
+  
+  _googleClient = new OAuth2Client(clientId || 'YOUR_GOOGLE_CLIENT_ID_HERE', clientSecret);
+  return _googleClient;
+};
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -534,9 +548,12 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
+    const googleClient = getGoogleClient();
+    const googleClientId = process.env['GOOGLE_CLIENT_ID'];
+
     const ticket = await googleClient.verifyIdToken({
       idToken,
-      audience: process.env['GOOGLE_CLIENT_ID'] || 'YOUR_GOOGLE_CLIENT_ID_HERE',
+      audience: googleClientId || 'YOUR_GOOGLE_CLIENT_ID_HERE',
     });
     
     const payload = ticket.getPayload();
