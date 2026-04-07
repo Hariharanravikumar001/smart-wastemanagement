@@ -71,8 +71,17 @@ export class LoginComponent implements AfterViewInit {
         },
         error: (err) => {
           this.isLoading = false;
-          console.error('Google Login error:', err);
-          this.errorMessage = 'Google Sign-In failed. Please try again.';
+          console.error('Google Login status:', err.status);
+          
+          if (err.status === 404 && err.error?.googleData) {
+            console.log('User not found, redirecting to register with Google data');
+            this.router.navigate(['/register'], { 
+              state: { googleData: err.error.googleData } 
+            });
+          } else {
+            console.error('Google Login error:', err);
+            this.errorMessage = 'Google Sign-In failed. Please try again.';
+          }
         }
       });
     });

@@ -566,28 +566,22 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Create new user for first-time Google sign-in
-      const randomPassword = crypto.randomBytes(16).toString('hex');
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(randomPassword, salt);
-
-      user = new User({
-        name: name || 'Google User',
-        username: email.split('@')[0] + Math.floor(Math.random() * 1000),
-        email,
-        password: hashedPassword,
-        role: 'citizen', // Default role for social login
-        profileImage: picture,
-        location: 'Not Specified'
+      // User does not exist, return 404 with profile info for registration redirect
+      res.status(404).json({ 
+        message: 'User not found. Please complete registration.',
+        googleData: {
+          email,
+          name,
+          picture
+        }
       });
+      return;
+    }
+
+    // User exists. Update profile picture if it's missing
+    if (!user.profileImage && picture) {
+      user.profileImage = picture;
       await user.save();
-      console.log(`🆕 New user created via Google: ${email}`);
-    } else {
-      // Update profile picture if it's missing
-      if (!user.profileImage && picture) {
-        user.profileImage = picture;
-        await user.save();
-      }
     }
 
     // Generate platform JWT
