@@ -55,7 +55,7 @@ export class ContactComponent {
     {
       icon: 'bi-envelope',
       title: 'Email Us',
-      details: 'support@wastezero.com',
+      details: 'hariharannamakkal2025@gmail.com',
       color: '#2196F3'
     },
     {

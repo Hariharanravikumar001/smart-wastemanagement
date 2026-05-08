@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AfterViewInit, NgZone } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,7 @@ export class LoginComponent implements AfterViewInit {
     if (typeof (window as any).google !== 'undefined') {
       try {
         (window as any).google.accounts.id.initialize({
-          client_id: (window as any).env?.GOOGLE_CLIENT_ID || '732688414595-dummy.apps.googleusercontent.com', // Updated placeholder with env support
+          client_id: environment.googleClientId, // Using environment-based configuration
           callback: this.handleCredentialResponse.bind(this),
           auto_select: false,
           cancel_on_tap_outside: true
@@ -70,8 +71,17 @@ export class LoginComponent implements AfterViewInit {
         },
         error: (err) => {
           this.isLoading = false;
-          console.error('Google Login error:', err);
-          this.errorMessage = 'Google Sign-In failed. Please try again.';
+          console.error('Google Login status:', err.status);
+          
+          if (err.status === 404 && err.error?.googleData) {
+            console.log('User not found, redirecting to register with Google data');
+            this.router.navigate(['/register'], { 
+              state: { googleData: err.error.googleData } 
+            });
+          } else {
+            console.error('Google Login error:', err);
+            this.errorMessage = 'Google Sign-In failed. Please try again.';
+          }
         }
       });
     });

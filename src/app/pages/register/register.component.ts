@@ -30,7 +30,17 @@ export class RegisterComponent {
   errorMessage = '';
   termsAccepted = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state as { googleData: any };
+    
+    if (state && state.googleData) {
+      console.log('Pre-filling registration form with Google data:', state.googleData);
+      this.name = state.googleData.name || '';
+      this.email = state.googleData.email || '';
+      this.errorMessage = 'Please complete your profile to finish signing up with Google';
+    }
+  }
 
   sendOtp() {
     if (!this.contactNumber) return;

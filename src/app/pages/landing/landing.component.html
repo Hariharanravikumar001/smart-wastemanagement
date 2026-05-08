@@ -20,20 +20,20 @@
             <a href="#how-it-works" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-semibold">Learn
               More</a>
           </div>
-          <div class="mt-5 d-flex align-items-center gap-4 text-light opacity-75">
+          <div class="mt-5 d-flex align-items-center gap-4 text-light">
             <div>
-              <h3 class="fw-bold text-white mb-0">{{ displayUsers }}k+</h3>
-              <small>Active Users</small>
+              <h3 class="fw-bold mb-0" [style.color]="getCounterColor(animationProgress)">{{ displayUsers }}k+</h3>
+              <small class="opacity-75">Active Users</small>
             </div>
-            <div class="vr"></div>
+            <div class="vr opacity-25"></div>
             <div>
-              <h3 class="fw-bold text-white mb-0">{{ displayPickups }}k+</h3>
-              <small>Pickups Completed</small>
+              <h3 class="fw-bold mb-0" [style.color]="getCounterColor(animationProgress)">{{ displayPickups }}k+</h3>
+              <small class="opacity-75">Pickups Completed</small>
             </div>
-            <div class="vr"></div>
+            <div class="vr opacity-25"></div>
             <div>
-              <h3 class="fw-bold text-white mb-0">{{ displayNGOs }}+</h3>
-              <small>NGO Partners</small>
+              <h3 class="fw-bold mb-0" [style.color]="getCounterColor(animationProgress)">{{ displayNGOs }}+</h3>
+              <small class="opacity-75">NGO Partners</small>
             </div>
           </div>
         </div>
