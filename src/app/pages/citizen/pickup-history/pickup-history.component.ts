@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { WasteRequest } from '../../../models/waste-request.model';
 import { AuthService, User } from '../../../services/auth.service';
 import { WasteRequestService } from '../../../services/waste-request.service';
+import { SearchService } from '../../../services/search.service';
 
 @Component({
   selector: 'app-pickup-history',
@@ -17,12 +18,11 @@ export class PickupHistoryComponent implements OnInit {
   currentUser: User | null = null;
   activeRequests$: Observable<WasteRequest[]> = of([]);
   historyRequests$: Observable<WasteRequest[]> = of([]);
-  searchQuery: string = '';
-  private searchSubject = new BehaviorSubject<string>('');
 
   constructor(
     private authService: AuthService,
-    private wasteService: WasteRequestService
+    private wasteService: WasteRequestService,
+    private searchService: SearchService
   ) {}
 
   ngOnInit() {
@@ -33,7 +33,7 @@ export class PickupHistoryComponent implements OnInit {
           this.wasteService.requests$.pipe(
             map(reqs => reqs.filter(r => r.citizenId === user.id))
           ),
-          this.searchSubject
+          this.searchService.searchTerm$
         ]).pipe(
           map(([reqs, query]) => {
             if (!query || !query.trim()) return reqs;
@@ -58,9 +58,7 @@ export class PickupHistoryComponent implements OnInit {
     });
   }
 
-  onSearch(): void {
-    this.searchSubject.next(this.searchQuery);
-  }
+
 
   getCategoryIcon(cat: string | string[]): string {
     const icons: Record<string, string> = {

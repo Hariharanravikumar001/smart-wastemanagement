@@ -7,6 +7,7 @@ import { User, AuthService } from '../../../services/auth.service';
 import { WasteRequestService } from '../../../services/waste-request.service';
 import { RouterModule } from '@angular/router';
 import { ChatService } from '../../../services/chat.service';
+import { SearchService } from '../../../services/search.service';
 
 @Component({
   selector: 'app-citizen-dashboard',
@@ -32,7 +33,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private wasteService: WasteRequestService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private searchService: SearchService
   ) {}
 
   ngOnInit() {
@@ -47,10 +49,22 @@ export class DashboardComponent implements OnInit {
           shareReplay(1)
         );
 
-        this.recentRequests$ = dataStream.pipe(
-          switchMap(u => this.wasteService.getRequestsByCitizen(u!.id).pipe(
-            catchError(() => of([]))
-          )),
+        this.recentRequests$ = combineLatest([
+          dataStream.pipe(
+            switchMap(u => this.wasteService.getRequestsByCitizen(u!.id).pipe(
+              catchError(() => of([]))
+            ))
+          ),
+          this.searchService.searchTerm$
+        ]).pipe(
+          map(([reqs, query]) => {
+            if (!query) return reqs;
+            const q = query.toLowerCase().trim();
+            return reqs.filter(r => 
+              (r.description && r.description.toLowerCase().includes(q)) || 
+              (r.location && JSON.stringify(r.location).toLowerCase().includes(q))
+            );
+          }),
           shareReplay(1)
         );
 

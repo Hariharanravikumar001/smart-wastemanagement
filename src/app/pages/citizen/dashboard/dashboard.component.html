@@ -72,10 +72,7 @@
               </div>
 
               <div class="d-grid pt-3 border-top" *ngIf="actives[0].volunteerId">
-                <button class="btn btn-primary rounded-pill py-2 fw-bold shadow-sm" 
-                        [routerLink]="['/chat', actives[0].volunteerId, actives[0].volunteerName || 'Volunteer']">
-                  <i class="bi bi-chat-fill me-2 small"></i> Message Collector
-                </button>
+                <!-- Message button removed as per requirement: message using sidebar link only -->
               </div>
             </div>
             <ng-template #noActive>

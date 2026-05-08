@@ -7,6 +7,7 @@ export interface IUser extends Document {
   password?: string;
   role: 'user' | 'volunteer' | 'admin' | 'citizen' | 'ngo';
   location?: string;
+  contactNumber?: string;
   skills?: string[];
   bio?: string;
   resetPasswordOtp?: string;
@@ -32,6 +33,7 @@ const UserSchema: Schema = new Schema({
     default: 'user' 
   },
   location: { type: String },
+  contactNumber: { type: String },
   skills: { type: [String], default: [] },
   bio: { type: String },
   resetPasswordOtp: { type: String },

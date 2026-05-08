@@ -111,11 +111,7 @@
               <button class="od-apply-btn od-closed" *ngIf="opportunity.status !== 'open' && !hasApplied" disabled>🚫
                 Not Accepting Applications</button>
 
-              <button class="od-chat-btn mt-3" 
-                      *ngIf="opportunity.ngo_id" 
-                      [routerLink]="['/chat', opportunity.ngo_id._id || opportunity.ngo_id, (opportunity.ngo_id.name || 'NGO')]">
-                💬 Message Organization
-              </button>
+              <!-- Message Organization button removed as per requirement: message using sidebar link only -->
               <p class="od-cta-note">📋 Joining will notify the organizer.</p>
             </div>
           </div>

@@ -161,7 +161,41 @@
 
   <!-- MAIN CONTENT -->
   <main class="db-content">
-    <router-outlet></router-outlet>
+    <!-- Top Navbar -->
+    <header class="db-top-navbar d-none d-md-flex">
+      <div class="db-search-wrapper">
+        <i class="bi bi-search db-search-icon"></i>
+        <input type="text" 
+               class="db-search-input" 
+               placeholder="Search dashboard, pickups, etc..." 
+               [(ngModel)]="searchTerm" 
+               (input)="onSearch()">
+      </div>
+      <div class="db-top-actions">
+        <div class="db-action-item" (click)="toggleTheme()" [title]="(isDarkMode$ | async) ? 'Light Mode' : 'Dark Mode'">
+          {{ (isDarkMode$ | async) ? '☀️' : '🌙' }}
+        </div>
+        <div class="db-action-item position-relative" (click)="toggleNotifDrawer()" title="Notifications">
+          <span>🔔</span>
+          <span class="badge rounded-pill bg-danger border border-white position-absolute top-0 start-100 translate-middle" 
+                style="font-size: 9px; padding: 2px 4px;"
+                *ngIf="(unreadNotifications$ | async) as count">
+            {{ count }}
+          </span>
+        </div>
+        <div class="db-user-pill" routerLink="/citizen/profile">
+          <div class="db-avatar-xs shadow-sm">
+            <img *ngIf="currentUser?.profileImage" [src]="currentUser?.profileImage" alt="Profile" class="avatar-img" />
+            <span *ngIf="!currentUser?.profileImage">{{ currentUser?.name?.charAt(0) }}</span>
+          </div>
+          <span class="ms-2 fw-bold small d-none d-lg-inline">{{ currentUser?.name }}</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="db-page-content">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 
   <!-- NOTIFICATION DRAWER -->

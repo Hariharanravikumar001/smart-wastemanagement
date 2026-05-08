@@ -74,11 +74,7 @@
               </div>
             </div>
             <div class="d-flex align-items-center gap-2">
-              <button [routerLink]="['/chat', app.opportunity_id?.ngo_id?._id || app.opportunity_id?.ngo_id || 'org', app.opportunity_id?.title || 'Organization']" 
-                      [queryParams]="{ opportunityId: app.opportunity_id?._id || app.opportunity_id?.id || app.opportunity_id }"
-                      class="btn btn-sm btn-light glass border rounded-circle shadow-sm" title="Chat">
-                <i class="bi bi-chat-dots-fill text-primary"></i>
-              </button>
+              <!-- Chat button removed as per requirement -->
               <button (click)="completeProject(app)" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold shadow-sm">
                 Mark Done
               </button>
@@ -173,9 +169,7 @@
               <div class="extra-small text-muted mb-3"><i class="bi bi-geo-alt me-1"></i>{{ req.location }}</div>
               
               <div class="d-flex gap-2">
-                <button [routerLink]="['/chat', req.citizenId, req.citizenName]" class="btn btn-sm btn-light glass border rounded-pill flex-grow-1 extra-small fw-bold">
-                  <i class="bi bi-chat-text text-primary me-2"></i>Coordinate
-                </button>
+                <!-- Coordinate/Chat button removed as per requirement -->
                 <button *ngIf="req.status === 'Scheduled'" (click)="startPickup(req)" 
                         class="btn btn-sm btn-primary rounded-pill flex-grow-1 extra-small fw-bold shadow-sm">
                   Start Route
@@ -186,32 +180,7 @@
         </div>
       </div>
 
-      <!-- Recent Support/Messaging -->
-      <div class="premium-card mb-4 h-auto">
-        <div class="card-header bg-transparent border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
-          <h5 class="fw-bold mb-0 small">Live Support</h5>
-          <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-10 rounded-pill py-1 px-2 extra-small">Live</span>
-        </div>
-        <div class="card-body p-4 pt-3">
-          <div *ngIf="(recentConversations$ | async) as convs">
-            <div *ngIf="convs.length === 0" class="text-center py-3 opacity-50">
-              <p class="extra-small mb-0">No active support threads</p>
-            </div>
-            <div *ngFor="let convo of convs" class="d-flex align-items-center gap-2 mb-3 cursor-pointer hover-translate transition-all" [routerLink]="['/chat', convo.partnerId, convo.partnerName]">
-              <div class="avatar-extra-small bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm cyber-avatar-xs" style="flex-shrink: 0;">
-                {{ convo.partnerName.charAt(0).toUpperCase() }}
-              </div>
-              <div class="min-width-0 flex-grow-1">
-                <div class="d-flex justify-content-between">
-                  <div class="fw-bold extra-small text-truncate">{{ convo.partnerName }}</div>
-                  <span class="extra-small opacity-50">{{ convo.lastMessageTime | date:'shortTime' }}</span>
-                </div>
-                <div class="extra-small text-muted text-truncate">{{ convo.lastMessage }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Recent Support/Messaging section removed as per requirement -->
     </div>
   </div>
 </div>

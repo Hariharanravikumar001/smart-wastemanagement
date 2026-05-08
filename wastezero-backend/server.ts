@@ -35,11 +35,22 @@ app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
     const duration = Date.now() - start;
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url} - ${res.statusCode} - ${duration}ms`);
+    const logLine = `${new Date().toISOString()} - ${req.method} ${req.url} - ${res.statusCode} - ${duration}ms\n`;
+    console.log(logLine.trim());
+    try {
+      require('fs').appendFileSync('live_requests.log', logLine);
+    } catch (e) {}
     if (duration > 1000) {
       console.warn(`⚠️ SLOW REQUEST: ${req.method} ${req.url} took ${duration}ms`);
     }
   });
+  next();
+});
+app.use((req, res, next) => {
+  if (req.url.includes('/api/login')) {
+    console.log(`[DIAGNOSTIC] Incoming login request: ${req.method} ${req.url}`);
+    console.log(`[DIAGNOSTIC] Headers:`, req.headers);
+  }
   next();
 });
 app.use(express.json({ limit: '10mb' }));

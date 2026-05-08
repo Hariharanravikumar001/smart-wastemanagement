@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { OpportunityService } from '../../../services/opportunity.service';
 import { AuthService, User } from '../../../services/auth.service';
+import { SearchService } from '../../../services/search.service';
 import { Opportunity } from '../../../models/opportunity.model';
 
 @Component({
@@ -26,6 +27,7 @@ export class OpportunityListComponent implements OnInit {
   constructor(
     private opportunityService: OpportunityService,
     private authService: AuthService,
+    private searchService: SearchService,
     private router: Router
   ) { }
 
@@ -36,6 +38,12 @@ export class OpportunityListComponent implements OnInit {
       this.isVolunteer = user?.role === 'Volunteer';
       this.isNGO = user?.role === 'NGO';
     });
+
+    this.searchService.searchTerm$.subscribe(term => {
+      this.searchQuery = term;
+      this.filterOpportunities();
+    });
+
     this.loadOpportunities();
   }
 

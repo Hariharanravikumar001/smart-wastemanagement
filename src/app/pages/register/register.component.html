@@ -59,6 +59,28 @@
               </div>
 
               <div class="mb-3">
+                <label for="contactNumber" class="form-label fw-semibold">Contact Number</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-telephone text-muted"></i></span>
+                  <input type="tel" class="form-control border-start-0 ps-0 bg-light" id="contactNumber" name="contactNumber" [(ngModel)]="contactNumber" required placeholder="+1 234 567 890">
+                </div>
+              </div>
+
+              <div class="mb-3" *ngIf="showOtpField">
+                <label for="otp" class="form-label fw-semibold">OTP Verification</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
+                  <input type="text" class="form-control border-start-0 ps-0 bg-light" id="otp" name="otp" [(ngModel)]="otp" placeholder="Enter 6-digit OTP">
+                  <button type="button" class="btn btn-outline-success" (click)="verifyOtp()" [disabled]="!otp">Verify</button>
+                </div>
+                <div class="form-text text-success" *ngIf="otpVerified">✅ OTP Verified Successfully!</div>
+              </div>
+
+              <div class="mb-3" *ngIf="!showOtpField && contactNumber">
+                 <button type="button" class="btn btn-outline-success btn-sm rounded-pill" (click)="sendOtp()">Send OTP to Mobile</button>
+              </div>
+
+              <div class="mb-3">
                 <label for="password" class="form-label fw-semibold">Password</label>
                 <div class="input-group input-group-lg">
                   <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>

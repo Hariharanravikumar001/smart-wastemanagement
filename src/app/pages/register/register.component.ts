@@ -18,13 +18,36 @@ export class RegisterComponent {
   password = '';
   confirmPassword = '';
   location = '';
+  contactNumber = '';
   role: 'User' | 'Volunteer' | 'Admin' | 'Citizen' | 'NGO' | '' = '';
   passwordMismatch = false;
+
+  showOtpField = false;
+  otp = '';
+  otpVerified = false;
+  generatedOtp = '';
 
   errorMessage = '';
   termsAccepted = false;
 
   constructor(private authService: AuthService, private router: Router) {}
+
+  sendOtp() {
+    if (!this.contactNumber) return;
+    // Generate random 6-digit OTP
+    this.generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    alert(`[Demo] OTP "${this.generatedOtp}" sent to ${this.contactNumber}`);
+    this.showOtpField = true;
+  }
+
+  verifyOtp() {
+    if (this.otp === this.generatedOtp) {
+      this.otpVerified = true;
+      alert('OTP Verified!');
+    } else {
+      alert('Invalid OTP. Please check the alert for the correct code.');
+    }
+  }
 
   onSubmit() {
     this.errorMessage = '';
@@ -35,6 +58,11 @@ export class RegisterComponent {
       return;
     }
 
+    if (!this.otpVerified && this.contactNumber) {
+      this.errorMessage = 'Please verify your contact number with OTP.';
+      return;
+    }
+
     if (this.name && this.username && this.email && this.password && this.role && this.location && !this.passwordMismatch) {
       this.authService.register(
         this.name, 
@@ -42,7 +70,8 @@ export class RegisterComponent {
         this.email, 
         this.role as string,
         this.location,
-        this.password
+        this.password,
+        this.contactNumber
       ).subscribe({
         next: (res) => {
            console.log('Registration successful', res);

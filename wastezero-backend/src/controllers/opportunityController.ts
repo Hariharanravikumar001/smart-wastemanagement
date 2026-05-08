@@ -12,7 +12,8 @@ import { createNotification } from '../services/notificationService';
 // @access  Private (Admin)
 export const createOpportunity = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        console.log(`[DEBUG] Incoming createOpportunity request from user ${req.user?.id}`);
+        // Log received request context
+        console.debug(`[ADMIN] Incoming createOpportunity request from user ${req.user?.id}`);
         const { title, description, skills, duration, location, status, wasteType } = req.body;
 
         if (!title || !description || !duration || !location) {
@@ -22,7 +23,8 @@ export const createOpportunity = async (req: AuthRequest, res: Response): Promis
             if (!duration) missing.push('duration');
             if (!location) missing.push('location');
             
-            console.warn(`[DEBUG] Missing required fields: ${missing.join(', ')}`);
+            // Validation failure - no warning needed in standard prod logs unless critical
+            // console.warn(`[DEBUG] Missing required fields: ${missing.join(', ')}`);
             res.status(400).json({ message: `Please provide all required fields: ${missing.join(', ')}` });
             return;
         }
@@ -38,11 +40,11 @@ export const createOpportunity = async (req: AuthRequest, res: Response): Promis
             ngo_id: req.user!.id
         });
 
-        console.log(`[DEBUG] Attempting to save new opportunity to database...`);
+        // Persistence step
         const savedOpportunity = await newOpportunity.save();
 
         // Notify matching volunteers in background
-        console.log(`[DEBUG] Starting background notification process...`);
+        // Notification trigger
         (async () => {
           try {
             const matchingVolunteers = await User.find({ 

@@ -109,7 +109,8 @@ export const updateApplicationStatus = async (req: AuthRequest, res: Response): 
         const { status } = req.body;
         const appId = req.params['id'];
 
-        console.log('Update Status Request:', { appId, status, userId: req.user?.id, role: req.user?.role });
+        // Standard validation steps
+        // console.debug('Update Status Request:', { appId, status, userId: req.user?.id, role: req.user?.role });
 
         if (!['accepted', 'rejected'].includes(status)) {
             res.status(400).json({ message: 'Invalid status' });
@@ -120,7 +121,6 @@ export const updateApplicationStatus = async (req: AuthRequest, res: Response): 
             .populate('opportunity_id');
 
         if (!application) {
-            console.log('Application not found:', appId);
             res.status(404).json({ message: 'Application not found' });
             return;
         }
@@ -129,7 +129,6 @@ export const updateApplicationStatus = async (req: AuthRequest, res: Response): 
         const opp: any = application.opportunity_id;
         
         if (!opp) {
-            console.log('Opportunity not found for application:', appId);
             if (req.user!.role?.toLowerCase() !== 'admin') {
                 res.status(404).json({ message: 'Associated opportunity not found. Only admins can modify this.' });
                 return;

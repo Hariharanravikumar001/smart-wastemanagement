@@ -150,7 +150,7 @@ export class AuthService {
   }
 
   // Uses actual backend API
-  register(name: string, username: string, email: string, role: string, location: string, password?: string): Observable<any> {
+  register(name: string, username: string, email: string, role: string, location: string, password?: string, contactNumber?: string): Observable<any> {
       let mappedRole = role.toLowerCase();
 
       const registerData = {
@@ -159,7 +159,8 @@ export class AuthService {
           email,
           password: password || 'password123',
           role: mappedRole,
-          location
+          location,
+          contactNumber
       };
       
       return this.http.post<any>(`${this.apiUrl}/register`, registerData).pipe(

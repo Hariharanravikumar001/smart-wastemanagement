@@ -2,18 +2,7 @@
   <h1 class="db-page-title">🚛 Pickup Tracking</h1>
   <p class="db-page-sub">Manage your active requests and view your history of waste collections</p>
 
-  <div class="db-search-wrap mb-4">
-    <div class="input-group">
-      <span class="input-group-text bg-dark border-light border-opacity-10 text-muted">
-        <i class="bi bi-search"></i>
-      </span>
-      <input type="text" 
-        class="form-control bg-dark border-light border-opacity-10 text-white" 
-        placeholder="Search requests by description or location..."
-        [(ngModel)]="searchQuery"
-        (input)="onSearch()">
-    </div>
-  </div>
+  <!-- Local search removed: using global search from top navbar -->
 
   <div class="db-tabs-internal">
     <!-- Active Requests Section -->

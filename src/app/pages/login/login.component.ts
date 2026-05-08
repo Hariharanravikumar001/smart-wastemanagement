@@ -29,7 +29,7 @@ export class LoginComponent implements AfterViewInit {
     if (typeof (window as any).google !== 'undefined') {
       try {
         (window as any).google.accounts.id.initialize({
-          client_id: 'YOUR_GOOGLE_CLIENT_ID_HERE', // User should replace this in production
+          client_id: (window as any).env?.GOOGLE_CLIENT_ID || '732688414595-dummy.apps.googleusercontent.com', // Updated placeholder with env support
           callback: this.handleCredentialResponse.bind(this),
           auto_select: false,
           cancel_on_tap_outside: true

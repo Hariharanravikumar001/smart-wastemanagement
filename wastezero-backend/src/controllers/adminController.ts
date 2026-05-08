@@ -202,3 +202,40 @@ export const getAdminLogs = async (req: AuthRequest, res: Response): Promise<voi
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+export const generateCSVReport = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const { type } = req.query;
+        let data: any[] = [];
+        let filename = `wastezero_report_${type}_${new Date().toISOString().split('T')[0]}.csv`;
+        let headers = '';
+
+        if (type === 'users') {
+            data = await User.find().lean();
+            headers = 'ID,Name,Email,Username,Role,Location,Created At,Status\n';
+            const rows = data.map(u => `${u._id},"${u.name}",${u.email},${u.username},${u.role},"${u.location || ''}",${u.created_at},${u.isSuspended ? 'Suspended' : 'Active'}`).join('\n');
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+            res.status(200).send(headers + rows);
+        } else if (type === 'opportunities') {
+            data = await Opportunity.find({ isDeleted: false }).lean();
+            headers = 'ID,Title,Status,Location,Required Skills,Duration,Created At\n';
+            const rows = data.map(o => `${o._id},"${o.title}",${o.status},"${o.location}",${o.required_skills?.join('|')},${o.duration},${o.createdAt}`).join('\n');
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+            res.status(200).send(headers + rows);
+        } else if (type === 'applications') {
+            data = await Application.find().populate('opportunity_id', 'title').populate('volunteer_id', 'name email').lean();
+            headers = 'ID,Opportunity,Volunteer Name,Volunteer Email,Status,Created At\n';
+            const rows = data.map(a => `${a._id},"${(a.opportunity_id as any)?.title || 'N/A'}","${(a.volunteer_id as any)?.name || 'N/A'}",${(a.volunteer_id as any)?.email || 'N/A'},${a.status},${a.createdAt}`).join('\n');
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+            res.status(200).send(headers + rows);
+        } else {
+            res.status(400).json({ message: 'Invalid report type' });
+        }
+    } catch (error) {
+        console.error('Generate CSV error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

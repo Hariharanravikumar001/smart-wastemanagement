@@ -49,9 +49,7 @@
         <a *ngIf="isAdmin || isNGO" routerLink="/opportunities/new" class="ol-action-btn">+ Create New</a>
       </div>
 
-      <div class="ol-search-wrap">
-        <input class="ol-search" type="text" placeholder="Search by title, location, or waste type..." [(ngModel)]="searchQuery" (input)="filterOpportunities()" />
-      </div>
+      <!-- Local search removed: using global search from top navbar -->
 
       <div *ngIf="filteredOpportunities.length === 0" class="ol-empty">No opportunities found.</div>
 

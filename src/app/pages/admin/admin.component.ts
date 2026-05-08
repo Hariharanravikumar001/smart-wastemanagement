@@ -645,6 +645,14 @@ export class AdminComponent implements OnInit, AfterViewInit {
     }
   }
 
+  downloadApplicationReport() {
+    try {
+      this.adminReportService.exportApplicationsToCSV();
+    } catch (e) {
+      console.error('Error in downloadApplicationReport:', e);
+    }
+  }
+
   setActiveMenu(menuId: string) {
     this.activeMenu = menuId;
     if (menuId !== 'all-opportunities' && menuId !== 'users') {
@@ -858,14 +866,4 @@ export class AdminComponent implements OnInit, AfterViewInit {
   markNotifAsRead(id: string) {
     this.notificationService.markAsRead(id);
   }
-
-  downloadApplicationReport() {
-    try {
-      this.adminReportService.exportApplicationsToCSV();
-    } catch (err) {
-      console.error('Application report export failed:', err);
-      alert('Failed to generate Application report. Please try again.');
-    }
-  }
 }
-

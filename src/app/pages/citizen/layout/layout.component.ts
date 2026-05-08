@@ -5,12 +5,14 @@ import { AuthService, User } from '../../../services/auth.service';
 import { ThemeService } from '../../../services/theme.service';
 import { ChatService } from '../../../services/chat.service';
 import { NotificationService, Notification } from '../../../services/notification.service';
+import { SearchService } from '../../../services/search.service';
 import { Observable } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-citizen-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css']
 })
@@ -22,12 +24,14 @@ export class CitizenLayoutComponent implements OnInit {
   unreadNotifications$ = this.notificationService.getUnreadCount();
   notifications$ = this.notificationService.notifications$;
   showNotifDrawer = false;
+  searchTerm = '';
 
   constructor(
     private authService: AuthService,
     private themeService: ThemeService,
     private chatService: ChatService,
     private notificationService: NotificationService,
+    private searchService: SearchService,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -79,6 +83,10 @@ export class CitizenLayoutComponent implements OnInit {
 
   markNotifAsRead(id: string) {
     this.notificationService.markAsRead(id);
+  }
+
+  onSearch() {
+    this.searchService.setSearchTerm(this.searchTerm);
   }
 
   logout() {

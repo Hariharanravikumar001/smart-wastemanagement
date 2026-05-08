@@ -10,11 +10,11 @@ import { AuthRequest } from '../middleware/authMiddleware';
 import { sendEmail } from '../utils/emailService';
 import crypto from 'crypto';
 
-const googleClient = new OAuth2Client(process.env['GOOGLE_CLIENT_ID'] || 'YOUR_GOOGLE_CLIENT_ID_HERE');
+const googleClient = new OAuth2Client(process.env['GOOGLE_CLIENT_ID'] || '770353118324-dummy.apps.googleusercontent.com');
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, username, email, password, role, location } = req.body;
+    const { name, username, email, password, role, location, contactNumber } = req.body;
 
     let user = await User.findOne({ 
       $or: [{ email }, { username }] 
@@ -35,7 +35,8 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       email,
       password: hashedPassword,
       role: role ? role.toLowerCase() : 'user',
-      location
+      location,
+      contactNumber
     });
 
     await user.save();
@@ -70,16 +71,13 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       </div>
     `;
     
-    // We send this asynchronously, no need to wait for it before giving response to user
+    // Welcome email is sent asynchronously
     sendEmail(
       user.email, 
       'Welcome to WasteZero - Your Sustainable Journey Begins!', 
-      `Hello ${user.name}, welcome to WasteZero. Your account as a ${user.role} has been created.`, 
+      `Hello ${user.name}, welcome to WasteZero.`, 
       welcomeHtml
-    ).then(success => {
-       if (success) console.log(`✅ Welcome email sent to ${user.email}`);
-       else console.error(`❌ Failed to send welcome email to ${user.email}`);
-    });
+    ).catch(err => console.error(`[EMAIL_FAIL] Welcome email to ${user.email}:`, err.message));
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err: any) {
@@ -95,6 +93,10 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).json({ message: 'Email and password are required' });
+      return;
+    }
 
     const user = await User.findOne({
       $or: [

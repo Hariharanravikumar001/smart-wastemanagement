@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAnalytics, getUsers, updateUserStatus, getAdminLogs } from '../controllers/adminController';
+import { getAnalytics, getUsers, updateUserStatus, getAdminLogs, generateCSVReport } from '../controllers/adminController';
 import { getUserStats } from '../controllers/authController';
 import { authProtect } from '../middleware/authMiddleware';
 import { requireRole } from '../middleware/roleMiddleware';
@@ -25,5 +25,9 @@ router.get('/logs', authProtect, requireRole(['admin']), getAdminLogs);
 // @route   GET /api/admin/user-stats
 // @access  Private (Admin)
 router.get('/user-stats', authProtect, requireRole(['admin']), getUserStats);
+
+// @route   GET /api/admin/reports
+// @access  Private (Admin)
+router.get('/reports', authProtect, requireRole(['admin']), generateCSVReport);
 
 export default router;

@@ -9,6 +9,7 @@ import { ChatService } from '../../../services/chat.service';
 import { MatchingService } from '../../../services/matching.service';
 import { ApplicationService } from '../../../services/application.service';
 import { OpportunityService } from '../../../services/opportunity.service';
+import { SearchService } from '../../../services/search.service';
 import { Opportunity } from '../../../models/opportunity.model';
 import { Application } from '../../../models/application.model';
 
@@ -43,7 +44,8 @@ export class DashboardComponent implements OnInit {
     private chatService: ChatService,
     private matchingService: MatchingService,
     private applicationService: ApplicationService,
-    private opportunityService: OpportunityService
+    private opportunityService: OpportunityService,
+    private searchService: SearchService
   ) {}
 
   ngOnInit() {
@@ -103,17 +105,43 @@ export class DashboardComponent implements OnInit {
           shareReplay(1)
         );
 
-        this.assignments$ = dataStream.pipe(
-          switchMap(() => this.wasteService.getRequestsByVolunteer(user.id).pipe(
-            map(reqs => reqs.filter(r => r.status !== 'Completed')),
-            catchError(() => of([]))
-          ))
+        this.assignments$ = combineLatest([
+          dataStream.pipe(
+            switchMap(() => this.wasteService.getRequestsByVolunteer(user.id).pipe(
+              map(reqs => reqs.filter(r => r.status !== 'Completed')),
+              catchError(() => of([]))
+            ))
+          ),
+          this.searchService.searchTerm$
+        ]).pipe(
+          map(([reqs, query]) => {
+            if (!query) return reqs;
+            const q = query.toLowerCase().trim();
+            return reqs.filter(r => 
+              (r.description && r.description.toLowerCase().includes(q)) || 
+              (r.location && r.location.toLowerCase().includes(q)) ||
+              (r.citizenName && r.citizenName.toLowerCase().includes(q))
+            );
+          })
         );
 
-        this.availablePickups$ = dataStream.pipe(
-          switchMap(() => this.wasteService.getAvailableRequests().pipe(
-            catchError(() => of([]))
-          ))
+        this.availablePickups$ = combineLatest([
+          dataStream.pipe(
+            switchMap(() => this.wasteService.getAvailableRequests().pipe(
+              catchError(() => of([]))
+            ))
+          ),
+          this.searchService.searchTerm$
+        ]).pipe(
+          map(([reqs, query]) => {
+            if (!query) return reqs;
+            const q = query.toLowerCase().trim();
+            return reqs.filter(r => 
+              (r.description && r.description.toLowerCase().includes(q)) || 
+              (r.location && r.location.toLowerCase().includes(q)) ||
+              (r.citizenName && r.citizenName.toLowerCase().includes(q))
+            );
+          })
         );
 
         const history$ = dataStream.pipe(

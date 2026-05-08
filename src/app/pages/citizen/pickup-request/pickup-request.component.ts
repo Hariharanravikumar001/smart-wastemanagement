@@ -66,24 +66,34 @@ export class PickupRequestComponent implements OnInit {
       this.isAnalyzing = true;
       this.clearAiPrediction();
       
-      // Simulate ML Classification delay
+      // ML Classification Pipeline (Simulation)
       setTimeout(() => {
-        const mockCategories = ['E-Waste', 'Organic', 'Plastic', 'Metal', 'Paper', 'Glass'];
-        const randomCat = mockCategories[Math.floor(Math.random() * mockCategories.length)];
+        // High-confidence categories for demo
+        const demoPredictions = [
+          { cat: 'E-Waste', msg: 'Electronic components detected.' },
+          { cat: 'Organic', msg: 'Food or garden waste identified.' },
+          { cat: 'Plastic', msg: 'Synthetic polymer material found.' },
+          { cat: 'Metal', msg: 'Recyclable metallic objects detected.' },
+          { cat: 'Paper', msg: 'Cellulose-based waste identified.' },
+          { cat: 'Glass', msg: 'Transparent silica-based material detected.' }
+        ];
         
-        (this.newRequest as any).aiPredictedCategory = randomCat;
-        this.newRequest.wasteCategory = [randomCat]; // Auto-select it in generic logic
+        const prediction = demoPredictions[Math.floor(Math.random() * demoPredictions.length)];
+        
+        (this.newRequest as any).aiPredictedCategory = prediction.cat;
+        this.newRequest.wasteCategory = [prediction.cat]; 
+        this.newRequest.description = (this.newRequest.description || '') + ` (AI Detection: ${prediction.msg})`;
+        
         this.isAnalyzing = false;
         
-        // Base64 mapping for quick mockup rendering
         const reader = new FileReader();
         reader.onload = (e: any) => {
            (this.newRequest as any).imageUrl = e.target.result;
-           this.newRequest = { ...this.newRequest }; // trigger standard view bindings
-           this.cdr.detectChanges(); // force view refresh
+           this.newRequest = { ...this.newRequest }; 
+           this.cdr.detectChanges(); 
         };
         reader.readAsDataURL(file);
-      }, 2500);
+      }, 1800);
     }
   }
 

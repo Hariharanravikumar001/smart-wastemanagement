@@ -6,6 +6,7 @@ import { AuthService, User } from '../../../services/auth.service';
 import { WasteRequestService } from '../../../services/waste-request.service';
 import { MatchingService } from '../../../services/matching.service';
 import { ApplicationService } from '../../../services/application.service';
+import { SearchService } from '../../../services/search.service';
 import { Opportunity } from '../../../models/opportunity.model';
 import { Application } from '../../../models/application.model';
 import { FormsModule } from '@angular/forms';
@@ -24,16 +25,14 @@ export class OpportunitiesComponent implements OnInit {
   activeTab: 'pickups' | 'projects' = 'pickups';
   volunteerApplications: Application[] = [];
 
-  searchQuery: string = '';
-  
   private refreshSubject = new BehaviorSubject<void>(undefined);
-  private searchSubject = new BehaviorSubject<string>('');
 
   constructor(
     private authService: AuthService,
     private wasteService: WasteRequestService,
     private matchingService: MatchingService,
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private searchService: SearchService
   ) {}
 
   ngOnInit() {
@@ -65,7 +64,7 @@ export class OpportunitiesComponent implements OnInit {
             ))
           ),
           myApps$,
-          this.searchSubject
+          this.searchService.searchTerm$
         ]).pipe(
           map(([oppsRes, apps, query]) => {
             let opps = (oppsRes as any)?.opportunities || (Array.isArray(oppsRes) ? oppsRes : []);
@@ -105,7 +104,7 @@ export class OpportunitiesComponent implements OnInit {
               catchError(() => of([]))
             ))
           ),
-          this.searchSubject
+          this.searchService.searchTerm$
         ]).pipe(
           map(([reqs, query]) => {
             if (!query || !query.trim()) return reqs;
@@ -175,9 +174,7 @@ export class OpportunitiesComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  onSearch(): void {
-    this.searchSubject.next(this.searchQuery);
-  }
+
 
   getCategoryIcon(cat: string | string[]): string {
     const icons: Record<string, string> = {
