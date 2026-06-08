@@ -12,7 +12,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://YOUR_RENDER_BACKEND_URL/api/$1"
+      "dest": "https://wastezero-backend.onrender.com/api/$1"
     },
     {
       "src": "/(.*)",
