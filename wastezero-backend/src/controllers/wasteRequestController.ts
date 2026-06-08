@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware';
 import WasteRequest from '../models/WasteRequest';
+import mongoose from 'mongoose';
+import Message from '../models/Message';
 
 export const createRequest = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -90,6 +92,29 @@ export const updateRequestStatus = async (req: Request, res: Response): Promise<
     Object.assign(existingRequest, updateData);
     const updatedRequest = await existingRequest.save();
     
+    // Auto soft-delete messages between volunteer and citizen on completion
+    if (!wasAlreadyCompleted && isNowCompleted && existingRequest.citizenId && existingRequest.volunteerId) {
+      const volId = new mongoose.Types.ObjectId(existingRequest.volunteerId);
+      const citId = new mongoose.Types.ObjectId(existingRequest.citizenId);
+      Message.updateMany(
+        {
+          $or: [
+            { sender_id: volId, receiver_id: citId },
+            { sender_id: citId, receiver_id: volId }
+          ]
+        },
+        {
+          $addToSet: { deletedFor: { $each: [volId, citId] } }
+        }
+      ).then(() => {
+        console.log(`[SOFT DELETE] Messages soft deleted between volunteer ${volId} and citizen ${citId}`);
+        import('../services/socketService').then(({ emitToUser }) => {
+          emitToUser(volId.toString(), 'conversation_cleared', { partnerId: citId.toString() });
+          emitToUser(citId.toString(), 'conversation_cleared', { partnerId: volId.toString() });
+        }).catch(e => console.error('Failed to import socketService:', e));
+      }).catch(e => console.error('Failed to soft delete pickup messages:', e));
+    }
+
     // Gamified Rewards System: Issue points when completed
     if (!wasAlreadyCompleted && isNowCompleted && existingRequest.citizenId) {
       import('../models/User').then(({ default: User }) => {
@@ -108,9 +133,180 @@ export const updateRequestStatus = async (req: Request, res: Response): Promise<
       });
     }
 
+    // Assign QR Code when accepted by Volunteer
+    if (updateData.status === 'Scheduled' || (updateData.volunteerId && !existingRequest.volunteerId)) {
+      import('crypto').then(crypto => {
+        if (!existingRequest.qrCodeToken) {
+          existingRequest.qrCodeToken = crypto.randomBytes(16).toString('hex');
+          existingRequest.save().catch(e => console.error('Failed to save QR token:', e));
+        }
+      });
+      
+      // Notify citizen that pickup is scheduled
+      if (existingRequest.citizenId) {
+        import('../services/socketService').then(({ emitToUser }) => {
+          emitToUser(existingRequest.citizenId.toString(), 'notification', {
+            id: new Date().getTime().toString(),
+            title: 'Pickup Scheduled',
+            message: `A volunteer has accepted your pickup request for ${existingRequest.description}.`,
+            type: 'info',
+            timestamp: new Date(),
+            read: false
+          });
+        });
+      }
+    }
+
+    if (updateData.status === 'In Progress' && existingRequest.citizenId) {
+       // Notify citizen that pickup is in progress
+       import('../services/socketService').then(({ emitToUser }) => {
+         emitToUser(existingRequest.citizenId.toString(), 'notification', {
+           id: new Date().getTime().toString(),
+           title: 'Volunteer on the way!',
+           message: `The volunteer has started the pickup and is on their way.`,
+           type: 'warning',
+           timestamp: new Date(),
+           read: false
+         });
+       });
+    }
+
     res.json(updatedRequest);
   } catch (err: any) {
     console.error('Error updating request status:', err);
     res.status(500).json({ message: 'Server Error' });
   }
 };
+
+export const verifyQrCode = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { qrCodeToken } = req.body;
+    
+    if (req.user?.role?.toLowerCase() !== 'volunteer') {
+      res.status(403).json({ message: 'Only volunteers can verify QR codes' });
+      return;
+    }
+
+    const request = await WasteRequest.findById(id);
+    if (!request) {
+      res.status(404).json({ message: 'Waste request not found' });
+      return;
+    }
+
+    if (request.status === 'Completed') {
+      res.status(400).json({ message: 'This request is already completed' });
+      return;
+    }
+
+    if (!request.qrCodeToken || request.qrCodeToken !== qrCodeToken) {
+      res.status(400).json({ message: 'Invalid QR code' });
+      return;
+    }
+
+    // Mark as completed
+    request.status = 'Completed';
+    const updatedRequest = await request.save();
+
+    // Auto soft-delete messages between volunteer and citizen on completion
+    if (request.citizenId && request.volunteerId) {
+      const volId = new mongoose.Types.ObjectId(request.volunteerId);
+      const citId = new mongoose.Types.ObjectId(request.citizenId);
+      Message.updateMany(
+        {
+          $or: [
+            { sender_id: volId, receiver_id: citId },
+            { sender_id: citId, receiver_id: volId }
+          ]
+        },
+        {
+          $addToSet: { deletedFor: { $each: [volId, citId] } }
+        }
+      ).then(() => {
+        console.log(`[SOFT DELETE] Messages soft deleted (QR verified) between volunteer ${volId} and citizen ${citId}`);
+        import('../services/socketService').then(({ emitToUser }) => {
+          emitToUser(volId.toString(), 'conversation_cleared', { partnerId: citId.toString() });
+          emitToUser(citId.toString(), 'conversation_cleared', { partnerId: volId.toString() });
+        }).catch(e => console.error('Failed to import socketService:', e));
+      }).catch(e => console.error('Failed to soft delete pickup messages:', e));
+    }
+
+    // Reward the citizen
+    if (request.citizenId) {
+      import('../models/User').then(({ default: User }) => {
+        User.findById(request.citizenId).then(user => {
+          if (user) {
+            user.rewardPoints = (user.rewardPoints || 0) + 50;
+            if (user.rewardPoints >= 100 && !user.badges?.includes('Eco Starter')) {
+              user.badges?.push('Eco Starter');
+            }
+            if (user.rewardPoints >= 500 && !user.badges?.includes('Recycling Champion')) {
+              user.badges?.push('Recycling Champion');
+            }
+            user.save().catch(e => console.error('Failed to reward user:', e));
+          }
+        }).catch(e => console.error('Error finding user for rewards:', e));
+      });
+
+      // Notify citizen that pickup is complete
+      import('../services/socketService').then(({ emitToUser }) => {
+        emitToUser(request.citizenId.toString(), 'notification', {
+          id: new Date().getTime().toString(),
+          title: 'Pickup Completed & Rewarded!',
+          message: `Your pickup was verified successfully. You earned 50 reward points!`,
+          type: 'success',
+          timestamp: new Date(),
+          read: false
+        });
+      });
+    }
+
+    res.json({ message: 'QR Code verified successfully. Pickup complete.', request: updatedRequest });
+  } catch (err: any) {
+    console.error('Error verifying QR code:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Reschedule a pending pickup request (citizen only)
+// @route   PATCH /api/waste-requests/:id/reschedule
+// @access  Private (Citizen)
+export const rescheduleRequest = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { scheduledDate, scheduledTime } = req.body;
+
+    if (!scheduledDate && !scheduledTime) {
+      res.status(400).json({ message: 'Please provide a new scheduledDate or scheduledTime.' });
+      return;
+    }
+
+    const request = await WasteRequest.findById(id);
+    if (!request) {
+      res.status(404).json({ message: 'Waste request not found' });
+      return;
+    }
+
+    // Only the citizen who owns this request can reschedule
+    if (String(request.citizenId) !== String(req.user?.id)) {
+      res.status(403).json({ message: 'Not authorized to reschedule this request.' });
+      return;
+    }
+
+    // Can only reschedule if still Pending
+    if (request.status !== 'Pending') {
+      res.status(400).json({ message: 'Only pending pickups can be rescheduled.' });
+      return;
+    }
+
+    if (scheduledDate) request.scheduledDate = new Date(scheduledDate);
+    if (scheduledTime) request.scheduledTime = scheduledTime;
+
+    const updated = await request.save();
+    res.json(updated);
+  } catch (err: any) {
+    console.error('Error rescheduling request:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+

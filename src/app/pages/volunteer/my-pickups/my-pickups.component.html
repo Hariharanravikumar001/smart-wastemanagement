@@ -1,17 +1,177 @@
 <div class="db-body">
-  <h1 class="db-page-title">🚛 My Pickup Operations</h1>
-  <p class="db-page-sub">Manage your assigned collections and report completion data</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold gradient-text mb-1">🚛 My Pickup Operations</h1>
+      <p class="text-muted small mb-0">Manage your assigned collections and report completion data</p>
+    </div>
+  </div>
 
   <!-- Active Assignments List -->
   <div class="db-section">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h3 class="db-sub-title mb-0">📡 Current Operations</h3>
-      <button class="btn btn-sm shadow-sm rounded-pill px-3 fw-bold transition-all" 
-              [class.btn-warning]="smartRouteMode" [class.text-dark]="smartRouteMode" 
-              [class.btn-outline-secondary]="!smartRouteMode"
-              (click)="toggleSmartRoute()">
-        <i class="bi bi-geo-alt-fill me-1"></i> {{ smartRouteMode ? 'Smart Route Active' : 'Enable Smart Route' }}
-      </button>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm shadow-sm rounded-pill px-3 fw-bold transition-all" 
+                [class.btn-warning]="smartRouteMode" [class.text-dark]="smartRouteMode" 
+                [class.btn-outline-secondary]="!smartRouteMode"
+                (click)="toggleSmartRoute()">
+          <i class="bi bi-geo-alt-fill me-1"></i> {{ smartRouteMode ? 'Smart Route Active' : 'Enable Smart Route' }}
+        </button>
+        <button *ngIf="smartRouteMode && smartRouteOrder.length > 0"
+                class="btn btn-sm shadow-sm rounded-pill px-3 fw-bold transition-all" 
+                [class.btn-success]="shareLocationActive" [class.text-white]="shareLocationActive" 
+                [class.btn-outline-danger]="!shareLocationActive"
+                (click)="toggleLocationSharing()">
+          <i class="bi" [class.bi-broadcast-pin]="shareLocationActive" [class.bi-broadcast]="!shareLocationActive"></i> 
+          {{ shareLocationActive ? 'Sharing Live Location' : 'Share Live Location' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Smart Route Optimizer Animated Canvas Map -->
+    <div *ngIf="smartRouteMode && smartRouteOrder.length > 0" class="db-card mb-4 overflow-hidden p-4 route-map-card bg-dark bg-opacity-20 animate-fade-in" style="border: 1px dashed rgba(251, 191, 36, 0.3);">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <div>
+          <h5 class="fw-bold mb-1" style="color: #fbbf24;"><i class="bi bi-compass-fill me-2"></i>Smart Logistics Route Optimizer</h5>
+          <p class="text-muted extra-small mb-0">Dijkstra & A* path-finding visualization for minimized travel time and carbon emission.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-white extra-small text-uppercase ls-wide" style="font-size: 10px;">Routing Profile:</span>
+          <select class="form-select form-select-sm bg-dark text-warning border-warning border-opacity-25 rounded-pill px-3 py-1" style="font-size: 11px; cursor: pointer; width: 150px;" [ngModel]="optimizationProfile" (ngModelChange)="changeProfile($event)">
+            <option value="priority">Priority First</option>
+            <option value="distance">Shortest Distance</option>
+            <option value="eco">Eco-Carbon Loop</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="row g-3">
+        <!-- Map Column -->
+        <div class="col-lg-8">
+          <div class="position-relative d-flex justify-content-center bg-black bg-opacity-25 rounded-4 border border-secondary border-opacity-10 p-2" style="height: 300px; z-index: 1;">
+            <div id="routeMapCanvas" style="width: 100%; height: 100%; min-height: 280px; border-radius: 12px; z-index: 1;"></div>
+            
+            <!-- In-Map Notification Toast -->
+            <div *ngIf="notificationMessage" class="position-absolute top-50 start-50 translate-middle bg-warning text-dark px-4 py-3 rounded-4 shadow-lg border border-warning border-opacity-50 text-center animate-pulse z-3" style="max-width: 80%; min-width: 250px; font-weight: 700; font-size: 13px; backdrop-filter: blur(8px);">
+              <i class="bi bi-bell-fill me-2"></i>{{ notificationMessage }}
+            </div>
+
+            <!-- Live Telemetry Overlay -->
+            <div *ngIf="navigationActive" class="position-absolute bottom-0 end-0 m-3 p-3 bg-dark bg-opacity-90 border border-secondary border-opacity-25 rounded-4 shadow-lg text-start z-3 d-flex flex-column gap-2 animate-fade-in" style="width: 200px; backdrop-filter: blur(8px);">
+              <div class="d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-20 pb-1">
+                <span class="text-info fw-bold extra-small text-uppercase" style="font-size: 9px;">Telemetry Live</span>
+                <span class="pulse-dot bg-danger" style="width: 6px; height: 6px;"></span>
+              </div>
+              <div class="d-flex align-items-center justify-content-between" style="font-size: 11px;">
+                <span class="text-muted">Speed:</span>
+                <span class="text-white fw-bold">{{ telemetry.speed }} km/h</span>
+              </div>
+              <div class="d-flex align-items-center justify-content-between" style="font-size: 11px;">
+                <span class="text-muted">Battery/Fuel:</span>
+                <span class="text-warning fw-bold">{{ telemetry.battery }}%</span>
+              </div>
+              <div class="d-flex align-items-center justify-content-between" style="font-size: 11px;">
+                <span class="text-muted">Carbon Offset:</span>
+                <span class="text-success fw-bold">{{ telemetry.carbonOffset }} kg</span>
+              </div>
+              <div class="d-flex align-items-center justify-content-between" style="font-size: 11px;">
+                <span class="text-muted">Remaining:</span>
+                <span class="text-white fw-bold">{{ telemetry.distanceRemaining }} km</span>
+              </div>
+              <div class="d-flex align-items-center justify-content-between" style="font-size: 11px;">
+                <span class="text-muted">ETA:</span>
+                <span class="text-info fw-bold">{{ telemetry.etaMinutes }} min</span>
+              </div>
+            </div>
+
+            <!-- Legend Overlay -->
+            <div class="position-absolute bottom-0 start-0 p-2 bg-dark bg-opacity-90 rounded-3 m-3 border border-secondary border-opacity-20 text-start extra-small" style="backdrop-filter: blur(4px); font-size: 10px; z-index: 10;">
+              <div class="d-flex align-items-center gap-2 text-white mb-1"><span class="bg-success rounded-circle d-inline-block" style="width: 6px; height: 6px;"></span> Depot / Start</div>
+              <div class="d-flex align-items-center gap-2 text-white mb-1"><span class="bg-warning rounded-circle d-inline-block" style="width: 6px; height: 6px;"></span> Collection Stops</div>
+              <div class="d-flex align-items-center gap-2 text-white"><span class="bg-info rounded-circle d-inline-block" style="width: 6px; height: 6px;"></span> Optimized Path</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Live Route Steps Column -->
+        <div class="col-lg-4">
+          <div class="bg-black bg-opacity-30 rounded-4 border border-secondary border-opacity-10 p-3 h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-white fw-bold extra-small text-uppercase ls-wide">Dispatch sequence</span>
+              <span class="badge bg-success bg-opacity-10 text-success extra-small border border-success border-opacity-25 rounded-pill">Optimized</span>
+            </div>
+            
+            <div class="route-timeline flex-grow-1 overflow-auto pe-1" style="max-height: 180px;">
+              <!-- Depot Start -->
+              <div class="d-flex gap-2 mb-3 align-items-start timeline-step clickable-step" (click)="focusStop(-1)" [class.active-target]="navigationActive && activeRouteIndex === 0">
+                <div class="step-marker-outer bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; font-size: 10px; flex-shrink: 0;">
+                  <i class="bi bi-house-door-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <div class="text-white fw-bold extra-small">Start at Depot</div>
+                  <div class="text-muted extra-small" style="font-size: 10px;">Departure: Hub A</div>
+                </div>
+              </div>
+              
+              <!-- Stops Loop -->
+              <div *ngFor="let req of smartRouteOrder; let idx = index" class="d-flex gap-2 mb-3 align-items-start timeline-step clickable-step" (click)="focusStop(idx)" [class.active-target]="navigationActive && activeRouteIndex === idx">
+                <div class="step-marker-outer rounded-circle d-flex align-items-center justify-content-center" 
+                     [class.bg-warning]="req.status === 'Scheduled'" [class.text-warning]="req.status === 'Scheduled'"
+                     [class.bg-purple]="req.status === 'In Progress'" [class.text-purple]="req.status === 'In Progress'"
+                     [class.bg-success]="req.status === 'Completed'" [class.text-success]="req.status === 'Completed'"
+                     style="width: 20px; height: 20px; font-size: 10px; flex-shrink: 0; background-color: rgba(255,255,255,0.05);">
+                  {{ idx + 1 }}
+                </div>
+                <div class="flex-grow-1">
+                  <div class="text-white fw-bold extra-small" [class.line-through]="req.status === 'Completed'">Stop {{ idx + 1 }}: {{ req.citizenName }}</div>
+                  <div class="text-muted extra-small" style="font-size: 10px; line-height: 1.2;">
+                    {{ req.location | slice:0:30 }}...<br>
+                    <span *ngIf="req.status === 'Completed'" class="text-success text-uppercase" style="font-size: 9px;">Completed</span>
+                    <span *ngIf="req.status === 'In Progress'" class="text-purple text-uppercase" style="font-size: 9px;">Arrived / Active</span>
+                    <span *ngIf="req.status === 'Scheduled'" class="text-muted" style="font-size: 9px;">Est. Drive: ~{{ (idx + 1) * 8 + 4 }} min</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Depot End -->
+              <div class="d-flex gap-2 align-items-start timeline-step clickable-step" (click)="focusStop(smartRouteOrder.length)" [class.active-target]="navigationActive && activeRouteIndex === smartRouteOrder.length">
+                <div class="step-marker-outer bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; font-size: 10px; flex-shrink: 0;">
+                  <i class="bi bi-flag-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <div class="text-white fw-bold extra-small">Return to Depot</div>
+                  <div class="text-muted extra-small" style="font-size: 10px;">End route cycle</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Navigation Controls inside sidebar footer -->
+            <div class="border-top border-secondary border-opacity-10 pt-2 mt-2 d-flex flex-column gap-2">
+              <div class="d-flex gap-1 justify-content-between">
+                <button *ngIf="!navigationActive" class="btn btn-sm btn-outline-info rounded-pill px-2 py-1 flex-grow-1" style="font-size: 10px; font-weight: 700;" (click)="startNavigation()">
+                  <i class="bi bi-play-circle-fill me-1"></i> Start Nav
+                </button>
+                <button *ngIf="navigationActive && !navigationPaused" class="btn btn-sm btn-outline-warning rounded-pill px-2 py-1 flex-grow-1" style="font-size: 10px; font-weight: 700;" (click)="pauseNavigation()">
+                  <i class="bi bi-pause-circle-fill me-1"></i> Pause
+                </button>
+                <button *ngIf="navigationActive && navigationPaused" class="btn btn-sm btn-outline-success rounded-pill px-2 py-1 flex-grow-1" style="font-size: 10px; font-weight: 700;" (click)="resumeNavigation()">
+                  <i class="bi bi-play-circle me-1"></i> Resume
+                </button>
+                <button *ngIf="navigationActive" class="btn btn-sm btn-outline-danger rounded-pill px-2 py-1" style="font-size: 10px; font-weight: 700;" (click)="stopNavigation()">
+                  <i class="bi bi-stop-circle-fill"></i> Stop
+                </button>
+              </div>
+              <div class="extra-small text-muted d-flex justify-content-between align-items-center" style="font-size: 10px;">
+                <span>Telemetry Status:</span>
+                <span class="d-flex align-items-center gap-1 text-success">
+                  <span class="pulse-dot" [class.bg-success]="!navigationPaused" [class.bg-warning]="navigationPaused" style="width: 6px; height: 6px;"></span> 
+                  {{ navigationActive ? (navigationPaused ? 'Paused' : 'Navigating') : 'Active Feed' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     
     <div *ngIf="(activePickups$ | async) as actives">
@@ -42,9 +202,11 @@
 
         <!-- Action Controls -->
         <div class="db-pickup-actions" *ngIf="completingRequestId !== req.id">
-          <button [routerLink]="['/chat', req.citizenId, req.citizenName]" class="db-action-btn neutral">
+          <button class="db-action-btn btn-message-citizen" 
+                  [routerLink]="['/volunteer/messages']" [queryParams]="{ partnerId: req.citizenId, partnerName: req.citizenName }">
             💬 Message Citizen
           </button>
+
           <button *ngIf="req.status === 'Scheduled'" 
                   class="db-action-btn primary" 
                   (click)="updateStatus(req.id, 'In Progress')">
@@ -59,14 +221,62 @@
 
         <!-- Completion Form Overlay-ish -->
         <div class="db-completion-form" *ngIf="completingRequestId === req.id">
-          <div class="db-form-inline">
-            <label>Weight Collected (kg):</label>
-            <input type="number" [(ngModel)]="weightInput" class="db-input-small" placeholder="0.0" />
-            <div class="db-inline-btns">
-              <button class="db-btn-save" (click)="completePickup()" [disabled]="weightInput <= 0">Confirm</button>
+          <div class="db-form-inline flex-wrap">
+            <div class="d-flex align-items-center mb-2 w-100">
+              <label class="me-2 text-dark">Weight (kg):</label>
+              <input type="number" [(ngModel)]="weightInput" class="db-input-small flex-grow-1" placeholder="0.0" />
+            </div>
+            
+            <div *ngIf="isScanning" class="w-100 mb-2 border rounded overflow-hidden">
+              <div id="qr-reader" style="width: 100%;"></div>
+            </div>
+
+            <div class="db-inline-btns w-100 d-flex gap-2 justify-content-end">
+              <button *ngIf="!isScanning" class="db-action-btn primary flex-grow-1" (click)="startQrScanner()">
+                <i class="bi bi-qr-code-scan"></i> Scan QR
+              </button>
+              <button *ngIf="isScanning" class="db-action-btn primary flex-grow-1" (click)="stopQrScanner()">
+                <i class="bi bi-x-circle"></i> Stop Scan
+              </button>
+              <button class="db-btn-save" (click)="completePickup()" [disabled]="weightInput <= 0">Verify & Complete</button>
               <button class="db-btn-cancel" (click)="cancelCompletion()">Cancel</button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active NGO Projects Section -->
+  <div class="db-section mt-50">
+    <h3 class="db-sub-title mb-3">🏢 Active NGO Projects</h3>
+    <div *ngIf="(acceptedNGOProjects$ | async) as assignments">
+      <div *ngIf="assignments.length === 0" class="db-empty">
+        You are not assigned to any active NGO projects. 
+        <a routerLink="/volunteer/opportunities" class="db-link">Apply for projects →</a>
+      </div>
+
+      <div *ngFor="let app of assignments" class="db-card db-pickup-item position-relative mb-3">
+        <div class="db-pickup-core">
+          <div class="db-list-icon">🏢</div>
+          <div class="db-list-info">
+            <div class="db-list-title">{{ app.opportunity_id?.title }}</div>
+            <div class="db-list-meta">📍 {{ app.opportunity_id?.location }}</div>
+            <div class="db-list-meta" *ngIf="app.opportunity_id?.description">📋 Description: {{ app.opportunity_id?.description }}</div>
+          </div>
+          <div class="db-status-wrap">
+            <span class="db-status-chip" style="background-color: rgba(25, 135, 84, 0.1); color: #198754; border: 1px solid rgba(25, 135, 84, 0.2); font-weight: 700;">Accepted</span>
+          </div>
+        </div>
+        <div class="db-pickup-actions">
+          <button [routerLink]="['/chat', app.opportunity_id?.ngo_id?._id || app.opportunity_id?.ngo_id, app.opportunity_id?.ngo_id?.name || 'NGO Admin']"
+                  [queryParams]="{ opportunityId: app.opportunity_id?._id || app.opportunity_id?.id }"
+                  class="db-action-btn primary me-2">
+            💬 Message NGO
+          </button>
+          <button (click)="completeProject(app)" class="db-action-btn success">
+            ✅ Mark Done
+          </button>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+@import "leaflet/dist/leaflet.css";
 /* You can add global styles to this file, and also import other style files */
 :root {
   /* Premium HSL Color Palette - Emerald Theme */
@@ -15,15 +16,16 @@
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border: rgba(226, 232, 240, 0.8);
+
   
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1.25rem;
   --radius-xl: 2rem;
   
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-sm: 0 2px 4px 0 rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
   
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.3);
@@ -46,7 +48,8 @@ body.dark-mode .text-dark, .admin-dark-mode .text-dark {
   color: var(--text-main) !important;
 }
 
-body.dark-mode .text-muted, .admin-dark-mode .text-muted {
+body.dark-mode .text-muted, .admin-dark-mode .text-muted,
+body.dark-mode .text-secondary, .admin-dark-mode .text-secondary {
   color: var(--text-muted) !important;
 }
 
@@ -99,7 +102,8 @@ body.dark-mode .profile-card, .admin-dark-mode .profile-card {
   color: var(--text-main) !important;
 }
 
-body.dark-mode .form-select, .admin-dark-mode .form-select {
+body.dark-mode .form-select, .admin-dark-mode .form-select,
+body.dark-mode .form-control, .admin-dark-mode .form-control {
   background-color: #0f172a !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
   color: #f1f5f9 !important;
@@ -157,11 +161,11 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .premium-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -178,10 +182,11 @@ body {
   box-shadow: var(--shadow-sm);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .profile-card:hover {
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -366,3 +371,14 @@ body {
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
+
+/* Accessibility Enhancements */
+a:focus, button:focus, input:focus, textarea:focus, select:focus {
+  outline: 3px solid #6366f1 !important;
+  outline-offset: 2px !important;
+}
+
+[role="button"], [tabindex="0"] {
+  cursor: pointer;
+}
+body.dark-mode .form-control::placeholder, .admin-dark-mode .form-control::placeholder { color: rgba(241, 245, 249, 0.4) !important; }

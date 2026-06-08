@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { OpportunityService } from '../../../services/opportunity.service';
 import { ApplicationService } from '../../../services/application.service';
 import { AuthService, User } from '../../../services/auth.service';
@@ -9,7 +10,7 @@ import { Opportunity } from '../../../models/opportunity.model';
 @Component({
   selector: 'app-opportunity-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './opportunity-detail.component.html',
   styleUrls: ['./opportunity-detail.component.css']
 })
@@ -23,6 +24,8 @@ export class OpportunityDetailComponent implements OnInit {
 
   hasApplied = false;
   applicationStatus = '';
+  coverLetter = '';
+  showCoverLetterForm = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -69,15 +72,26 @@ export class OpportunityDetailComponent implements OnInit {
     }
   }
 
+  openApplyForm() {
+    this.showCoverLetterForm = true;
+  }
+
+  cancelApply() {
+    this.showCoverLetterForm = false;
+    this.coverLetter = '';
+  }
+
   applyForOpportunity() {
     if (!this.opportunity || !this.isVolunteer) return;
     const oppId = this.opportunity._id || this.opportunity.id;
     if (!oppId) return;
 
-    this.applicationService.applyForOpportunity(oppId).subscribe({
+    this.applicationService.applyForOpportunity(oppId, this.coverLetter.trim() || undefined).subscribe({
       next: (app) => {
         this.hasApplied = true;
         this.applicationStatus = app.status;
+        this.showCoverLetterForm = false;
+        this.coverLetter = '';
         alert('Successfully applied for this opportunity!');
       },
       error: (err) => alert(err.error?.message || 'Error applying for opportunity')
@@ -93,6 +107,12 @@ export class OpportunityDetailComponent implements OnInit {
         this.router.navigate(['/opportunities']);
       });
     }
+  }
+
+  asArray(value: any): string[] {
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string' && value) return [value];
+    return [];
   }
 
   toggleSidebar() {

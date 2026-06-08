@@ -23,3 +23,20 @@
 }
 .of-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(99,255,180,0.25); }
 select.of-input { appearance: none; cursor: pointer; }
+
+/* Chip multi-select */
+.of-sub { font-size: 10px; font-weight: 400; color: rgba(180,200,235,0.3); margin-left: 8px; text-transform: none; letter-spacing: 0; }
+.of-chip-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.of-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 50px;
+  border: 1.5px solid rgba(99,255,180,0.12);
+  background: rgba(255,255,255,0.03); color: rgba(180,200,235,0.55);
+  font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease; user-select: none; white-space: nowrap; font-family: inherit;
+}
+.of-chip:hover { border-color: rgba(99,255,180,0.35); background: rgba(99,255,180,0.05); color: #63ffb4; transform: translateY(-1px); }
+.of-chip.active { border-color: #63ffb4; background: rgba(99,255,180,0.1); color: #63ffb4; box-shadow: 0 2px 12px rgba(99,255,180,0.15); }
+.of-chip-check { font-size: 0.72rem; font-weight: 800; color: #63ffb4; }
+.of-warn { font-size: 0.75rem; color: rgba(255,100,100,0.7); margin-top: 4px; }
+.of-selected { font-size: 0.75rem; color: rgba(99,255,180,0.6); margin-top: 4px; }

@@ -6,7 +6,9 @@ import {
   getRequestsByCitizen,
   getRequestsByVolunteer,
   getAvailableRequests,
-  updateRequestStatus
+  updateRequestStatus,
+  verifyQrCode,
+  rescheduleRequest
 } from '../controllers/wasteRequestController';
 
 const router = Router();
@@ -17,5 +19,7 @@ router.get('/available', authProtect, getAvailableRequests);
 router.get('/citizen/:citizenId', getRequestsByCitizen);
 router.get('/volunteer/:volunteerId', getRequestsByVolunteer);
 router.patch('/:id/status', updateRequestStatus);
+router.patch('/:id/reschedule', authProtect, rescheduleRequest);
+router.post('/:id/verify-qr', authProtect, verifyQrCode);
 
 export default router;

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Observable, of, map, combineLatest, catchError, BehaviorSubject, switchMap, timer, shareReplay } from 'rxjs';
 import { WasteRequest } from '../../../models/waste-request.model';
 import { AuthService, User } from '../../../services/auth.service';
@@ -14,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-opportunities',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './opportunities.component.html',
   styleUrls: ['./opportunities.component.css']
 })
@@ -113,7 +114,7 @@ export class OpportunitiesComponent implements OnInit {
               const cat = r.wasteCategory as any;
               return r.location?.toLowerCase().includes(q) || 
                 r.description?.toLowerCase().includes(q) ||
-                (Array.isArray(cat) ? cat.some((c: any) => c.toString().toLowerCase().includes(q)) : cat?.toLowerCase().includes(q));
+                (Array.isArray(cat) ? cat.some((c: any) => c.toString().toLowerCase().includes(q)) : typeof cat === 'string' && (cat as string).toLowerCase().includes(q));
             });
           })
         );

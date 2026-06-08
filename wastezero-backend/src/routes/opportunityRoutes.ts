@@ -18,14 +18,15 @@ const router = express.Router();
 // @route   GET /api/opportunities
 router.get('/', getOpportunities);
 
-// @route   GET /api/opportunities/:id
-router.get('/:id', getOpportunityById);
-
 // Protected routes below
 router.use(authProtect);
 
+// Reordered to prevent Express from matching "matches" as the ":id" dynamic parameter
 // @route   GET /api/opportunities/matches
 router.get('/matches', requireRole(['volunteer']), getMatchedOpportunities);
+
+// @route   GET /api/opportunities/:id
+router.get('/:id', getOpportunityById);
 
 // @route   POST /api/opportunities
 router.post('/', requireRole(['admin', 'ngo']), createOpportunity);

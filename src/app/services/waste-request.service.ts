@@ -106,4 +106,27 @@ export class WasteRequestService {
       })
     );
   }
+
+  detectWasteAI(imageBase64: string): Observable<{ message: string, category: string, confidence: number }> {
+    return this.http.post<any>('/api/ai/detect-waste', { image: imageBase64 });
+  }
+
+  verifyQrCode(requestId: string, qrCodeToken: string): Observable<WasteRequest> {
+    return this.http.post<any>(`${this.apiUrl}/${requestId}/verify-qr`, { qrCodeToken }).pipe(
+      map(res => res.request),
+      tap(updated => {
+        const current = this.requestsSubject.value;
+        this.requestsSubject.next(current.map(r => r.id === requestId ? updated : r));
+      })
+    );
+  }
+
+  rescheduleRequest(requestId: string, scheduledDate: string, scheduledTime: string): Observable<WasteRequest> {
+    return this.http.patch<WasteRequest>(`${this.apiUrl}/${requestId}/reschedule`, { scheduledDate, scheduledTime }).pipe(
+      tap(updated => {
+        const current = this.requestsSubject.value;
+        this.requestsSubject.next(current.map(r => r.id === requestId ? updated : r));
+      })
+    );
+  }
 }

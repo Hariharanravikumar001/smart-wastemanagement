@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-about-us',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './about-us.component.html',
   styleUrl: './about-us.component.css'
 })
@@ -25,8 +26,12 @@ export class AboutUsComponent implements OnInit {
   targetVolunteers = 12;
   targetPartners = 950;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   ngOnInit(): void {
-    this.startCounters();
+    if (isPlatformBrowser(this.platformId)) {
+      this.startCounters();
+    }
   }
 
   private startCounters() {

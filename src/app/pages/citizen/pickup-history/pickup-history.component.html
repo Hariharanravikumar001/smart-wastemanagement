@@ -22,27 +22,82 @@
               <div class="db-list-meta">📍 {{ formatLocation(req.location) }}</div>
               <div class="db-list-meta" *ngIf="req.volunteerName">👤 Volunteer: {{ req.volunteerName }}</div>
             </div>
-            <span class="db-status-chip" [ngClass]="getStatusClass(req.status)">
-              {{ req.status }}
-            </span>
+            <div class="d-flex flex-column align-items-end gap-2">
+              <span class="db-status-chip" [ngClass]="getStatusClass(req.status)">
+                {{ req.status }}
+              </span>
+              <button *ngIf="req.volunteerId" class="db-action-btn" style="background-color: #6366f1; color: white; padding: 4px 12px; font-size: 0.8rem;" 
+                      [routerLink]="['/citizen/messages']" [queryParams]="{ partnerId: req.volunteerId, partnerName: req.volunteerName }">
+                💬 Message Volunteer
+              </button>
+            </div>
           </div>
 
-          <!-- Progress Timeline -->
-          <div class="db-timeline">
-            <div class="db-timeline-step" [class.done]="true">
-              <div class="db-timeline-dot"></div>
-              <span>Requested</span>
+          <!-- Progress Timeline & Extras -->
+          <div class="db-timeline-wrapper d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3 p-3 bg-light rounded-4">
+            <div class="db-timeline flex-grow-1">
+              <div class="db-timeline-step" [class.done]="true">
+                <div class="db-timeline-dot"></div>
+                <span>Requested</span>
+              </div>
+              <div class="db-timeline-line" [class.done]="req.status !== 'Pending'"></div>
+              <div class="db-timeline-step" [class.done]="req.status === 'Scheduled' || req.status === 'In Progress'">
+                <div class="db-timeline-dot"></div>
+                <span>Scheduled</span>
+              </div>
+              <div class="db-timeline-line" [class.done]="req.status === 'In Progress'"></div>
+              <div class="db-timeline-step" [class.done]="req.status === 'In Progress'">
+                <div class="db-timeline-dot"></div>
+                <span>In Progress</span>
+              </div>
             </div>
-            <div class="db-timeline-line" [class.done]="req.status !== 'Pending'"></div>
-            <div class="db-timeline-step" [class.done]="req.status === 'Scheduled' || req.status === 'In Progress'">
-              <div class="db-timeline-dot"></div>
-              <span>Scheduled</span>
+
+            <div class="qr-code-section text-center bg-white p-2 rounded shadow-sm border" *ngIf="req.qrCodeToken && (req.status === 'Scheduled' || req.status === 'In Progress')">
+              <div class="fw-bold text-success mb-1" style="font-size: 0.8rem;"><i class="bi bi-qr-code-scan me-1"></i>Pickup Verification</div>
+              <qrcode [qrdata]="req.qrCodeToken" [width]="100" [errorCorrectionLevel]="'M'"></qrcode>
+              <div class="text-muted" style="font-size: 0.7rem;">Show this to volunteer</div>
             </div>
-            <div class="db-timeline-line" [class.done]="req.status === 'In Progress'"></div>
-            <div class="db-timeline-step" [class.done]="req.status === 'In Progress'">
-              <div class="db-timeline-dot"></div>
-              <span>In Progress</span>
+
+            <!-- Reschedule Button (Only for Pending) -->
+            <div *ngIf="req.status === 'Pending'" class="ms-auto">
+              <button class="db-action-btn" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;" (click)="openReschedule(req)">
+                📅 Reschedule
+              </button>
             </div>
+
+            <!-- Live Tracking Map Preview -->
+            <div *ngIf="req.status === 'In Progress'" class="ms-auto">
+              <button class="db-action-btn primary" (click)="trackLive(req.id)">
+                <i class="bi bi-geo-alt-fill text-white"></i> Live Tracking
+              </button>
+            </div>
+          </div>
+
+          <!-- Inline Reschedule Form -->
+          <div *ngIf="reschedulingId === req.id" class="mt-3 p-3 rounded-4" style="background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.06)); border: 1px solid rgba(99,102,241,0.2);">
+            <div class="fw-bold mb-2" style="font-size: 0.9rem; color: #6366f1;">📅 Reschedule Pickup</div>
+            <div class="d-flex flex-wrap gap-2 mb-2">
+              <div>
+                <label style="font-size: 0.75rem; color: #64748b; display: block; margin-bottom: 2px;">New Date</label>
+                <input type="date" [(ngModel)]="rescheduleDate" class="form-control form-control-sm">
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; color: #64748b; display: block; margin-bottom: 2px;">New Time</label>
+                <input type="time" [(ngModel)]="rescheduleTime" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div *ngIf="rescheduleError" class="text-danger small mb-1">{{ rescheduleError }}</div>
+            <div *ngIf="rescheduleSuccess" class="text-success small mb-1">{{ rescheduleSuccess }}</div>
+            <div class="d-flex gap-2">
+              <button class="db-action-btn" style="background: #6366f1; color: white; padding: 5px 14px; font-size: 0.82rem;" (click)="submitReschedule()">✅ Confirm</button>
+              <button class="db-action-btn" style="background: #e2e8f0; color: #64748b; padding: 5px 14px; font-size: 0.82rem;" (click)="cancelReschedule()">Cancel</button>
+            </div>
+          </div>
+
+          
+          <div *ngIf="trackingRequestId === req.id" class="mt-3 rounded overflow-hidden shadow-sm" style="height: 200px; position: relative;">
+            <div class="position-absolute top-0 start-0 w-100 bg-dark text-white text-center py-1 z-3" style="font-size: 0.8rem; z-index: 1000; opacity: 0.8;">Live Volunteer Tracking</div>
+            <div [id]="'tracking-map-' + req.id" class="w-100 h-100 bg-light"></div>
           </div>
         </div>
       </div>

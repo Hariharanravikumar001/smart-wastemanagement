@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, of, map } from 'rxjs';
+import { Observable, of, map, BehaviorSubject, combineLatest, timer, switchMap, catchError, shareReplay } from 'rxjs';
 import { WasteRequest } from '../../../models/waste-request.model';
 import { AuthService, User } from '../../../services/auth.service';
 import { WasteRequestService } from '../../../services/waste-request.service';
@@ -18,6 +18,7 @@ export class StatisticsComponent implements OnInit {
   impactScore$: Observable<number> = of(0);
   completedCount$: Observable<number> = of(0);
   wasteStats$: Observable<{category: string, weight: number, percentage: number}[]> = of([]);
+  private refreshSubject = new BehaviorSubject<void>(undefined);
 
   constructor(
     private authService: AuthService,
@@ -28,11 +29,20 @@ export class StatisticsComponent implements OnInit {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       if (user) {
-        const userRequests$ = this.wasteService.requests$.pipe(
-          map(reqs => reqs.filter(r => r.citizenId === user.id && r.status === 'Completed'))
+        const dataStream = combineLatest([
+          this.refreshSubject,
+          timer(0, 60000)
+        ]).pipe(map(() => user));
+
+        const completedRequests$ = dataStream.pipe(
+          switchMap(u => this.wasteService.getRequestsByCitizen(u!.id).pipe(
+            map(reqs => reqs.filter(r => r.status === 'Completed')),
+            catchError(() => of([]))
+          )),
+          shareReplay(1)
         );
 
-        this.totalWeight$ = userRequests$.pipe(
+        this.totalWeight$ = completedRequests$.pipe(
           map(reqs => reqs.reduce((sum, r) => sum + (r.weight || 0), 0))
         );
 
@@ -40,11 +50,11 @@ export class StatisticsComponent implements OnInit {
           map(weight => Math.round(weight * 18.5))
         );
 
-        this.completedCount$ = userRequests$.pipe(
+        this.completedCount$ = completedRequests$.pipe(
           map(reqs => reqs.length)
         );
 
-        this.wasteStats$ = userRequests$.pipe(
+        this.wasteStats$ = completedRequests$.pipe(
           map(reqs => {
             const total = reqs.reduce((sum, r) => sum + (r.weight || 0), 0);
             if (total === 0) return [];
@@ -58,6 +68,7 @@ export class StatisticsComponent implements OnInit {
       }
     });
   }
+
 
   getCategoryIcon(cat: string | string[]): string {
     const icons: Record<string, string> = {

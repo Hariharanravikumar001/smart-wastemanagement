@@ -1,61 +1,62 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-services',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './services.component.html',
   styleUrls: ['./services.component.css']
 })
 export class ServicesComponent {
   services = [
     {
-      title: 'Smart Waste Pickup',
+      title: 'SERVICES.SERVICE_PICKUP_TITLE',
       icon: 'bi-truck',
-      description: 'Effortless scheduling and tracking of waste collection at your doorstep.',
+      description: 'SERVICES.SERVICE_PICKUP_DESC',
       details: [
-        'On-demand pickup scheduling via mobile or web.',
-        'Real-time tracking of collection vehicles.',
-        'Digital verification of completed pickups.',
-        'Special handling for hazardous materials.'
+        'SERVICES.SERVICE_PICKUP_D1',
+        'SERVICES.SERVICE_PICKUP_D2',
+        'SERVICES.SERVICE_PICKUP_D3',
+        'SERVICES.SERVICE_PICKUP_D4'
       ],
       color: '#4CAF50'
     },
     {
-      title: 'Intelligent Sorting',
+      title: 'SERVICES.SERVICE_SORTING_TITLE',
       icon: 'bi-diagram-3',
-      description: 'AI-powered waste categorization to maximize recycling efficiency.',
+      description: 'SERVICES.SERVICE_SORTING_DESC',
       details: [
-        'Automated classification of Plastic, Paper, Glass, and Metal.',
-        'Guidance on local recycling regulations.',
-        'Contamination detection and alerts.',
-        'Optimized routing for specific waste categories.'
+        'SERVICES.SERVICE_SORTING_D1',
+        'SERVICES.SERVICE_SORTING_D2',
+        'SERVICES.SERVICE_SORTING_D3',
+        'SERVICES.SERVICE_SORTING_D4'
       ],
       color: '#2196F3'
     },
     {
-      title: 'Volunteer Network',
+      title: 'SERVICES.SERVICE_VOLUNTEER_TITLE',
       icon: 'bi-people',
-      description: 'Connecting motivated citizens with NGOs and environmental volunteers.',
+      description: 'SERVICES.SERVICE_VOLUNTEER_DESC',
       details: [
-        'Community cleaning drive organization.',
-        'Reward points for active volunteer participation.',
-        'Direct communication with local NGOs.',
-        'Skill-sharing and environmental workshops.'
+        'SERVICES.SERVICE_VOLUNTEER_D1',
+        'SERVICES.SERVICE_VOLUNTEER_D2',
+        'SERVICES.SERVICE_VOLUNTEER_D3',
+        'SERVICES.SERVICE_VOLUNTEER_D4'
       ],
       color: '#FF9800'
     },
     {
-      title: 'Impact Analytics',
+      title: 'SERVICES.SERVICE_ANALYTICS_TITLE',
       icon: 'bi-graph-up-arrow',
-      description: 'Data-driven insights into your environmental contribution.',
+      description: 'SERVICES.SERVICE_ANALYTICS_DESC',
       details: [
-        'Personalized dashboard for waste reduction trends.',
-        'Carbon footprint savings calculation.',
-        'Community-wide recycling benchmarks.',
-        'Exportable reports for sustainability compliance.'
+        'SERVICES.SERVICE_ANALYTICS_D1',
+        'SERVICES.SERVICE_ANALYTICS_D2',
+        'SERVICES.SERVICE_ANALYTICS_D3',
+        'SERVICES.SERVICE_ANALYTICS_D4'
       ],
       color: '#9C27B0'
     }
@@ -64,23 +65,23 @@ export class ServicesComponent {
   howItWorks = [
     {
       step: '1',
-      title: 'Register & Profile',
-      description: 'Join the platform and set up your location for seamless service.'
+      title: 'SERVICES.STEP1_TITLE',
+      description: 'SERVICES.STEP1_DESC'
     },
     {
       step: '2',
-      title: 'Request Pickup',
-      description: 'Choose your waste type and schedule a convenient time slot.'
+      title: 'SERVICES.STEP2_TITLE',
+      description: 'SERVICES.STEP2_DESC'
     },
     {
       step: '3',
-      title: 'Process & Sort',
-      description: 'Our team uses intelligent sorting to ensure maximum recycling.'
+      title: 'SERVICES.STEP3_TITLE',
+      description: 'SERVICES.STEP3_DESC'
     },
     {
       step: '4',
-      title: 'Track Impact',
-      description: 'See your contribution reflected in real-time analytics.'
+      title: 'SERVICES.STEP4_TITLE',
+      description: 'SERVICES.STEP4_DESC'
     }
   ];
 }

@@ -3,18 +3,24 @@ export interface Opportunity {
   id?: string;
   title: string;
   description: string;
-  wasteType?: string; // Kept for UI backward compatibility if needed
+  wasteType?: string | string[];
   location: string;
   skills: string[];
-  skillsRequired?: string[]; // Alias for backward compatibility
+  skillsRequired?: string[];
   duration: string;
   status?: string;
-  ngo_id?: any; // populated object or string
-  organizationId?: string; // Alias
-  organizationName?: string; // Alias
+  ngo_id?: any;
+  organizationId?: string;
+  organizationName?: string;
   applicantCount?: number;
   applicantNames?: string[];
-  totalScore?: number; // Added for matching logic
+  totalScore?: number;
+  // Scheduling
+  startDate?: string;
+  startTime?: string;
+  scheduleType?: 'none' | 'daily' | 'weekly-2' | 'weekly-3';
+  scheduleDays?: string[];
+  scheduleTime?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

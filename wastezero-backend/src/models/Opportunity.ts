@@ -6,10 +6,16 @@ export interface IOpportunity extends Document {
     skills: string[];
     duration: string;
     location: string;
-    wasteType?: string;
+    wasteType?: string | string[];
     status: 'open' | 'closed' | 'in-progress';
     ngo_id: mongoose.Types.ObjectId;
     isDeleted: boolean;
+    // Scheduling
+    startDate?: string;
+    startTime?: string;
+    scheduleType?: 'none' | 'daily' | 'weekly-2' | 'weekly-3';
+    scheduleDays?: string[];
+    scheduleTime?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -20,7 +26,7 @@ const OpportunitySchema: Schema = new Schema({
     skills: { type: [String], default: [] },
     duration: { type: String, required: true },
     location: { type: String, required: true },
-    wasteType: { type: String },
+    wasteType: { type: [String], default: [] },
     status: {
         type: String,
         enum: ['open', 'closed', 'in-progress'],
@@ -31,7 +37,13 @@ const OpportunitySchema: Schema = new Schema({
         ref: 'User',
         required: true
     },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    // Scheduling fields
+    startDate: { type: String },
+    startTime: { type: String },
+    scheduleType: { type: String, enum: ['none', 'daily', 'weekly-2', 'weekly-3'], default: 'none' },
+    scheduleDays: { type: [String], default: [] },
+    scheduleTime: { type: String }
 }, {
     timestamps: true,
     toJSON: {

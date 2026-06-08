@@ -96,6 +96,25 @@
                 <div class="od-detail-value">{{ opportunity.location }}</div>
               </div>
             </div>
+            <div class="od-detail-row" *ngIf="opportunity.startDate">
+              <div class="od-detail-icon da">📅</div>
+              <div>
+                <div class="od-detail-label">DATE & TIME</div>
+                <div class="od-detail-value">{{ opportunity.startDate }}<span *ngIf="opportunity.startTime"> at {{ opportunity.startTime }}</span></div>
+              </div>
+            </div>
+            <div class="od-detail-row" *ngIf="opportunity.scheduleType && opportunity.scheduleType !== 'none'">
+              <div class="od-detail-icon da">🕒</div>
+              <div>
+                <div class="od-detail-label">CLEANING SCHEDULE</div>
+                <div class="od-detail-value">
+                  <span *ngIf="opportunity.scheduleType === 'daily'">Daily Cleaning</span>
+                  <span *ngIf="opportunity.scheduleType === 'weekly-2'">Weekly (2x: {{ asArray(opportunity.scheduleDays).join(', ') }})</span>
+                  <span *ngIf="opportunity.scheduleType === 'weekly-3'">Weekly (3x: {{ asArray(opportunity.scheduleDays).join(', ') }})</span>
+                  <span *ngIf="opportunity.scheduleTime"> at {{ opportunity.scheduleTime }}</span>
+                </div>
+              </div>
+            </div>
             <div class="od-detail-row">
               <div class="od-detail-icon da">📅</div>
               <div>
@@ -104,8 +123,30 @@
               </div>
             </div>
             <div class="od-cta" *ngIf="!isAdmin">
-              <button class="od-apply-btn" *ngIf="isVolunteer && !hasApplied && opportunity.status === 'open'"
-                (click)="applyForOpportunity()">☑️ Apply to Volunteer</button>
+              <!-- Apply button: opens cover letter form -->
+              <button class="od-apply-btn" *ngIf="isVolunteer && !hasApplied && opportunity.status === 'open' && !showCoverLetterForm"
+                (click)="openApplyForm()">☑️ Apply to Volunteer</button>
+
+              <!-- Cover Letter Form -->
+              <div *ngIf="showCoverLetterForm && !hasApplied" class="od-cover-letter-form">
+                <label style="font-size: 0.85rem; font-weight: 600; color: #334155; display: block; margin-bottom: 6px;">
+                  ✉️ Tell the NGO why you'd like to help (optional):
+                </label>
+                <textarea 
+                  [(ngModel)]="coverLetter" 
+                  name="coverLetter"
+                  rows="4" 
+                  placeholder="Describe your motivation, relevant experience, or skills..." 
+                  maxlength="1000"
+                  style="width:100%; border-radius: 10px; border: 1px solid #cbd5e1; padding: 10px; font-size: 0.85rem; resize: vertical; background: #f8fafc;">
+                </textarea>
+                <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 8px; text-align: right;">{{ coverLetter.length }}/1000</div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="od-apply-btn" (click)="applyForOpportunity()">✅ Submit Application</button>
+                  <button class="od-apply-btn od-closed" (click)="cancelApply()" style="background: #e2e8f0; color: #64748b;">Cancel</button>
+                </div>
+              </div>
+
               <button class="od-apply-btn od-applied" *ngIf="hasApplied" disabled>✅ Applied ({{ applicationStatus |
                 titlecase }})</button>
               <button class="od-apply-btn od-closed" *ngIf="opportunity.status !== 'open' && !hasApplied" disabled>🚫

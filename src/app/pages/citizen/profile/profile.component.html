@@ -65,6 +65,10 @@
               <div class="profile-value-box">{{ user.email }}</div>
             </div>
             <div class="col-md-6">
+              <span class="profile-label">Contact Number</span>
+              <div class="profile-value-box">{{ user.contactNumber || 'Not Specified' }}</div>
+            </div>
+            <div class="col-md-6">
               <span class="profile-label">Location</span>
               <div class="profile-value-box">{{ user.location || 'Not Specified' }}</div>
             </div>
@@ -104,6 +108,10 @@
             <div class="col-md-6">
               <label class="profile-label">Location</label>
               <input type="text" [(ngModel)]="editUser.location" name="location" class="profile-input" />
+            </div>
+            <div class="col-md-6">
+              <label class="profile-label">Contact Number</label>
+              <input type="tel" [(ngModel)]="editUser.contactNumber" name="contactNumber" class="profile-input" placeholder="+1234567890" />
             </div>
             <div class="col-12">
               <label class="profile-label">Bio</label>

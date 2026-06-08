@@ -14,17 +14,22 @@
         <textarea class="of-textarea" [(ngModel)]="form.description" name="description" required rows="4" placeholder="Describe the opportunity..."></textarea>
       </div>
 
-      <div class="of-row">
-        <div class="of-field">
-          <label class="of-label">Waste Type</label>
-          <select class="of-input" [(ngModel)]="form.wasteType" name="wasteType">
-            <option *ngFor="let type of wasteTypes" [value]="type">{{ type }}</option>
-          </select>
+      <div class="of-field">
+        <label class="of-label">
+          ♻️ Waste Types <span style="color:#ef4444">*</span>
+          <span class="of-sub">Select one or more</span>
+        </label>
+        <div class="of-chip-group">
+          <button *ngFor="let wt of wasteTypes" type="button"
+            class="of-chip" [class.active]="isWasteTypeSelected(wt.value)"
+            (click)="toggleWasteType(wt.value)">
+            <span>{{ wt.icon }}</span>
+            <span>{{ wt.value }}</span>
+            <span *ngIf="isWasteTypeSelected(wt.value)" class="of-chip-check">✓</span>
+          </button>
         </div>
-        <div class="of-field">
-          <label class="of-label">Duration <span class="text-danger">*</span></label>
-          <input class="of-input" type="text" [(ngModel)]="form.duration" name="duration" required placeholder="e.g. 4 hours" />
-        </div>
+        <div *ngIf="selectedWasteTypes.length === 0" class="of-warn">⚠️ Select at least one type</div>
+        <div *ngIf="selectedWasteTypes.length > 0" class="of-selected">✅ {{ selectedWasteTypes.join(', ') }}</div>
       </div>
 
       <div class="of-field">
@@ -35,6 +40,62 @@
       <div class="of-field">
         <label class="of-label">Required Skills (comma-separated)</label>
         <input class="of-input" type="text" [(ngModel)]="form.skillsRequired" name="skillsRequired" placeholder="e.g. Physical Fitness, Teamwork" />
+      </div>
+
+      <div class="of-field">
+        <label class="of-label">Duration <span style="color:#ef4444">*</span></label>
+        <input class="of-input" type="text" [(ngModel)]="form.duration" name="duration" required placeholder="e.g. 4 hours" />
+      </div>
+
+      <div class="of-row">
+        <div class="of-field">
+          <label class="of-label">Date</label>
+          <input class="of-input" type="date" [(ngModel)]="form.startDate" name="startDate" />
+        </div>
+        <div class="of-field">
+          <label class="of-label">Time</label>
+          <input class="of-input" type="time" [(ngModel)]="form.startTime" name="startTime" />
+        </div>
+      </div>
+
+      <div class="of-field" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; margin-top: 8px;">
+        <label class="of-label" style="font-size: 13px; color: #63ffb4; text-transform: none; margin-bottom: 8px;">🕒 Cleaning Schedule</label>
+        
+        <div class="of-row">
+          <div class="of-field">
+            <label class="of-label">Schedule Type</label>
+            <select class="of-input" [(ngModel)]="form.scheduleType" name="scheduleType" (change)="onScheduleTypeChange()">
+              <option value="none">No Schedule (One-time)</option>
+              <option value="daily">Daily Cleaning</option>
+              <option value="weekly-2">Weekly (2 times per week)</option>
+              <option value="weekly-3">Weekly (3 times per week)</option>
+            </select>
+          </div>
+          
+          <div class="of-field" *ngIf="form.scheduleType !== 'none'">
+            <label class="of-label">Work Completion Time</label>
+            <input class="of-input" type="time" [(ngModel)]="form.scheduleTime" name="scheduleTime" />
+          </div>
+        </div>
+
+        <!-- Weekly Day Selection -->
+        <div class="of-field" style="margin-top: 16px;" *ngIf="form.scheduleType === 'weekly-2' || form.scheduleType === 'weekly-3'">
+          <label class="of-label">
+            Select Days <span style="color:#ef4444">*</span>
+            <span class="of-sub">Select exactly {{ form.scheduleType === 'weekly-2' ? '2' : '3' }} days</span>
+          </label>
+          <div class="of-chip-group">
+            <button *ngFor="let day of weekDays" type="button"
+              class="of-chip" [class.active]="isScheduleDaySelected(day.value)"
+              (click)="toggleScheduleDay(day.value)">
+              <span>{{ day.value }}</span>
+              <span *ngIf="isScheduleDaySelected(day.value)" class="of-chip-check">✓</span>
+            </button>
+          </div>
+          <div *ngIf="form.scheduleDays.length !== (form.scheduleType === 'weekly-2' ? 2 : 3)" class="of-warn">
+            ⚠️ Please select exactly {{ form.scheduleType === 'weekly-2' ? 2 : 3 }} days (Currently selected: {{ form.scheduleDays.length }})
+          </div>
+        </div>
       </div>
 
       <button type="submit" class="of-submit-btn" [disabled]="isSubmitting">

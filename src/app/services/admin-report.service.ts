@@ -163,4 +163,46 @@ export class AdminReportService {
       document.body.removeChild(link);
     }
   }
+
+  exportUsersToPDF(): void {
+    console.log('Initiating User PDF export...');
+    this.authService.getAllUsers().subscribe({
+      next: (users) => {
+        try {
+          const usersArray = Array.isArray(users) ? users : ((users as any).users || []);
+          const headers = [['Name', 'Email', 'Role', 'Status']];
+          const rows = usersArray.map((u: any) => [
+            u.name || '',
+            u.email || '',
+            u.role || '',
+            u.isSuspended ? 'Suspended' : 'Active'
+          ]);
+          this.downloadPDF(headers, rows, 'wastezero_users_report.pdf', 'User Report');
+        } catch (err) {
+          console.error('Error exporting PDF:', err);
+        }
+      }
+    });
+  }
+
+  private async downloadPDF(headers: string[][], rows: any[][], filename: string, title: string) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    try {
+      const { jsPDF } = await import('jspdf');
+      const autoTable = (await import('jspdf-autotable')).default;
+      
+      const doc = new jsPDF();
+      doc.text(title, 14, 15);
+      
+      autoTable(doc, {
+        head: headers,
+        body: rows,
+        startY: 20
+      });
+      
+      doc.save(filename);
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+    }
+  }
 }

@@ -24,6 +24,11 @@ export class OpportunityListComponent implements OnInit {
   sidebarOpen = true;
   searchQuery = '';
 
+  // Local filter fields
+  localSearchQuery = '';
+  filterCategory = '';
+  filterLocation = '';
+
   constructor(
     private opportunityService: OpportunityService,
     private authService: AuthService,
@@ -41,7 +46,7 @@ export class OpportunityListComponent implements OnInit {
 
     this.searchService.searchTerm$.subscribe(term => {
       this.searchQuery = term;
-      this.filterOpportunities();
+      this.applyLocalFilters();
     });
 
     this.loadOpportunities();
@@ -51,20 +56,68 @@ export class OpportunityListComponent implements OnInit {
     this.opportunityService.getOpportunities().subscribe({
       next: (res) => {
         this.opportunities = res.opportunities || res;
-        this.filteredOpportunities = this.opportunities;
+        this.applyLocalFilters();
       },
       error: (err) => console.error('Failed to load opportunities:', err)
     });
   }
 
+  applyLocalFilters() {
+    let results = [...this.opportunities];
+
+    // Apply global search term from search service
+    const globalQ = this.searchQuery.toLowerCase();
+    if (globalQ) {
+      results = results.filter(o => {
+        const title = o.title ? o.title.toLowerCase() : '';
+        const loc = o.location ? o.location.toLowerCase() : '';
+        const typeRaw = o.wasteType;
+        const type = Array.isArray(typeRaw) ? typeRaw.join(' ').toLowerCase() : (typeRaw ? typeRaw.toLowerCase() : '');
+        return title.includes(globalQ) || loc.includes(globalQ) || type.includes(globalQ);
+      });
+    }
+
+    // Apply local search query
+    const localQ = this.localSearchQuery.toLowerCase().trim();
+    if (localQ) {
+      results = results.filter(o => {
+        const title = o.title ? o.title.toLowerCase() : '';
+        const loc = o.location ? o.location.toLowerCase() : '';
+        const typeRaw = o.wasteType;
+        const type = Array.isArray(typeRaw) ? typeRaw.join(' ').toLowerCase() : (typeRaw ? typeRaw.toLowerCase() : '');
+        const desc = o.description ? o.description.toLowerCase() : '';
+        return title.includes(localQ) || loc.includes(localQ) || type.includes(localQ) || desc.includes(localQ);
+      });
+    }
+
+    // Apply category filter
+    if (this.filterCategory) {
+      results = results.filter(o => {
+        const wt = o.wasteType;
+        if (Array.isArray(wt)) return wt.includes(this.filterCategory);
+        return wt === this.filterCategory;
+      });
+    }
+
+    // Apply location filter
+    const locQ = this.filterLocation.toLowerCase().trim();
+    if (locQ) {
+      results = results.filter(o => o.location && o.location.toLowerCase().includes(locQ));
+    }
+
+    this.filteredOpportunities = results;
+  }
+
+  // Keep backward compat alias
   filterOpportunities() {
-    const q = this.searchQuery.toLowerCase();
-    this.filteredOpportunities = this.opportunities.filter(o => {
-      const title = o.title ? o.title.toLowerCase() : '';
-      const loc = o.location ? o.location.toLowerCase() : '';
-      const type = o.wasteType ? o.wasteType.toLowerCase() : '';
-      return title.includes(q) || loc.includes(q) || type.includes(q);
-    });
+    this.applyLocalFilters();
+  }
+
+  clearFilters() {
+    this.localSearchQuery = '';
+    this.filterCategory = '';
+    this.filterLocation = '';
+    this.applyLocalFilters();
   }
 
   deleteOpportunity(id: string | undefined) {

@@ -32,10 +32,7 @@
                        <span class="text-truncate">{{ app.opportunity_id?.location || 'Assigned Location' }}</span>
                     </div>
                     <div class="mt-auto pt-2 border-top">
-                       <button [routerLink]="['/chat', app.opportunity_id?.id || app.opportunity_id?._id || app.opportunity_id?.ngo_id, 'NGO']" 
-                               class="btn btn-sm btn-link text-primary p-0 text-decoration-none fw-bold">
-                         <i class="bi bi-chat-dots me-1"></i> Chat with NGO
-                       </button>
+
                     </div>
                   </div>
                 </div>
@@ -202,10 +199,7 @@
                       </td>
                       <td class="text-end px-4 py-3">
                         <div class="d-flex align-items-center justify-content-end gap-2">
-                          <button [routerLink]="['/chat', req.citizenId, req.citizenName]"
-                                  class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                            <i class="bi bi-chat-text me-1"></i> Message Citizen
-                          </button>
+
                           <span class="badge rounded-pill px-3 py-2 border" [ngClass]="{
                               'bg-success bg-opacity-10 text-success border-success border-opacity-25': req.status === 'Completed',
                               'bg-info bg-opacity-10 text-info border-info border-opacity-25': req.status === 'Scheduled',
@@ -253,11 +247,7 @@
                       </td>
                       <td class="text-end px-4 py-3">
                         <div class="d-flex align-items-center justify-content-end gap-2">
-                          <button *ngIf="app.opportunity_id?.ngo_id" 
-                                  [routerLink]="['/chat', app.opportunity_id.id || app.opportunity_id._id || app.opportunity_id.ngo_id, 'NGO']"
-                                  class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                            <i class="bi bi-chat-text me-1"></i> Message NGO
-                          </button>
+
                           <span class="badge rounded-pill px-3 py-2 bg-success bg-opacity-10 text-success border border-success border-opacity-25">
                             ASSIGNED
                           </span>
@@ -307,11 +297,7 @@
                       </td>
                       <td class="text-end px-4 py-3">
                         <div class="d-flex align-items-center justify-content-end gap-2">
-                          <button *ngIf="app.opportunity_id?.ngo_id" 
-                                  [routerLink]="['/chat', (app.opportunity_id.id || app.opportunity_id._id || app.opportunity_id.ngo_id), 'NGO']"
-                                  class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                            <i class="bi bi-chat-text me-1"></i> Message NGO
-                          </button>
+
                           <span class="badge rounded-pill px-3 py-2 border" [ngClass]="{
                               'bg-success bg-opacity-10 text-success border-success border-opacity-25': app.status === 'accepted',
                               'bg-warning bg-opacity-10 text-warning border-warning border-opacity-25': app.status === 'pending',

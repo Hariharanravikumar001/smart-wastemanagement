@@ -44,3 +44,25 @@ export const getPublicAnalytics = async (req: Request, res: Response): Promise<v
         res.status(500).json({ error: 'Internal pipeline error', message: error.message });
     }
 };
+
+// @desc    Get live public stats for landing page (users, pickups, NGO count)
+// @route   GET /api/public/stats
+// @access  Public
+export const getPublicStats = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const [totalUsers, completedPickups, ngoCount] = await Promise.all([
+            User.countDocuments(),
+            WasteRequest.countDocuments({ status: 'Completed' }),
+            User.countDocuments({ role: { $in: ['Admin', 'admin', 'NGO', 'ngo'] } })
+        ]);
+
+        res.json({
+            totalUsers,
+            completedPickups,
+            ngoPartners: ngoCount
+        });
+    } catch (error: any) {
+        console.error('Public Stats Error:', error);
+        res.status(500).json({ error: 'Stats error', message: error.message });
+    }
+};

@@ -6,6 +6,7 @@ import User from '../models/User';
 import { AuthRequest } from '../middleware/authMiddleware';
 import AdminLog from '../models/AdminLog';
 import { createNotification } from '../services/notificationService';
+import Message from '../models/Message';
 
 // @desc    Create new opportunity
 // @route   POST /api/opportunities
@@ -14,7 +15,7 @@ export const createOpportunity = async (req: AuthRequest, res: Response): Promis
     try {
         // Log received request context
         console.debug(`[ADMIN] Incoming createOpportunity request from user ${req.user?.id}`);
-        const { title, description, skills, duration, location, status, wasteType } = req.body;
+        const { title, description, skills, duration, location, status, wasteType, startDate, startTime, scheduleType, scheduleDays, scheduleTime } = req.body;
 
         if (!title || !description || !duration || !location) {
             const missing = [];
@@ -37,7 +38,12 @@ export const createOpportunity = async (req: AuthRequest, res: Response): Promis
             location,
             wasteType,
             status: status || 'open',
-            ngo_id: req.user!.id
+            ngo_id: req.user!.id,
+            startDate,
+            startTime,
+            scheduleType,
+            scheduleDays,
+            scheduleTime
         });
 
         // Persistence step
@@ -88,7 +94,7 @@ export const createOpportunity = async (req: AuthRequest, res: Response): Promis
 // @access  Private (Admin creator)
 export const updateOpportunity = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const { title, description, skills, duration, location, status, wasteType } = req.body;
+        const { title, description, skills, duration, location, status, wasteType, startDate, startTime, scheduleType, scheduleDays, scheduleTime } = req.body;
 
         // Opportunity attached by ownership middleware
         const opportunity = (req as any).opportunity;
@@ -111,6 +117,13 @@ export const updateOpportunity = async (req: AuthRequest, res: Response): Promis
         if (location) opportunity.location = location;
         if (status) opportunity.status = status;
         if (wasteType !== undefined) (opportunity as any).wasteType = wasteType;
+        
+        // Update scheduling
+        opportunity.startDate = startDate;
+        opportunity.startTime = startTime;
+        opportunity.scheduleType = scheduleType;
+        opportunity.scheduleDays = scheduleDays || [];
+        opportunity.scheduleTime = scheduleTime;
 
         const updatedOpportunity = await opportunity.save();
         res.status(200).json(updatedOpportunity);
@@ -336,8 +349,6 @@ export const getMatchedOpportunities = async (req: AuthRequest, res: Response): 
         .slice(0, 10);
 
         res.status(200).json(opportunities);
-
-        res.status(200).json(opportunities);
     } catch (error: any) {
         console.error('Match opportunities error:', error);
         res.status(500).json({ message: 'Server error: ' + error.message });
@@ -371,6 +382,48 @@ export const completeOpportunity = async (req: AuthRequest, res: Response): Prom
 
         opportunity.status = 'closed';
         await opportunity.save();
+
+        // Auto soft-delete messages between volunteer(s) and NGO/Admin for this opportunity
+        if (opportunity.ngo_id) {
+            const ngoId = new mongoose.Types.ObjectId(opportunity.ngo_id.toString());
+            // Find all accepted applications for this opportunity to identify volunteers
+            const acceptedApps = await Application.find({
+                opportunity_id: oppId,
+                status: 'accepted'
+            });
+
+            if (acceptedApps.length > 0) {
+                try {
+                    const { emitToUser } = await import('../services/socketService');
+                    const deletePromises = acceptedApps.map(async (app) => {
+                        if (app.volunteer_id) {
+                            const volunteerId = new mongoose.Types.ObjectId(app.volunteer_id.toString());
+                            // Soft delete all messages between the volunteer and the NGO/Admin for this opportunity
+                            await Message.updateMany(
+                                {
+                                    opportunity_id: new mongoose.Types.ObjectId(oppId as string),
+                                    $or: [
+                                        { sender_id: volunteerId, receiver_id: ngoId },
+                                        { sender_id: ngoId, receiver_id: volunteerId }
+                                    ]
+                                },
+                                {
+                                    $addToSet: { deletedFor: { $each: [volunteerId, ngoId] } }
+                                }
+                            );
+                            console.log(`[SOFT DELETE] Messages soft deleted for opportunity ${oppId} between volunteer ${volunteerId} and NGO ${ngoId}`);
+                            
+                            // Emit conversation_cleared socket event to both parties
+                            emitToUser(volunteerId.toString(), 'conversation_cleared', { partnerId: ngoId.toString(), opportunityId: oppId });
+                            emitToUser(ngoId.toString(), 'conversation_cleared', { partnerId: volunteerId.toString(), opportunityId: oppId });
+                        }
+                    });
+                    await Promise.all(deletePromises);
+                } catch (e) {
+                    console.error('Failed to auto soft-delete opportunity messages:', e);
+                }
+            }
+        }
 
         // Notify NGO
         if (opportunity.ngo_id) {

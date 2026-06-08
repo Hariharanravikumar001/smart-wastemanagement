@@ -3,7 +3,7 @@
     <div class="row gy-4">
       <div class="col-lg-4 col-md-6">
         <h5 class="fw-bold mb-3"><i class="bi bi-recycle text-success me-2"></i>WasteZero</h5>
-        <p class="text-secondary small pe-lg-4">Your digital platform for smart waste pickup scheduling and intelligent recycling management. Join us in making the world cleaner, one pickup at a time.</p>
+        <p class="text-secondary small pe-lg-4">{{ 'FOOTER.DESC' | translate }}</p>
         <div class="d-flex gap-3 mt-3">
           <a href="#" class="text-light text-decoration-none"><i class="bi bi-facebook fs-5"></i></a>
           <a href="#" class="text-light text-decoration-none"><i class="bi bi-twitter-x fs-5"></i></a>
@@ -12,33 +12,33 @@
         </div>
       </div>
       <div class="col-lg-2 col-md-6">
-        <h6 class="text-uppercase fw-bold mb-3">Links</h6>
+        <h6 class="text-uppercase fw-bold mb-3">{{ 'FOOTER.LINKS' | translate }}</h6>
         <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
-          <li><a routerLink="/" class="text-secondary text-decoration-none hover-white">Home</a></li>
-          <li><a routerLink="/about-us" class="text-secondary text-decoration-none hover-white">About Us</a></li>
-          <li><a routerLink="/services" class="text-secondary text-decoration-none hover-white">Services</a></li>
-          <li><a routerLink="/contact" class="text-secondary text-decoration-none hover-white">Contact</a></li>
+          <li><a routerLink="/" class="text-secondary text-decoration-none hover-white">{{ 'NAVBAR.HOME' | translate }}</a></li>
+          <li><a routerLink="/about-us" class="text-secondary text-decoration-none hover-white">{{ 'NAVBAR.ABOUT' | translate }}</a></li>
+          <li><a routerLink="/services" class="text-secondary text-decoration-none hover-white">{{ 'NAVBAR.SERVICES' | translate }}</a></li>
+          <li><a routerLink="/contact" class="text-secondary text-decoration-none hover-white">{{ 'NAVBAR.CONTACT' | translate }}</a></li>
         </ul>
       </div>
       <div class="col-lg-2 col-md-6">
-        <h6 class="text-uppercase fw-bold mb-3">Legal</h6>
+        <h6 class="text-uppercase fw-bold mb-3">{{ 'FOOTER.LEGAL' | translate }}</h6>
         <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
-          <li><a routerLink="/terms-of-service" class="text-secondary text-decoration-none hover-white">Terms of Service</a></li>
-          <li><a routerLink="/privacy-policy" class="text-secondary text-decoration-none hover-white">Privacy Policy</a></li>
+          <li><a routerLink="/terms-of-service" class="text-secondary text-decoration-none hover-white">{{ 'FOOTER.TERMS' | translate }}</a></li>
+          <li><a routerLink="/privacy-policy" class="text-secondary text-decoration-none hover-white">{{ 'FOOTER.PRIVACY' | translate }}</a></li>
         </ul>
       </div>
       <div class="col-lg-4 col-md-6">
-        <h6 class="text-uppercase fw-bold mb-3">Subscribe to Newsletter</h6>
-        <p class="text-secondary small mb-3">Get the latest updates on waste management and our platform.</p>
+        <h6 class="text-uppercase fw-bold mb-3">{{ 'FOOTER.SUBSCRIBE_TITLE' | translate }}</h6>
+        <p class="text-secondary small mb-3">{{ 'FOOTER.SUBSCRIBE_DESC' | translate }}</p>
         <form (submit)="$event.preventDefault()" class="d-flex w-100 gap-2">
-          <label for="newsletter1" class="visually-hidden">Email address</label>
-          <input id="newsletter1" type="text" class="form-control bg-dark border-secondary text-light" placeholder="Email address">
-          <button class="btn btn-success" type="button">Subscribe</button>
+          <label for="newsletter1" class="visually-hidden">{{ 'FOOTER.EMAIL_PLACEHOLDER' | translate }}</label>
+          <input id="newsletter1" type="text" class="form-control bg-dark border-secondary text-light" [placeholder]="'FOOTER.EMAIL_PLACEHOLDER' | translate">
+          <button class="btn btn-success" type="button">{{ 'FOOTER.SUBSCRIBE_BUTTON' | translate }}</button>
         </form>
       </div>
     </div>
     <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top border-secondary">
-      <p class="mb-0 text-secondary small">&copy; 2026 WasteZero, Inc. All rights reserved.</p>
+      <p class="mb-0 text-secondary small">{{ 'FOOTER.RIGHTS' | translate }}</p>
     </div>
   </div>
 </footer>

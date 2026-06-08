@@ -22,7 +22,8 @@ export class PickupRequestComponent implements OnInit {
     description: '',
     location: '',
     estimatedWeight: 0,
-    pickupDate: new Date().toISOString().split('T')[0]
+    pickupDate: new Date().toISOString().split('T')[0],
+    pickupTime: '10:00'
   };
 
   categories: string[] = [
@@ -66,34 +67,63 @@ export class PickupRequestComponent implements OnInit {
       this.isAnalyzing = true;
       this.clearAiPrediction();
       
-      // ML Classification Pipeline (Simulation)
-      setTimeout(() => {
-        // High-confidence categories for demo
-        const demoPredictions = [
-          { cat: 'E-Waste', msg: 'Electronic components detected.' },
-          { cat: 'Organic', msg: 'Food or garden waste identified.' },
-          { cat: 'Plastic', msg: 'Synthetic polymer material found.' },
-          { cat: 'Metal', msg: 'Recyclable metallic objects detected.' },
-          { cat: 'Paper', msg: 'Cellulose-based waste identified.' },
-          { cat: 'Glass', msg: 'Transparent silica-based material detected.' }
-        ];
-        
-        const prediction = demoPredictions[Math.floor(Math.random() * demoPredictions.length)];
-        
-        (this.newRequest as any).aiPredictedCategory = prediction.cat;
-        this.newRequest.wasteCategory = [prediction.cat]; 
-        this.newRequest.description = (this.newRequest.description || '') + ` (AI Detection: ${prediction.msg})`;
-        
-        this.isAnalyzing = false;
-        
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-           (this.newRequest as any).imageUrl = e.target.result;
-           this.newRequest = { ...this.newRequest }; 
-           this.cdr.detectChanges(); 
-        };
-        reader.readAsDataURL(file);
-      }, 1800);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+         const imageBase64 = e.target.result;
+         (this.newRequest as any).imageUrl = imageBase64;
+         
+         // Dynamically import tfjs and mobilenet
+         Promise.all([
+           import('@tensorflow/tfjs'),
+           import('@tensorflow-models/mobilenet')
+         ]).then(([tf, mobilenet]) => {
+           // Create an image element to classify
+           const img = new Image();
+           img.src = imageBase64;
+           img.onload = async () => {
+             try {
+               await tf.ready(); // Ensure tf backend is ready
+               const model = await mobilenet.load();
+               const predictions = await model.classify(img);
+               
+               if (predictions && predictions.length > 0) {
+                 const bestPred = predictions[0];
+                 const predictedText = bestPred.className.toLowerCase();
+                 const confidence = (bestPred.probability * 100).toFixed(1) + '%';
+                 
+                 // Map predictions to our categories
+                 let category = 'Other';
+                 if (predictedText.includes('plastic') || predictedText.includes('bottle')) category = 'Plastic';
+                 else if (predictedText.includes('can') || predictedText.includes('metal')) category = 'Metal';
+                 else if (predictedText.includes('paper') || predictedText.includes('book') || predictedText.includes('carton') || predictedText.includes('box')) category = 'Paper';
+                 else if (predictedText.includes('glass') || predictedText.includes('jar')) category = 'Glass';
+                 else if (predictedText.includes('computer') || predictedText.includes('phone') || predictedText.includes('keyboard') || predictedText.includes('mouse') || predictedText.includes('monitor') || predictedText.includes('tv') || predictedText.includes('television')) category = 'E-Waste';
+                 else if (predictedText.includes('plant') || predictedText.includes('food') || predictedText.includes('apple')) category = 'Organic';
+                 
+                 (this.newRequest as any).aiPredictedCategory = category;
+                 this.newRequest.wasteCategory = [category]; 
+                 this.newRequest.description = (this.newRequest.description || '') + ` (AI Detection: ${bestPred.className} - Confidence: ${confidence})`;
+                 this.errorMessage = null;
+               } else {
+                 this.errorMessage = 'AI could not detect any waste category.';
+               }
+             } catch (err) {
+               console.error('TFJS Classification error:', err);
+               this.errorMessage = 'AI Detection failed on device. Please select categories manually.';
+             } finally {
+               this.isAnalyzing = false;
+               this.newRequest = { ...this.newRequest }; 
+               this.cdr.detectChanges();
+             }
+           };
+         }).catch(err => {
+           console.error('Failed to load TensorFlow:', err);
+           this.errorMessage = 'Failed to load AI model. Please select categories manually.';
+           this.isAnalyzing = false;
+           this.cdr.detectChanges();
+         });
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -114,6 +144,8 @@ export class PickupRequestComponent implements OnInit {
 
     this.wasteService.createRequest({
       ...this.newRequest,
+      scheduledDate: this.newRequest.pickupDate,
+      scheduledTime: this.newRequest.pickupTime,
       citizenId: this.currentUser.id,
       citizenName: this.currentUser.name
     }).subscribe({
@@ -127,7 +159,8 @@ export class PickupRequestComponent implements OnInit {
           description: '',
           location: this.currentUser?.location || '',
           estimatedWeight: 0,
-          pickupDate: new Date().toISOString().split('T')[0]
+          pickupDate: new Date().toISOString().split('T')[0],
+          pickupTime: '10:00'
         };
 
         setTimeout(() => {

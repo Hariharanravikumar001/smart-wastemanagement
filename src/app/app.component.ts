@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { TranslateService } from '@ngx-translate/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +14,20 @@ export class AppComponent implements OnInit {
   showFooter = true;
   showNavbar = true;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router, 
+    private authService: AuthService,
+    private translate: TranslateService,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) {
+    // Set default and saved language configuration
+    let savedLang = 'en';
+    if (isPlatformBrowser(this.platformId)) {
+      savedLang = localStorage.getItem('lang') || 'en';
+    }
+    this.translate.setDefaultLang('en');
+    this.translate.use(savedLang);
+  }
 
   ngOnInit() {
     this.router.events.subscribe(event => {

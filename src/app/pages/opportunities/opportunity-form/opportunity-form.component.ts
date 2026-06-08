@@ -21,15 +21,40 @@ export class OpportunityFormComponent implements OnInit {
   form = {
     title: '',
     description: '',
-    wasteType: 'Plastic',
     location: '',
     skillsRequired: '',
     duration: '',
     organizationId: '',
-    organizationName: ''
+    organizationName: '',
+    startDate: '',
+    startTime: '',
+    scheduleType: 'none' as 'none' | 'daily' | 'weekly-2' | 'weekly-3',
+    scheduleDays: [] as string[],
+    scheduleTime: ''
   };
 
-  wasteTypes = ['Plastic', 'E-Waste', 'Organic', 'Metal', 'Glass', 'Paper', 'Hazardous', 'Other'];
+  wasteTypes = [
+    { value: 'Plastic', icon: '🧴' },
+    { value: 'Paper', icon: '📄' },
+    { value: 'Metal', icon: '🔩' },
+    { value: 'E-Waste', icon: '💻' },
+    { value: 'Organic', icon: '🌿' },
+    { value: 'Glass', icon: '🥃' },
+    { value: 'Hazardous', icon: '☢️' },
+    { value: 'Other', icon: '📦' }
+  ];
+
+  weekDays = [
+    { value: 'Monday', short: 'Mon' },
+    { value: 'Tuesday', short: 'Tue' },
+    { value: 'Wednesday', short: 'Wed' },
+    { value: 'Thursday', short: 'Thu' },
+    { value: 'Friday', short: 'Fri' },
+    { value: 'Saturday', short: 'Sat' },
+    { value: 'Sunday', short: 'Sun' }
+  ];
+
+  selectedWasteTypes: string[] = [];
 
   constructor(
     private opportunityService: OpportunityService,
@@ -47,13 +72,22 @@ export class OpportunityFormComponent implements OnInit {
           this.form = {
             title: opp.title,
             description: opp.description,
-            wasteType: opp.wasteType || 'Plastic',
             location: opp.location,
             skillsRequired: (opp.skills || opp.skillsRequired || []).join(', '),
             duration: opp.duration,
             organizationId: opp.ngo_id?._id || opp.ngo_id || opp.organizationId || '',
-            organizationName: opp.organizationName || ''
+            organizationName: opp.organizationName || '',
+            startDate: opp.startDate || '',
+            startTime: opp.startTime || '',
+            scheduleType: (opp.scheduleType as any) || 'none',
+            scheduleDays: Array.isArray(opp.scheduleDays) ? opp.scheduleDays : [],
+            scheduleTime: opp.scheduleTime || ''
           };
+          // Populate selectedWasteTypes from existing wasteType
+          const raw = (opp as any).wasteType;
+          if (Array.isArray(raw)) this.selectedWasteTypes = raw;
+          else if (typeof raw === 'string' && raw) this.selectedWasteTypes = raw.split(',').map((s: string) => s.trim()).filter(Boolean);
+          else this.selectedWasteTypes = [];
         }
       });
     } else {
@@ -65,18 +99,76 @@ export class OpportunityFormComponent implements OnInit {
     }
   }
 
+  toggleWasteType(type: string) {
+    const idx = this.selectedWasteTypes.indexOf(type);
+    if (idx > -1) {
+      this.selectedWasteTypes = this.selectedWasteTypes.filter(t => t !== type);
+    } else {
+      this.selectedWasteTypes = [...this.selectedWasteTypes, type];
+    }
+  }
+
+  isWasteTypeSelected(type: string): boolean {
+    return this.selectedWasteTypes.includes(type);
+  }
+
+  toggleScheduleDay(day: string) {
+    const max = this.form.scheduleType === 'weekly-2' ? 2 : 3;
+    const idx = this.form.scheduleDays.indexOf(day);
+    if (idx > -1) {
+      this.form.scheduleDays = this.form.scheduleDays.filter(d => d !== day);
+    } else if (this.form.scheduleDays.length < max) {
+      this.form.scheduleDays = [...this.form.scheduleDays, day];
+    } else {
+      alert(`Please deselect a day first. You can only select ${max} days.`);
+    }
+  }
+
+  isScheduleDaySelected(day: string): boolean {
+    return this.form.scheduleDays.includes(day);
+  }
+
+  onScheduleTypeChange() {
+    this.form.scheduleDays = [];
+  }
+
   onSubmit() {
     if (this.isSubmitting) return;
+
+    if (this.selectedWasteTypes.length === 0) {
+      alert('Please select at least one waste type.');
+      return;
+    }
+
+    if (this.form.scheduleType === 'weekly-2' && this.form.scheduleDays.length !== 2) {
+      alert('Please select exactly 2 days for the weekly schedule.');
+      return;
+    }
+
+    if (this.form.scheduleType === 'weekly-3' && this.form.scheduleDays.length !== 3) {
+      alert('Please select exactly 3 days for the weekly schedule.');
+      return;
+    }
+
+    if (this.form.scheduleType !== 'none' && !this.form.scheduleTime) {
+      alert('Please specify the work completion time for the cleaning schedule.');
+      return;
+    }
 
     const data: any = {
       title: this.form.title,
       description: this.form.description,
-      wasteType: this.form.wasteType,
+      wasteType: this.selectedWasteTypes,
       location: this.form.location,
-      skills: this.form.skillsRequired.split(',').map(s => s.trim()).filter(s => s),
+      skills: this.form.skillsRequired.split(',').map((s: string) => s.trim()).filter(s => s),
       duration: this.form.duration,
       ngo_id: this.form.organizationId,
-      organizationName: this.form.organizationName
+      organizationName: this.form.organizationName,
+      startDate: this.form.startDate,
+      startTime: this.form.startTime,
+      scheduleType: this.form.scheduleType,
+      scheduleDays: this.form.scheduleDays,
+      scheduleTime: this.form.scheduleTime
     };
 
     this.isSubmitting = true;

@@ -27,6 +27,17 @@
           <p class="text-muted small mb-0 fw-bold" style="color: var(--text-color);">Tap to upload a photo</p>
           <p class="text-muted opacity-75" style="font-size: 0.75rem;">Our AI model will automatically classify your waste.</p>
         </label>
+
+        <!-- Analyzing State (Circular Scanner) -->
+        <div *ngIf="isAnalyzing" class="d-flex flex-column align-items-center justify-content-center py-4">
+          <div class="circular-scanner mb-3 animate-pulse">
+            <div class="scanner-circle"></div>
+            <div class="scanner-radar"></div>
+            <i class="bi bi-robot fs-1 text-primary animate-bounce"></i>
+          </div>
+          <div class="fw-bold text-primary mb-1 text-uppercase ls-wide" style="font-size: 0.8rem;">AI Classification in Progress</div>
+          <div class="text-muted extra-small">Analyzing waste molecular compound & category confidence...</div>
+        </div>
         
         <!-- Prediction State -->
         <div *ngIf="hasAiPrediction() && !isAnalyzing" style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
@@ -72,7 +83,7 @@
 
       <div class="db-form-group">
         <div class="row g-3">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label class="db-form-label">Estimated Weight (kg)</label>
             <div class="db-input-wrap">
               <span class="db-input-icon">⚖️</span>
@@ -81,12 +92,20 @@
                      placeholder="0.0" min="0" step="0.5" />
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label class="db-form-label">Preferred Date</label>
             <div class="db-input-wrap">
               <span class="db-input-icon">📅</span>
               <input type="date" class="db-input db-input-with-icon" 
                      [(ngModel)]="newRequest.pickupDate" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="db-form-label">Preferred Time</label>
+            <div class="db-input-wrap">
+              <span class="db-input-icon">⏰</span>
+              <input type="time" class="db-input db-input-with-icon" 
+                     [(ngModel)]="newRequest.pickupTime" />
             </div>
           </div>
         </div>

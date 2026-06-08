@@ -162,48 +162,9 @@ export class CitizenDashboardComponent implements OnInit, OnChanges {
     );
   }
 
-  private initCategoryDistributionChart() {
-    const ctx = document.getElementById('citizenCategoryChart') as HTMLCanvasElement;
-    if (ctx) {
-      if (this.categoryDistributionChart) {
-        this.categoryDistributionChart.destroy();
-      }
-      this.categoryDistributionChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: [],
-          datasets: [{
-            data: [],
-            backgroundColor: [],
-            borderWidth: 0,
-            hoverOffset: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '70%',
-          plugins: {
-            legend: { position: 'right' }
-          }
-        }
-      });
-      this.updateCategoryDistributionChart();
-    }
-  }
+  private initCategoryDistributionChart() {}
 
-  private updateCategoryDistributionChart() {
-    if (this.categoryDistributionChart && this.currentStats.length > 0) {
-      const labels = this.currentStats.map(s => s.category);
-      const data = this.currentStats.map(s => s.weight);
-      const bgColors = this.currentStats.map(s => this.getCategoryColor(s.category));
-
-      this.categoryDistributionChart.data.labels = labels;
-      this.categoryDistributionChart.data.datasets[0].data = data;
-      this.categoryDistributionChart.data.datasets[0].backgroundColor = bgColors;
-      this.categoryDistributionChart.update();
-    }
-  }
+  private updateCategoryDistributionChart() {}
 
   getCategoryIcon(cat: string | string[]): string {
     const icons: Record<string, string> = {

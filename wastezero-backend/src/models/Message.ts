@@ -4,7 +4,7 @@ export interface IMessage extends Document {
   sender_id: Types.ObjectId;
   receiver_id: Types.ObjectId;
   content: string;
-  messageType: 'text' | 'image' | 'audio' | 'location' | 'link';
+  messageType: 'text' | 'image' | 'audio' | 'location' | 'link' | 'live-location' | 'document';
   mediaUrl?: string;
   timestamp: Date;
   isRead: boolean;
@@ -21,7 +21,7 @@ const MessageSchema: Schema = new Schema({
   content: { type: String, required: true },
   messageType: { 
     type: String, 
-    enum: ['text', 'image', 'audio', 'location', 'link'], 
+    enum: ['text', 'image', 'audio', 'location', 'link', 'live-location', 'document'], 
     default: 'text' 
   },
   mediaUrl: { type: String },
@@ -44,5 +44,9 @@ const MessageSchema: Schema = new Schema({
     }
   }
 });
+
+MessageSchema.index({ sender_id: 1, receiver_id: 1, timestamp: -1 });
+MessageSchema.index({ deletedFor: 1 });
+MessageSchema.index({ opportunity_id: 1 });
 
 export default mongoose.model<IMessage>('Message', MessageSchema);

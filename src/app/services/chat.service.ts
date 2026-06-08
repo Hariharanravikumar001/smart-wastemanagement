@@ -1,7 +1,7 @@
-import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable, map, tap, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap, catchError, throwError, of } from 'rxjs';
 import { Message } from '../models/message.model';
 import { AuthService } from './auth.service';
 import { NotificationService } from './notification.service';
@@ -14,11 +14,29 @@ export class ChatService {
   private socket: Socket | null = null;
   private messagesSubject = new BehaviorSubject<Message[]>([]);
   public messages$ = this.messagesSubject.asObservable();
+
+  // Signals-based messaging state
+  private messagesSignal = signal<Message[]>([]);
+  public messages = this.messagesSignal.asReadonly();
+
+  public readonly chatUnreadCount = computed(() => {
+    const user = this.authService.currentUserValue;
+    if (!user) return 0;
+    return this.messagesSignal().filter(m => !m.isRead && m.senderId !== user.id).length;
+  });
+
+  private setMessages(msgs: Message[]): void {
+    this.messagesSubject.next(msgs);
+    this.messagesSignal.set(msgs);
+  }
+
   private unreadCountSubject = new BehaviorSubject<number>(0);
   public unreadCount$ = this.unreadCountSubject.asObservable();
   private userStatusSubject = new BehaviorSubject<{ userId: string, isOnline: boolean, lastActive?: Date } | null>(null);
   public userStatus$ = this.userStatusSubject.asObservable();
   private apiUrl = '/api/messages';
+  private volunteerLocationSubject = new BehaviorSubject<{ lat: number, lng: number, volunteerId: string } | null>(null);
+  public volunteerLocation$ = this.volunteerLocationSubject.asObservable();
   
   private activePartnerId: string | null = null;
   private activeOpportunityId: string | null = null;
@@ -40,7 +58,7 @@ export class ChatService {
           this.socket.disconnect();
           this.socket = null;
         }
-        this.messagesSubject.next([]);
+        this.setMessages([]);
         this.unreadCountSubject.next(0);
       }
     });
@@ -60,6 +78,8 @@ export class ChatService {
   }
 
   private initSocket(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     const user = this.authService.currentUserValue;
     if (!user) return;
 
@@ -91,7 +111,7 @@ export class ChatService {
       if (isFromActivePartner && isSameOpp) {
         // Check if message is already in list (for sender)
         if (!currentMessages.some(m => m.id === formattedMsg.id)) {
-          this.messagesSubject.next([...currentMessages, formattedMsg]);
+          this.setMessages([...currentMessages, formattedMsg]);
         }
       }
 
@@ -118,7 +138,7 @@ export class ChatService {
         }
         return m;
       });
-      this.messagesSubject.next(updatedMessages);
+      this.setMessages(updatedMessages);
     });
 
     this.socket.on('messages_read', (data: any) => {
@@ -130,7 +150,7 @@ export class ChatService {
         }
         return m;
       });
-      this.messagesSubject.next(updatedMessages);
+      this.setMessages(updatedMessages);
     });
 
     this.socket.on('message_update', (msg: any) => {
@@ -142,7 +162,7 @@ export class ChatService {
         }
         return m;
       });
-      this.messagesSubject.next(currentMessages);
+      this.setMessages(currentMessages);
     });
     
     this.socket.on('user_status', (status: any) => {
@@ -152,6 +172,20 @@ export class ChatService {
         isOnline: status.isOnline,
         lastActive: status.lastActive ? new Date(status.lastActive) : undefined
       });
+    });
+
+    this.socket.on('conversation_cleared', (data: any) => {
+      console.log('Conversation cleared socket event received:', data);
+      const isCurrentChat = data.partnerId === this.activePartnerId && String(data.opportunityId || '') === String(this.activeOpportunityId || '');
+      if (isCurrentChat) {
+        this.setMessages([]);
+      }
+      this.updateUnreadCountFromConversations();
+    });
+
+    this.socket.on('volunteer_location_updated', (data: any) => {
+      console.log('Received live volunteer location:', data);
+      this.volunteerLocationSubject.next(data);
     });
 
     this.socket.on('disconnect', () => {
@@ -198,6 +232,9 @@ export class ChatService {
 
 
   getChatMessages(currentUserId: string, partnerId: string, opportunityId?: string): Observable<Message[]> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return of([]);
+    }
     this.activePartnerId = partnerId;
     this.activeOpportunityId = opportunityId || null;
 
@@ -207,11 +244,14 @@ export class ChatService {
     }
     return this.http.get<any[]>(url, { headers: this.getHeaders() }).pipe(
         map(msgs => msgs.map(m => this.formatMessage(m))),
-        tap(msgs => this.messagesSubject.next(msgs))
+        tap(msgs => this.setMessages(msgs))
     );
   }
 
   getConversations(): Observable<any[]> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return of([]);
+    }
     return this.http.get<any[]>(`${this.apiUrl}/conversations`, { headers: this.getHeaders() }).pipe(
       catchError(err => {
         if (err.status === 0) {
@@ -240,7 +280,7 @@ export class ChatService {
     });
   }
 
-  sendMessage(receiverId: string, content: string, messageType: string = 'text', mediaUrl?: string, opportunityId?: string): void {
+  sendMessage(receiverId: string, content: string, messageType: string = 'text', mediaUrl?: string, opportunityId?: string, callback?: (msg: Message) => void): void {
     const body = { receiver_id: receiverId, content, messageType, mediaUrl, opportunity_id: opportunityId };
     this.http.post<any>(this.apiUrl, body, { headers: this.getHeaders() }).subscribe({
         next: (msg) => {
@@ -248,12 +288,33 @@ export class ChatService {
             const currentMessages = this.messagesSubject.value;
             // Prevent duplicate if socket already added it
             if (!currentMessages.some(m => m.id === formatted.id)) {
-                this.messagesSubject.next([...currentMessages, formatted]);
+                this.setMessages([...currentMessages, formatted]);
+            }
+            if (callback) {
+              callback(formatted);
             }
         },
         error: (err) => {
             console.error('Error sending message:', err);
         }
     });
+  }
+
+  updateLiveLocation(messageId: string, lat: number, lng: number): void {
+    if (this.socket) {
+      this.socket.emit('update_live_location', { messageId, lat, lng });
+    }
+  }
+
+  clearConversation(partnerId: string, opportunityId?: string): void {
+    const user = this.authService.currentUserValue;
+    if (!user || !this.socket) return;
+    this.socket.emit('clear_conversation', { partnerId, userId: user.id, opportunityId });
+  }
+
+  sendVolunteerLocation(receiverId: string, lat: number, lng: number): void {
+    if (this.socket) {
+      this.socket.emit('share_volunteer_location', { receiverId, lat, lng });
+    }
   }
 }

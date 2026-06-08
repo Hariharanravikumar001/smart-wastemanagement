@@ -30,6 +30,10 @@ export class RegisterComponent {
   errorMessage = '';
   termsAccepted = false;
 
+  // Password strength
+  passwordStrength: 'weak' | 'fair' | 'strong' | 'very-strong' | '' = '';
+  passwordStrengthPercent = 0;
+
   constructor(private authService: AuthService, private router: Router) {
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras.state as { googleData: any };
@@ -40,6 +44,38 @@ export class RegisterComponent {
       this.email = state.googleData.email || '';
       this.errorMessage = 'Please complete your profile to finish signing up with Google';
     }
+  }
+
+  onPasswordInput() {
+    const pwd = this.password;
+    let score = 0;
+
+    if (pwd.length >= 8) score++;
+    if (pwd.length >= 12) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    if (pwd.length === 0) {
+      this.passwordStrength = '';
+      this.passwordStrengthPercent = 0;
+    } else if (score <= 1) {
+      this.passwordStrength = 'weak';
+      this.passwordStrengthPercent = 25;
+    } else if (score === 2) {
+      this.passwordStrength = 'fair';
+      this.passwordStrengthPercent = 50;
+    } else if (score === 3) {
+      this.passwordStrength = 'strong';
+      this.passwordStrengthPercent = 75;
+    } else {
+      this.passwordStrength = 'very-strong';
+      this.passwordStrengthPercent = 100;
+    }
+  }
+
+  isPasswordAcceptable(): boolean {
+    return this.password.length >= 8 && (this.passwordStrength === 'strong' || this.passwordStrength === 'very-strong' || this.passwordStrength === 'fair');
   }
 
   sendOtp() {
@@ -65,6 +101,16 @@ export class RegisterComponent {
     
     if (!this.termsAccepted) {
       this.errorMessage = 'Please accept the Terms of Service and Privacy Policy.';
+      return;
+    }
+
+    if (this.password.length < 8) {
+      this.errorMessage = 'Password must be at least 8 characters long.';
+      return;
+    }
+
+    if (!this.isPasswordAcceptable()) {
+      this.errorMessage = 'Password is too weak. Use a mix of letters, numbers, and symbols.';
       return;
     }
 

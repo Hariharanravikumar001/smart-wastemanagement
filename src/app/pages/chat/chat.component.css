@@ -243,3 +243,414 @@
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* Pulsing Red Dot for Audio/Live-Location */
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ff3b30;
+  display: inline-block;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.4; }
+  100% { transform: scale(0.9); opacity: 1; }
+}
+
+/* WhatsApp Calling CSS */
+.call-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+  z-index: 1200;
+}
+
+.call-container {
+  height: 100vh;
+  width: 100%;
+}
+
+.call-avatar {
+  border: 4px solid rgba(255,255,255,0.08);
+}
+
+.video-container {
+  max-width: 500px;
+  background-color: #000;
+}
+
+.local-video-pip {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 110px;
+  height: 160px;
+  background: black;
+  z-index: 10;
+  border-color: rgba(255,255,255,0.2) !important;
+}
+
+.call-btn {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  transition: all 0.25s ease;
+}
+
+.call-btn.active {
+  background-color: white !important;
+  color: black !important;
+  border-color: white !important;
+}
+
+.hang-up-btn {
+  width: 65px;
+  height: 65px;
+  font-size: 1.5rem;
+  background-color: #dc3545 !important;
+  border: none !important;
+}
+
+.hang-up-btn:hover {
+  background-color: #bb2d3b !important;
+}
+
+.pulse-animation {
+  animation: pulseColor 1.5s infinite;
+}
+
+@keyframes pulseColor {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+
+/* WhatsApp Custom Audio Voice Note Player */
+.whatsapp-audio-player {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  max-width: 300px;
+}
+
+.audio-play-btn {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease;
+}
+
+.audio-play-btn:active {
+  transform: scale(0.9);
+}
+
+.custom-audio-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  outline: none;
+  cursor: pointer;
+  margin: 8px 0;
+}
+
+.bg-white.bg-opacity-20 .custom-audio-slider {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.custom-audio-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+}
+
+.custom-audio-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: #25d366;
+  cursor: pointer;
+  margin-top: -4px;
+}
+
+.bg-white.bg-opacity-20 .custom-audio-slider::-webkit-slider-thumb {
+  background: #ffffff;
+}
+
+.speed-badge {
+  background: rgba(0, 0, 0, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  color: inherit;
+}
+
+.bg-white.bg-opacity-20 .speed-badge {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.speed-badge:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.bg-white.bg-opacity-20 .speed-badge:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Custom WhatsApp Split Screen Styles */
+.chat-embedded-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.chat-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+.conversation-item {
+  background-color: transparent;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.conversation-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.conversation-item.active {
+  background-color: rgba(25, 135, 84, 0.08) !important;
+}
+
+/* Custom Webkit scrollbar for conversation sidebar */
+.conversation-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.conversation-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.conversation-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+}
+
+.conversation-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.text-small {
+  font-size: 0.85rem;
+}
+
+.conversation-item {
+  animation: slideInContact 0.2s ease-out;
+}
+
+@keyframes slideInContact {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Full Width and Height Embedded overrides */
+.chat-embedded-wrapper .chat-main-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Location Picker Modal styles */
+.location-picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.location-picker-modal {
+  background-color: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.location-card {
+  max-width: 320px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.location-card iframe {
+  display: block;
+}
+
+/* Dark mode compatibility inside chat */
+:host-context(.admin-dark-mode) .location-picker-modal,
+:host-context(.dark-mode) .location-picker-modal {
+  background-color: #1e293b !important;
+  color: #f1f5f9;
+}
+
+:host-context(.admin-dark-mode) .location-picker-modal .modal-header,
+:host-context(.dark-mode) .location-picker-modal .modal-header {
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(15, 23, 42, 0.3) !important;
+}
+
+:host-context(.admin-dark-mode) .location-picker-modal h6,
+:host-context(.dark-mode) .location-picker-modal h6 {
+  color: #f1f5f9 !important;
+}
+
+:host-context(.admin-dark-mode) .location-picker-modal .btn-close,
+:host-context(.dark-mode) .location-picker-modal .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+:host-context(.admin-dark-mode) .location-picker-modal .border-top,
+:host-context(.dark-mode) .location-picker-modal .border-top {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+:host-context(.admin-dark-mode) .location-picker-modal .bg-white,
+:host-context(.dark-mode) .location-picker-modal .bg-white {
+  background-color: #1e293b !important;
+}
+
+:host-context(.admin-dark-mode) .location-picker-modal .btn-light,
+:host-context(.dark-mode) .location-picker-modal .btn-light {
+  background-color: #334155 !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Chat Dark Mode Overrides */
+:host-context(.admin-dark-mode) .chat-main-container,
+:host-context(.dark-mode) .chat-main-container {
+  background-color: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+:host-context(.admin-dark-mode) .bg-white,
+:host-context(.dark-mode) .bg-white {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+:host-context(.admin-dark-mode) .bg-light,
+:host-context(.dark-mode) .bg-light {
+  background-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+:host-context(.admin-dark-mode) .text-dark,
+:host-context(.dark-mode) .text-dark {
+  color: #f1f5f9 !important;
+}
+
+:host-context(.admin-dark-mode) .text-muted,
+:host-context(.dark-mode) .text-muted,
+:host-context(.admin-dark-mode) .text-secondary,
+:host-context(.dark-mode) .text-secondary {
+  color: #94a3b8 !important;
+}
+
+:host-context(.admin-dark-mode) .border,
+:host-context(.dark-mode) .border,
+:host-context(.admin-dark-mode) .border-bottom,
+:host-context(.dark-mode) .border-bottom,
+:host-context(.admin-dark-mode) .border-end,
+:host-context(.dark-mode) .border-end,
+:host-context(.admin-dark-mode) .border-top,
+:host-context(.dark-mode) .border-top {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+:host-context(.admin-dark-mode) .chat-messages,
+:host-context(.dark-mode) .chat-messages {
+  background-color: #0f172a !important;
+}
+
+:host-context(.admin-dark-mode) .conversation-item:hover,
+:host-context(.dark-mode) .conversation-item:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+:host-context(.admin-dark-mode) .conversation-item.active,
+:host-context(.dark-mode) .conversation-item.active {
+  background-color: rgba(25, 135, 84, 0.2) !important;
+}
+
+:host-context(.admin-dark-mode) .btn-light,
+:host-context(.dark-mode) .btn-light {
+  background-color: #334155 !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+:host-context(.admin-dark-mode) .btn-light:hover,
+:host-context(.dark-mode) .btn-light:hover {
+  background-color: #475569 !important;
+}
+
+:host-context(.admin-dark-mode) .options-bubble,
+:host-context(.dark-mode) .options-bubble,
+:host-context(.admin-dark-mode) .emoji-picker-box,
+:host-context(.dark-mode) .emoji-picker-box {
+  background-color: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+:host-context(.admin-dark-mode) .form-control,
+:host-context(.dark-mode) .form-control {
+  color: #f1f5f9 !important;
+}
+
+:host-context(.admin-dark-mode) .form-control::placeholder,
+:host-context(.dark-mode) .form-control::placeholder {
+  color: #64748b !important;
+}
+
+:host-context(.admin-dark-mode) .deleted-bubble,
+:host-context(.dark-mode) .deleted-bubble {
+  background-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+/* Mobile Layout Device Optimization */
+@media (max-width: 767.98px) {
+  .chat-sidebar {
+    width: 100% !important;
+  }
+
+  .chat-main-container {
+    height: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+}
+

@@ -1,6 +1,6 @@
 <div class="db-layout" [class.sidebar-collapsed]="sidebarCollapsed" [class.mobile-sidebar-open]="!sidebarCollapsed">
   <!-- Mobile Navbar -->
-  <nav class="navbar navbar-dark bg-dark d-md-none fixed-top shadow-sm px-3" style="z-index: 1060;">
+  <nav class="navbar navbar-dark bg-dark d-lg-none fixed-top shadow-sm px-3" style="z-index: 1060;">
     <div class="d-flex align-items-center w-100 justify-content-between">
       <div class="d-flex align-items-center">
         <div class="db-brand">
@@ -30,7 +30,7 @@
   </nav>
 
   <!-- Mobile Bottom Navbar -->
-  <nav class="navbar fixed-bottom bg-dark border-top border-light border-opacity-10 d-md-none px-2 py-0 bottom-nav">
+  <nav class="navbar fixed-bottom bg-dark border-top border-light border-opacity-10 d-lg-none px-2 py-0 bottom-nav">
     <div class="container-fluid justify-content-around py-2">
       <a class="nav-link-bottom" routerLink="/citizen/dashboard" routerLinkActive="active">
         <span class="bottom-nav-icon">📊</span>
@@ -44,14 +44,9 @@
         <span class="bottom-nav-icon">📜</span>
         <span>History</span>
       </a>
-      <a class="nav-link-bottom position-relative" routerLink="/citizen/messages" routerLinkActive="active">
+      <a class="nav-link-bottom" routerLink="/citizen/messages" routerLinkActive="active">
         <span class="bottom-nav-icon">💬</span>
         <span>Messages</span>
-        <span class="badge rounded-pill bg-danger border border-white position-absolute top-0 start-50 translate-middle-y" 
-              style="font-size: 10px;"
-              *ngIf="(unreadCount$ | async) as count">
-          {{ count }}
-        </span>
       </a>
       <a class="nav-link-bottom" (click)="logout()" style="cursor: pointer;">
         <span class="bottom-nav-icon">🚪</span>
@@ -120,6 +115,11 @@
         <span class="db-nav-label" *ngIf="!sidebarCollapsed">Pickup History</span>
       </a>
 
+      <a routerLink="/citizen/messages" routerLinkActive="active" class="db-nav-item">
+        <span class="db-nav-icon">💬</span>
+        <span class="db-nav-label" *ngIf="!sidebarCollapsed">Messages</span>
+      </a>
+
       <div class="db-nav-divider"></div>
       <div class="db-nav-section" *ngIf="!sidebarCollapsed">Analytics</div>
 
@@ -130,12 +130,6 @@
 
       <div class="db-nav-divider"></div>
       <div class="db-nav-section" *ngIf="!sidebarCollapsed">Account</div>
-
-      <a routerLink="/citizen/messages" routerLinkActive="active" class="db-nav-item">
-        <span class="db-nav-icon">💬</span>
-        <span class="db-nav-label" *ngIf="!sidebarCollapsed">Messages</span>
-        <span class="db-badge" *ngIf="!sidebarCollapsed && (unreadCount$ | async) as count">{{ count }}</span>
-      </a>
 
       <a routerLink="/citizen/profile" routerLinkActive="active" class="db-nav-item">
         <span class="db-nav-icon">👤</span>
@@ -162,7 +156,7 @@
   <!-- MAIN CONTENT -->
   <main class="db-content">
     <!-- Top Navbar -->
-    <header class="db-top-navbar d-none d-md-flex">
+    <header class="db-top-navbar d-none d-lg-flex">
       <div class="db-search-wrapper">
         <i class="bi bi-search db-search-icon"></i>
         <input type="text" 

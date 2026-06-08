@@ -13,17 +13,25 @@ export class AuthInterceptor implements HttpInterceptor {
       token = localStorage.getItem('wastezero_token') || '';
     }
 
+    let clonedReq = req;
+
+    // Fix relative URLs during SSR to prevent "Invalid URL" crash
+    if (!isPlatformBrowser(this.platformId) && req.url.startsWith('/')) {
+      clonedReq = req.clone({
+        url: `http://localhost:5000${req.url}`
+      });
+    }
+
     // Only add token if it's an API request and NOT a login/register request
-    const isApiRequest = req.url.startsWith('/api') || req.url.includes(':5000/api');
-    const isPublicRoute = req.url.includes('/login') || req.url.includes('/register');
+    const isApiRequest = clonedReq.url.includes('/api');
+    const isPublicRoute = clonedReq.url.includes('/login') || clonedReq.url.includes('/register');
 
     if (token && isApiRequest && !isPublicRoute) {
-      const cloned = req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${token}`)
+      clonedReq = clonedReq.clone({
+        headers: clonedReq.headers.set('Authorization', `Bearer ${token}`)
       });
-      return next.handle(cloned);
     }
     
-    return next.handle(req);
+    return next.handle(clonedReq);
   }
 }

@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css']
 })
@@ -48,19 +49,19 @@ export class ContactComponent {
   contactInfo = [
     {
       icon: 'bi-geo-alt',
-      title: 'Our Location',
-      details: '123 Smart City Avenue, Eco District, NY 10001',
+      title: 'CONTACT.INFO_LOC_TITLE',
+      details: 'CONTACT.INFO_LOC_DETAILS',
       color: '#4CAF50'
     },
     {
       icon: 'bi-envelope',
-      title: 'Email Us',
+      title: 'CONTACT.INFO_EMAIL_TITLE',
       details: 'hariharannamakkal2025@gmail.com',
       color: '#2196F3'
     },
     {
       icon: 'bi-telephone',
-      title: 'Call Us',
+      title: 'CONTACT.INFO_PHONE_TITLE',
       details: '+1 (555) 123-4567',
       color: '#FF9800'
     }

@@ -78,3 +78,55 @@
 :host-context(body:not(.dark-mode)) .db-category-btn.selected { border-color: #10b981; background: rgba(16, 185, 129, 0.08); color: #059669; }
 :host-context(body:not(.dark-mode)) .db-page-title { color: #1a1a2e; }
 :host-context(body:not(.dark-mode)) .db-page-sub { color: rgba(0,0,0,0.5); }
+
+/* Circular AI Scanner Styles */
+.circular-scanner {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.05);
+  border: 2px dashed rgba(59, 130, 246, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.scanner-circle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  animation: spin 2s linear infinite;
+}
+
+.scanner-radar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(59, 130, 246, 0.15) 0deg, transparent 90deg);
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .7; }
+}

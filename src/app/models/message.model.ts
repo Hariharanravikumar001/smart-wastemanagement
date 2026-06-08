@@ -4,7 +4,7 @@ export interface Message {
   senderName: string;
   receiverId: string;
   content: string;
-  messageType: 'text' | 'image' | 'audio' | 'location' | 'link';
+  messageType: 'text' | 'image' | 'audio' | 'location' | 'link' | 'live-location' | 'document';
   mediaUrl?: string;
   timestamp: Date;
   isAdmin?: boolean;

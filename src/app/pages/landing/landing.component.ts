@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { OpportunityService } from '../../services/opportunity.service';
 import { Opportunity } from '../../models/opportunity.model';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
@@ -20,19 +22,46 @@ export class LandingComponent implements OnInit {
   displayNGOs = 0;
   animationProgress = 0; // Tracks progress from 0 to 1 for color animation
 
-  targetUsers = 10; // Target is 10k
-  targetPickups = 50; // Target is 50k
-  targetNGOs = 100; // Target is 100+
+  // Real targets loaded from DB (fallback to defaults)
+  targetUsers = 10;
+  targetPickups = 50;
+  targetNGOs = 10;
 
-  constructor(private opportunityService: OpportunityService) { }
+  constructor(
+    private opportunityService: OpportunityService,
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   ngOnInit(): void {
-    this.opportunityService.getOpportunities().subscribe(res => {
-      const opps = res.opportunities || res;
-      this.featuredOpportunities = opps.slice(0, 3);
+    this.opportunityService.getOpportunities().subscribe({
+      next: (res) => {
+        const opps = res.opportunities || res;
+        this.featuredOpportunities = opps.slice(0, 3);
+      },
+      error: (err) => {
+        console.warn('⚠️ [LANDING] Failed to load opportunities:', err.message);
+        this.featuredOpportunities = [];
+      }
     });
 
-    this.startCounters();
+    // Load live stats from backend
+    this.http.get<any>('/api/public/stats').subscribe({
+      next: (stats) => {
+        this.targetUsers = stats.totalUsers || 10;
+        this.targetPickups = stats.completedPickups || 50;
+        this.targetNGOs = stats.ngoPartners || 10;
+        if (isPlatformBrowser(this.platformId)) {
+          this.startCounters();
+        }
+      },
+      error: () => {
+        // Fallback to defaults if API fails
+        if (isPlatformBrowser(this.platformId)) {
+          this.startCounters();
+        }
+      }
+    });
   }
 
   private startCounters() {
@@ -53,12 +82,6 @@ export class LandingComponent implements OnInit {
 
       if (progress < 1) {
         requestAnimationFrame(update);
-      } else {
-        // Restart after 3 seconds for "again and again" looping
-        setTimeout(() => {
-          this.animationProgress = 0;
-          this.startCounters();
-        }, 3000);
       }
     };
 

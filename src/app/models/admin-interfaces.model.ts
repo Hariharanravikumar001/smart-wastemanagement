@@ -20,8 +20,14 @@ export interface OpportunityForm {
   skills: string;
   duration: string;
   location: string;
-  wasteType: string;
+  wasteType: string[];
   status: string;
+  // Scheduling
+  startDate: string;
+  startTime: string;
+  scheduleType: 'none' | 'daily' | 'weekly-2' | 'weekly-3';
+  scheduleDays: string[];
+  scheduleTime: string;
 }
 
 export interface OppStats {

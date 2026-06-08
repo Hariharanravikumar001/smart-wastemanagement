@@ -4,10 +4,10 @@
     <div class="container animate-fade-in">
       <div class="row justify-content-center">
         <div class="col-lg-10">
-          <span class="badge bg-success bg-opacity-25 text-white mb-3 px-3 py-2 rounded-pill fw-bold">EST. 2026</span>
-          <h1 class="display-3 fw-bold mb-4">Pioneering Sustainable <span class="text-white-50">Waste Management</span></h1>
+          <span class="badge bg-success bg-opacity-25 text-white mb-3 px-3 py-2 rounded-pill fw-bold">{{ 'ABOUT.EST' | translate }}</span>
+          <h1 class="display-3 fw-bold mb-4">{{ 'ABOUT.TITLE' | translate }}<span class="text-white-50">{{ 'ABOUT.TITLE_HIGHLIGHT' | translate }}</span></h1>
           <p class="lead-text mx-auto mb-5">
-            WasteZero is a community-driven technology platform dedicated to solving the global waste crisis through intelligent coordination, behavioral science, and real-time logistics.
+            {{ 'ABOUT.LEAD' | translate }}
           </p>
         </div>
       </div>
@@ -20,23 +20,23 @@
       <div class="row align-items-center g-5">
         <div class="col-lg-6 animate-slide-up">
           <div class="pe-lg-5">
-            <span class="section-tag">Our Collective Story</span>
-            <h2 class="fw-bold display-5 mb-4">Born from a vision, <br><span class="text-success">scaled by community.</span></h2>
+            <span class="section-tag">{{ 'ABOUT.STORY_TAG' | translate }}</span>
+            <h2 class="fw-bold display-5 mb-4">{{ 'ABOUT.STORY_TITLE' | translate }}<br><span class="text-success">{{ 'ABOUT.STORY_TITLE_HIGHLIGHT' | translate }}</span></h2>
             <p class="text-secondary mb-4">
-              WasteZero began as a small pilot project aimed at reducing landfill dependency in urban neighborhoods. We realized that the biggest barrier to effective recycling wasn't a lack of will, but a lack of infrastructure and coordination.
+              {{ 'ABOUT.STORY_DESC1' | translate }}
             </p>
             <p class="text-secondary mb-4">
-              By leveraging mobile technology and a passionate community of volunteers, we've built an ecosystem where every piece of waste is tracked, sorted, and redirected to its optimal end-point—whether that's a recycling plant, a composting facility, or a creative reuse center.
+              {{ 'ABOUT.STORY_DESC2' | translate }}
             </p>
             <div class="d-flex align-items-center gap-4 mt-5">
               <div class="d-flex flex-column">
                 <span class="stat-number">{{ displayCities }}+</span>
-                <span class="stat-label">Cities Reached</span>
+                <span class="stat-label">{{ 'ABOUT.STAT_CITIES' | translate }}</span>
               </div>
               <div class="vr mx-3"></div>
               <div class="d-flex flex-column">
                 <span class="stat-number">{{ displayAccuracy }}%</span>
-                <span class="stat-label">Sorting Accuracy</span>
+                <span class="stat-label">{{ 'ABOUT.STAT_ACCURACY' | translate }}</span>
               </div>
             </div>
           </div>
@@ -60,9 +60,9 @@
             <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
               <i class="bi bi-eye fs-3"></i>
             </div>
-            <h3 class="fw-bold mb-3">Our Vision</h3>
+            <h3 class="fw-bold mb-3">{{ 'ABOUT.VISION_TITLE' | translate }}</h3>
             <p class="text-secondary mb-0">
-              A future where "waste" as a concept no longer exists—replaced by a circular economy where every material is recognized as a valuable resource and handled with precision and care.
+              {{ 'ABOUT.VISION_DESC' | translate }}
             </p>
           </div>
         </div>
@@ -71,9 +71,9 @@
             <div class="bg-dark text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 70px; height: 70px;">
               <i class="bi bi-rocket-takeoff fs-3"></i>
             </div>
-            <h3 class="fw-bold mb-3">Our Mission</h3>
+            <h3 class="fw-bold mb-3">{{ 'ABOUT.MISSION_TITLE' | translate }}</h3>
             <p class="text-secondary mb-0">
-              To empower communities with the technical tools and coordination systems needed to achieve zero-waste goals efficiently, transparently, and rewardingly.
+              {{ 'ABOUT.MISSION_DESC' | translate }}
             </p>
           </div>
         </div>
@@ -84,30 +84,30 @@
   <!-- Impact Section -->
   <section class="py-5 my-5">
     <div class="container text-center">
-      <h2 class="fw-bold display-5 mb-5">Our Global Impact</h2>
+      <h2 class="fw-bold display-5 mb-5">{{ 'ABOUT.IMPACT_TITLE' | translate }}</h2>
       <div class="row g-4 mt-4">
         <div class="col-md-3">
           <div class="stat-box animate-fade-in delay-1">
             <h2 class="stat-number">{{ displayWaste }}M</h2>
-            <p class="stat-label">Kg of Waste Sorted</p>
+            <p class="stat-label">{{ 'ABOUT.STAT_WASTE' | translate }}</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="stat-box animate-fade-in delay-2">
             <h2 class="stat-number">{{ displayUsers }}K</h2>
-            <p class="stat-label">Active Users</p>
+            <p class="stat-label">{{ 'ABOUT.STAT_USERS' | translate }}</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="stat-box animate-fade-in delay-3">
             <h2 class="stat-number">{{ displayVolunteers }}K</h2>
-            <p class="stat-label">Certified Volunteers</p>
+            <p class="stat-label">{{ 'ABOUT.STAT_VOLUNTEERS' | translate }}</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="stat-box animate-fade-in delay-3">
             <h2 class="stat-number">{{ displayPartners }}</h2>
-            <p class="stat-label">Zero-Waste Partnerships</p>
+            <p class="stat-label">{{ 'ABOUT.STAT_PARTNERS' | translate }}</p>
           </div>
         </div>
       </div>
@@ -118,9 +118,9 @@
   <section class="py-5 my-5 bg-white overflow-hidden">
     <div class="container py-lg-5">
       <div class="text-center mb-5">
-        <span class="section-tag">Driving the Change</span>
-        <h2 class="fw-bold display-5 mb-3">Meet the Visionaries</h2>
-        <p class="text-secondary mx-auto" style="max-width: 600px;">A diverse collective of environmentalists, engineers, and community leaders dedicated to a greener future.</p>
+        <span class="section-tag">{{ 'ABOUT.TEAM_TAG' | translate }}</span>
+        <h2 class="fw-bold display-5 mb-3">{{ 'ABOUT.TEAM_TITLE' | translate }}</h2>
+        <p class="text-secondary mx-auto" style="max-width: 600px;">{{ 'ABOUT.TEAM_DESC' | translate }}</p>
       </div>
 
       <div class="row g-4 mt-4">
@@ -128,8 +128,8 @@
           <div class="team-member-card">
             <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200" alt="Nandan Nilekani" class="team-avatar">
             <h5 class="fw-bold mb-1">Nandan Nilekani</h5>
-            <p class="text-success small fw-bold mb-3">Chairman & Co-Founder </p>
-            <p class="text-muted small">Visionary leader driving digital transformation and sustainable global ecosystems.</p>
+            <p class="text-success small fw-bold mb-3">{{ 'ABOUT.TEAM_ROLE_NANDAN' | translate }}</p>
+            <p class="text-muted small">{{ 'ABOUT.TEAM_DESC_NANDAN' | translate }}</p>
             <div class="social-links">
               <a href="#"><i class="bi bi-linkedin"></i></a>
               <a href="#"><i class="bi bi-twitter-x"></i></a>
@@ -140,8 +140,8 @@
           <div class="team-member-card">
             <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200" alt="Anjali Sharma" class="team-avatar">
             <h5 class="fw-bold mb-1">Anjali Sharma</h5>
-            <p class="text-success small fw-bold mb-3">Head of Global Sustainability </p>
-            <p class="text-muted small">Pioneering green energy initiatives and carbon-neutral strategies across global operations.</p>
+            <p class="text-success small fw-bold mb-3">{{ 'ABOUT.TEAM_ROLE_ANJALI' | translate }}</p>
+            <p class="text-muted small">{{ 'ABOUT.TEAM_DESC_ANJALI' | translate }}</p>
             <div class="social-links">
               <a href="#"><i class="bi bi-linkedin"></i></a>
               <a href="#"><i class="bi bi-instagram"></i></a>
@@ -152,8 +152,8 @@
           <div class="team-member-card">
             <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200" alt="Mohammed Rafee" class="team-avatar">
             <h5 class="fw-bold mb-1">Mohammed Rafee</h5>
-            <p class="text-success small fw-bold mb-3">Chief Technology Officer </p>
-            <p class="text-muted small">Leading the deployment of AI-driven waste optimization and smart logistics.</p>
+            <p class="text-success small fw-bold mb-3">{{ 'ABOUT.TEAM_ROLE_RAFEE' | translate }}</p>
+            <p class="text-muted small">{{ 'ABOUT.TEAM_DESC_RAFEE' | translate }}</p>
             <div class="social-links">
               <a href="#"><i class="bi bi-linkedin"></i></a>
               <a href="#"><i class="bi bi-github"></i></a>
@@ -164,8 +164,8 @@
           <div class="team-member-card">
             <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200" alt="Vikram Murthy" class="team-avatar">
             <h5 class="fw-bold mb-1">Vikram Murthy</h5>
-            <p class="text-success small fw-bold mb-3">SVP, Sustainability </p>
-            <p class="text-muted small">Leading global digital transformation and ESG strategies to drive carbon-neutral operations at scale.</p>
+            <p class="text-success small fw-bold mb-3">{{ 'ABOUT.TEAM_ROLE_VIKRAM' | translate }}</p>
+            <p class="text-muted small">{{ 'ABOUT.TEAM_DESC_VIKRAM' | translate }}</p>
             <div class="social-links">
               <a href="#"><i class="bi bi-linkedin"></i></a>
               <a href="#"><i class="bi bi-globe"></i></a>
@@ -179,11 +179,11 @@
   <!-- CTA Section -->
   <section class="py-5 bg-light-soft">
     <div class="container text-center py-5">
-      <h2 class="fw-bold display-5 mb-4">Be Part of the Solution</h2>
-      <p class="text-secondary mx-auto mb-5 lead" style="max-width: 600px;">Join our growing community and start making a real impact on your environment today.</p>
+      <h2 class="fw-bold display-5 mb-4">{{ 'ABOUT.CTA_TITLE' | translate }}</h2>
+      <p class="text-secondary mx-auto mb-5 lead" style="max-width: 600px;">{{ 'ABOUT.CTA_DESC' | translate }}</p>
       <div class="d-flex justify-content-center gap-3">
-        <a routerLink="/register" class="btn btn-success btn-lg rounded-pill px-5 shadow fw-bold">Sign Up Free</a>
-        <a routerLink="/contact" class="btn btn-outline-dark btn-lg rounded-pill px-5 fw-bold">Work With Us</a>
+        <a routerLink="/register" class="btn btn-success btn-lg rounded-pill px-5 shadow fw-bold">{{ 'ABOUT.CTA_BUTTON_SIGNUP' | translate }}</a>
+        <a routerLink="/contact" class="btn btn-outline-dark btn-lg rounded-pill px-5 fw-bold">{{ 'ABOUT.CTA_BUTTON_WORK' | translate }}</a>
       </div>
     </div>
   </section>

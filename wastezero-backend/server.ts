@@ -2,6 +2,31 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+// Custom mongo sanitize middleware to support Express 5 where req.query is read-only
+const mongoSanitize = () => {
+  const sanitize = (obj: any): any => {
+    if (obj && typeof obj === 'object') {
+      for (const key in obj) {
+        if (key.startsWith('$') || key.includes('.')) {
+          delete obj[key];
+        } else if (typeof obj[key] === 'object') {
+          sanitize(obj[key]);
+        }
+      }
+    }
+    return obj;
+  };
+
+  return (req: any, res: any, next: any) => {
+    if (req.body) sanitize(req.body);
+    if (req.params) sanitize(req.params);
+    if (req.headers) sanitize(req.headers);
+    if (req.query) sanitize(req.query);
+    next();
+  };
+};
 dotenv.config();
 
 import authRoutes from './src/routes/authRoutes';
@@ -12,6 +37,8 @@ import messageRoutes from './src/routes/messageRoutes';
 import notificationRoutes from './src/routes/notificationRoutes';
 import adminRoutes from './src/routes/adminRoutes';
 import publicRoutes from './src/routes/publicRoutes';
+import feedbackRoutes from './src/routes/feedbackRoutes';
+import couponRoutes from './src/routes/couponRoutes';
 
 
 import { createServer } from 'http';
@@ -31,6 +58,22 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Rate limiting configuration
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10000, // Increased limit for local development/testing to avoid 429 errors
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests from this IP, please try again after 15 minutes' }
+});
+
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+  contentSecurityPolicy: false
+}));
+app.use(mongoSanitize());
+app.use('/api', limiter);
 app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
@@ -65,6 +108,14 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/coupons', couponRoutes);
+
+import aiRoutes from './src/routes/aiRoutes';
+app.use('/api/ai', aiRoutes);
+
+import routeOptimizationRoutes from './src/routes/routeOptimizationRoutes';
+app.use('/api/routes', routeOptimizationRoutes);
 
 // Database connection
 const mongoUri = process.env['MONGODB_URI'];

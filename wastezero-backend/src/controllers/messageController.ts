@@ -99,7 +99,8 @@ export const getConversation = async (req: AuthRequest, res: Response): Promise<
             $or: [
                 { sender_id: userId, receiver_id: pId },
                 { sender_id: pId, receiver_id: userId }
-            ]
+            ],
+            deletedFor: { $ne: userId }
         };
 
         if (opportunityId) {
@@ -173,7 +174,8 @@ export const getConversationsList = async (req: AuthRequest, res: Response): Pro
                     $or: [
                         { sender_id: userId },
                         { receiver_id: userId }
-                    ]
+                    ],
+                    deletedFor: { $ne: userId }
                 }
             },
             {

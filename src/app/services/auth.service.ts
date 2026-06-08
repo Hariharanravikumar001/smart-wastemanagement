@@ -11,6 +11,7 @@ export interface User {
   email: string;
   role: 'User' | 'Volunteer' | 'Admin' | 'Citizen' | 'NGO';
   location?: string;
+  contactNumber?: string;
   password?: string;
   bio?: string;
   skills?: string[];
@@ -261,6 +262,9 @@ export class AuthService {
   }
 
   refreshCurrentUser(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     this.http.get<User>(`${this.apiUrl}/me`).subscribe({
       next: (user) => {
         if (user) {

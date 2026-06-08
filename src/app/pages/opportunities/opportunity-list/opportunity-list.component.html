@@ -49,7 +49,32 @@
         <a *ngIf="isAdmin || isNGO" routerLink="/opportunities/new" class="ol-action-btn">+ Create New</a>
       </div>
 
-      <!-- Local search removed: using global search from top navbar -->
+      <!-- Search & Filter Panel -->
+      <div class="ol-filter-panel mb-4">
+        <div class="ol-filter-row">
+          <div class="ol-search-box">
+            <span class="ol-search-icon">🔍</span>
+            <input type="text" class="ol-search-input" placeholder="Search by title, location, or waste type..." 
+              [(ngModel)]="localSearchQuery" (input)="applyLocalFilters()">
+          </div>
+          <select class="ol-filter-select" [(ngModel)]="filterCategory" (change)="applyLocalFilters()">
+            <option value="">All Categories</option>
+            <option value="Plastic">♻️ Plastic</option>
+            <option value="Organic">🌿 Organic</option>
+            <option value="E-Waste">💻 E-Waste</option>
+            <option value="Metal">🔩 Metal</option>
+            <option value="Glass">🥃 Glass</option>
+            <option value="Paper">📄 Paper</option>
+            <option value="Other">📦 Other</option>
+          </select>
+          <input type="text" class="ol-filter-select" placeholder="📍 Filter by location..." 
+            [(ngModel)]="filterLocation" (input)="applyLocalFilters()">
+          <button class="ol-clear-btn" *ngIf="localSearchQuery || filterCategory || filterLocation" (click)="clearFilters()">✕ Clear</button>
+        </div>
+        <div class="ol-filter-count" *ngIf="filteredOpportunities.length > 0">
+          Showing <strong>{{ filteredOpportunities.length }}</strong> opportunit{{ filteredOpportunities.length === 1 ? 'y' : 'ies' }}
+        </div>
+      </div>
 
       <div *ngIf="filteredOpportunities.length === 0" class="ol-empty">No opportunities found.</div>
 
@@ -64,6 +89,9 @@
             <span class="ol-tag">⏱ {{ opp.duration }}</span>
             <span class="ol-tag">♻️ {{ opp.wasteType }}</span>
             <span class="ol-tag">📍 {{ opp.location }}</span>
+            <span class="ol-tag" style="background: rgba(99,255,180,0.08); color: #63ffb4; border-color: rgba(99,255,180,0.15);" *ngIf="opp.scheduleType && opp.scheduleType !== 'none'">
+              📅 {{ opp.scheduleType === 'daily' ? 'Daily' : opp.scheduleType === 'weekly-2' ? 'Weekly (2x)' : 'Weekly (3x)' }}
+            </span>
           </div>
           <div class="ol-card-skills">
             <span *ngFor="let skill of opp.skillsRequired" class="ol-skill">{{ skill }}</span>

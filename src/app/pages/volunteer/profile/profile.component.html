@@ -75,6 +75,10 @@
               <span class="profile-label">Primary Location</span>
               <div class="profile-value-box">{{ user.location || 'Not Specified' }}</div>
             </div>
+            <div class="col-md-6">
+              <span class="profile-label">Contact Number</span>
+              <div class="profile-value-box">{{ user.contactNumber || 'Not Specified' }}</div>
+            </div>
             <div class="col-12 mt-2">
               <span class="profile-label">Professional Bio</span>
               <div class="profile-value-box" style="min-height: 80px;">{{ user.bio || 'No bio provided yet.' }}</div>
@@ -124,6 +128,10 @@
             <div class="col-md-6">
               <label class="profile-label">Location</label>
               <input type="text" [(ngModel)]="editUser.location" name="location" class="profile-input" placeholder="e.g. Chennai, India" />
+            </div>
+            <div class="col-md-6">
+              <label class="profile-label">Contact Number</label>
+              <input type="tel" [(ngModel)]="editUser.contactNumber" name="contactNumber" class="profile-input" placeholder="+1234567890" />
             </div>
             <div class="col-12">
               <label class="profile-label">Professional Bio</label>

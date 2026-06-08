@@ -45,6 +45,8 @@ export class NotificationService {
   }
 
   private initSocket(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     const user = this.authService.currentUserValue;
     if (!user) return;
 

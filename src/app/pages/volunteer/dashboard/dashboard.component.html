@@ -12,50 +12,50 @@
 
   <div class="row g-4 mb-5">
     <div class="col-md-3">
-      <div class="premium-card p-4 h-100">
+      <div class="premium-card p-4 h-100 card-ngo-matches text-white">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted fw-bold extra-small text-uppercase ls-wide">NGO Matches</span>
-          <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-stars"></i></div>
+          <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">NGO Matches</span>
+          <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-stars"></i></div>
         </div>
-        <h2 class="fw-bold mb-1">{{ (availableNGOProjects$ | async)?.length || 0 }}</h2>
-        <div class="extra-small text-primary fw-bold">Intelligent Matches</div>
+        <h2 class="fw-bold mb-1 text-white">{{ (availableNGOProjects$ | async)?.length || 0 }}</h2>
+        <div class="extra-small text-white opacity-75 fw-bold">Intelligent Matches</div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="premium-card p-4 h-100">
+      <div class="premium-card p-4 h-100 card-active-tasks text-white">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted fw-bold extra-small text-uppercase ls-wide">My Active Tasks</span>
-          <div class="stat-icon bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-truck"></i></div>
+          <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">My Active Tasks</span>
+          <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-truck"></i></div>
         </div>
-        <h2 class="fw-bold mb-1">{{ (assignments$ | async)?.length || 0 }}</h2>
-        <div class="extra-small text-info fw-bold">Accepted Assignments</div>
+        <h2 class="fw-bold mb-1 text-white">{{ (assignments$ | async)?.length || 0 }}</h2>
+        <div class="extra-small text-white opacity-75 fw-bold">Accepted Assignments</div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="premium-card p-4 h-100">
+      <div class="premium-card p-4 h-100 card-citizen-pickups text-white">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted fw-bold extra-small text-uppercase ls-wide">Citizen Pickups</span>
-          <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-box-seam"></i></div>
+          <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">Citizen Pickups</span>
+          <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-box-seam"></i></div>
         </div>
-        <h2 class="fw-bold mb-1">{{ (availablePickups$ | async)?.length || 0 }}</h2>
-        <div class="extra-small text-warning fw-bold">Near Your Location</div>
+        <h2 class="fw-bold mb-1 text-white">{{ (availablePickups$ | async)?.length || 0 }}</h2>
+        <div class="extra-small text-white opacity-75 fw-bold">Near Your Location</div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="premium-card p-4 h-100">
+      <div class="premium-card p-4 h-100 card-recycled-total text-white">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted fw-bold extra-small text-uppercase ls-wide">Recycled Total</span>
-          <div class="stat-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-recycle"></i></div>
+          <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">Recycled Total</span>
+          <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;"><i class="bi bi-recycle"></i></div>
         </div>
-        <h2 class="fw-bold mb-1">{{ (totalWeight$ | async) || 0 }}<span class="small ms-1">kg</span></h2>
-        <div class="extra-small text-success fw-bold">Total Impact</div>
+        <h2 class="fw-bold mb-1 text-white">{{ (totalWeight$ | async) || 0 }}<span class="small ms-1">kg</span></h2>
+        <div class="extra-small text-white opacity-75 fw-bold">Total Impact</div>
       </div>
     </div>
   </div>
 
-  <div class="row g-4">
+  <div class="row g-4 flex-grow-1">
     <!-- NGO Assignments & Recommended -->
-    <div class="col-lg-8">
+    <div class="col-lg-8 d-flex flex-column">
       <!-- NGO Project Assignments Summary -->
       <div class="premium-card mb-4 overflow-hidden shadow-md" *ngIf="(acceptedNGOProjects$ | async) as assignments" [class.d-none]="assignments.length === 0">
         <div class="card-header bg-transparent border-0 p-4 pb-0">
@@ -84,7 +84,7 @@
       </div>
 
       <!-- Recommended Projects (Matches) -->
-      <div class="premium-card mb-4 overflow-hidden">
+      <div class="premium-card mb-4 overflow-hidden flex-grow-1 d-flex flex-column">
         <div class="card-header bg-transparent border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
           <div>
             <h5 class="fw-bold mb-1 gradient-text"><i class="bi bi-bullseye me-2"></i>Intelligent Matches</h5>
@@ -144,9 +144,9 @@
     </div>
 
     <!-- Active Citizen Pickups & Messaging -->
-    <div class="col-lg-4">
+    <div class="col-lg-4 d-flex flex-column">
       <!-- Active Citizen Pickups -->
-      <div class="premium-card mb-4">
+      <div class="premium-card mb-4 flex-grow-1 d-flex flex-column">
         <div class="card-header bg-transparent border-0 p-4 pb-0">
           <h5 class="fw-bold mb-1 gradient-text"><i class="bi bi-person-heart me-2"></i>Citizen Pickups</h5>
           <p class="text-muted extra-small">Accepted collection requests</p>

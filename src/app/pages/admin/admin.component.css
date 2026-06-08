@@ -788,6 +788,10 @@ textarea.profile-input {
   :host-context(.admin-dark-mode) .application-mobile-card:active {
     background-color: #334155 !important;
   }
+
+  .messages-view {
+    height: calc(100vh - 130px) !important;
+  }
 }
 
 /* Chat & Messaging Styles */
@@ -795,7 +799,14 @@ textarea.profile-input {
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-  min-height: 600px;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+.messages-view app-chat {
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 
 .conversation-sidebar {
@@ -953,4 +964,140 @@ textarea.profile-input {
 
 @media (max-width: 480px) {
   .db-notif-drawer { width: 100%; right: -100%; }
+}
+
+/* ====================== DASHBOARD KPI CARDS PREMIUM COLORS ====================== */
+.card-active-users {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15) !important;
+  border: none !important;
+}
+.card-active-users:hover {
+  box-shadow: 0 6px 24px rgba(37, 99, 235, 0.3) !important;
+  transform: translateY(-5px);
+}
+
+.card-total-volunteers {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%) !important;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15) !important;
+  border: none !important;
+}
+.card-total-volunteers:hover {
+  box-shadow: 0 6px 24px rgba(139, 92, 246, 0.3) !important;
+  transform: translateY(-5px);
+}
+
+.card-pickups-done {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.15) !important;
+  border: none !important;
+}
+.card-pickups-done:hover {
+  box-shadow: 0 6px 24px rgba(249, 115, 22, 0.3) !important;
+  transform: translateY(-5px);
+}
+
+.card-system-health {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15) !important;
+  border: none !important;
+}
+.card-system-health:hover {
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.3) !important;
+  transform: translateY(-5px);
+}
+
+/* Stat Icons in KPI Cards */
+.card-active-users .stat-icon,
+.card-total-volunteers .stat-icon,
+.card-pickups-done .stat-icon,
+.card-system-health .stat-icon {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+/* ====================== DASHBOARD & ADMIN HEIGHT OPTIMIZATION ====================== */
+.admin-content-area {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.dashboard-wrapper-inner {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* ====================== WASTE TYPE MULTI-SELECT CHIPS ====================== */
+.waste-type-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 50px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.waste-type-chip:hover {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+  color: #10b981;
+  transform: translateY(-1px);
+}
+
+.waste-type-chip.active {
+  border-color: #10b981;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.08));
+  color: #059669;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+}
+
+.waste-type-chip .chip-icon {
+  font-size: 1rem;
+}
+
+.waste-type-chip .chip-label {
+  font-size: 0.78rem;
+}
+
+.waste-type-chip .chip-check {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #10b981;
+  margin-left: 2px;
+}
+
+/* Dark mode chips */
+:host-context(.admin-dark-mode) .waste-type-chip {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+}
+
+:host-context(.admin-dark-mode) .waste-type-chip:hover {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+  color: #6ee7b7;
+}
+
+:host-context(.admin-dark-mode) .waste-type-chip.active {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.15);
 }

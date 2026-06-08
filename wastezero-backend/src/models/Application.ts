@@ -4,6 +4,7 @@ export interface IApplication extends Document {
     opportunity_id: mongoose.Types.ObjectId;
     volunteer_id: mongoose.Types.ObjectId;
     status: 'pending' | 'accepted' | 'rejected';
+    coverLetter?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -23,6 +24,10 @@ const ApplicationSchema: Schema = new Schema({
         type: String,
         enum: ['pending', 'accepted', 'rejected'],
         default: 'pending'
+    },
+    coverLetter: {
+        type: String,
+        maxlength: 1000
     }
 }, {
     timestamps: true,

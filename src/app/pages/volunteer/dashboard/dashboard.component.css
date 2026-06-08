@@ -1,5 +1,12 @@
 /* Volunteer Dashboard Specific Styles */
-.db-body { max-width: 1100px; margin: 0 auto; padding: 40px 36px; }
+.db-body {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 36px;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+}
 
 .db-stats-row { 
   display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -237,3 +244,51 @@
 :host-context(body:not(.dark-mode)) .ngo-btn-premium.primary {
   color: #ffffff;
 }
+
+/* ====================== VOLUNTEER DASHBOARD KPI CARDS PREMIUM COLORS ====================== */
+.card-ngo-matches {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15) !important;
+  border: none !important;
+}
+.card-ngo-matches:hover {
+  box-shadow: 0 6px 24px rgba(37, 99, 235, 0.3) !important;
+  transform: translateY(-5px);
+}
+
+.card-active-tasks {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%) !important;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15) !important;
+  border: none !important;
+}
+.card-active-tasks:hover {
+  box-shadow: 0 6px 24px rgba(139, 92, 246, 0.3) !important;
+  transform: translateY(-5px);
+}
+
+.card-citizen-pickups {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.15) !important;
+  border: none !important;
+}
+.card-citizen-pickups:hover {
+  box-shadow: 0 6px 24px rgba(249, 115, 22, 0.3) !important;
+  transform: translateY(-5px);
+}
+
+.card-recycled-total {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15) !important;
+  border: none !important;
+}
+.card-recycled-total:hover {
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.3) !important;
+  transform: translateY(-5px);
+}
+
+/* Stat Icons in KPI Cards */
+.premium-card.text-white .stat-icon {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+

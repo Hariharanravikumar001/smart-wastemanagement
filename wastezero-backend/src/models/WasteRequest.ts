@@ -11,6 +11,8 @@ export interface IWasteRequest extends Document {
   volunteerId?: string;
   volunteerName?: string;
   scheduledDate?: Date;
+  scheduledTime?: string;
+  qrCodeToken?: string;
   createdAt: Date;
   imageUrl?: string;
   aiPredictedCategory?: string;
@@ -31,6 +33,8 @@ const wasteRequestSchema = new Schema<IWasteRequest>({
   volunteerId: { type: String },
   volunteerName: { type: String },
   scheduledDate: { type: Date },
+  scheduledTime: { type: String },
+  qrCodeToken: { type: String },
   createdAt: { type: Date, default: Date.now },
   imageUrl: { type: String },
   aiPredictedCategory: { type: String }

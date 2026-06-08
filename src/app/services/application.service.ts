@@ -23,8 +23,8 @@ export class ApplicationService {
         return new HttpHeaders({ Authorization: `Bearer ${token}` });
     }
 
-    applyForOpportunity(opportunity_id: string): Observable<Application> {
-        return this.http.post<Application>(this.apiUrl, { opportunity_id }, { headers: this.getHeaders() }).pipe(
+    applyForOpportunity(opportunity_id: string, coverLetter?: string): Observable<Application> {
+        return this.http.post<Application>(this.apiUrl, { opportunity_id, coverLetter }, { headers: this.getHeaders() }).pipe(
             catchError(err => {
                 if (err.status === 0) {
                     console.error('Connection refuse: Please ensure your backend server is running on port 5000.');

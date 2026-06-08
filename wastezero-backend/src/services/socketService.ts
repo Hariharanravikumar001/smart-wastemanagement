@@ -83,6 +83,74 @@ export const initSocket = (server: HttpServer): Server => {
       }
     });
 
+    // Handle live location updates
+    socket.on('update_live_location', async (data: { messageId: string, lat: number, lng: number }) => {
+      try {
+        const Message = (await import('../models/Message')).default;
+        const locationUrl = `https://www.google.com/maps?q=${data.lat},${data.lng}`;
+        const message = await Message.findByIdAndUpdate(
+          data.messageId, 
+          { mediaUrl: locationUrl }, 
+          { new: true }
+        );
+        if (message) {
+          // Notify both parties of the updated message
+          io.to(message.sender_id.toString()).emit('message_update', message);
+          io.to(message.receiver_id.toString()).emit('message_update', message);
+          console.log(`📡 Live location updated for message ${data.messageId}: ${data.lat}, ${data.lng}`);
+        }
+      } catch (err) {
+        console.error('Error updating live location:', err);
+      }
+    });
+
+    // Handle clearing the entire conversation (soft delete)
+    socket.on('clear_conversation', async (data: { partnerId: string, userId: string, opportunityId?: string }) => {
+      try {
+        const Message = (await import('../models/Message')).default;
+        const mongoose = (await import('mongoose')).default;
+        const userId = new mongoose.Types.ObjectId(data.userId);
+        const pId = new mongoose.Types.ObjectId(data.partnerId);
+        
+        let query: any = {
+          $or: [
+            { sender_id: userId, receiver_id: pId },
+            { sender_id: pId, receiver_id: userId }
+          ]
+        };
+        
+        if (data.opportunityId) {
+          query.opportunity_id = new mongoose.Types.ObjectId(data.opportunityId);
+        }
+        
+        const messages = await Message.find(query);
+        for (const msg of messages) {
+          if (!msg.deletedFor.includes(userId as any)) {
+            msg.deletedFor.push(userId as any);
+            await msg.save();
+          }
+        }
+        
+        // Notify the user who cleared the chat
+        socket.emit('conversation_cleared', { partnerId: data.partnerId, opportunityId: data.opportunityId });
+        console.log(`🧹 Conversation cleared (soft delete) between ${data.userId} and ${data.partnerId}`);
+      } catch (err) {
+        console.error('Error clearing conversation:', err);
+      }
+    });
+
+    // Handle live volunteer location sharing
+    socket.on('share_volunteer_location', (data: { receiverId: string, lat: number, lng: number }) => {
+      const senderId = (socket as any).userId;
+      if (senderId) {
+        io.to(data.receiverId).emit('volunteer_location_updated', {
+          volunteerId: senderId,
+          lat: data.lat,
+          lng: data.lng
+        });
+      }
+    });
+
     socket.on('disconnect', async () => {
       const userId = (socket as any).userId;
       console.log('Client disconnected:', socket.id, userId || '');

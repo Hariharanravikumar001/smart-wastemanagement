@@ -1,0 +1,91 @@
+<!-- Floating Chatbot Toggle Button -->
+<div class="chatbot-floating-btn shadow-lg" (click)="toggleChat()" [class.active]="isOpen" title="EcoBot AI Assistant">
+  <i class="bi" [class.bi-chat-dots-fill]="!isOpen" [class.bi-x-lg]="isOpen"></i>
+  <span class="chatbot-pulse" *ngIf="!isOpen"></span>
+</div>
+
+<!-- Chatbot Panel Overlay -->
+<div class="chatbot-panel shadow-2xl border border-light" *ngIf="isOpen">
+  <!-- Header -->
+  <div class="chatbot-header d-flex align-items-center justify-content-between p-3 text-white">
+    <div class="d-flex align-items-center gap-2">
+      <div class="chatbot-avatar bg-white text-success rounded-circle d-flex align-items-center justify-content-center">
+        <i class="bi bi-robot fs-5"></i>
+      </div>
+      <div>
+        <h6 class="mb-0 fw-bold">{{ 'CHATBOT.HEADER' | translate }}</h6>
+        <small class="chatbot-status d-flex align-items-center gap-1 opacity-75">
+          <span class="chatbot-status-dot"></span> {{ 'CHATBOT.STATUS' | translate }}
+        </small>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-sm btn-link text-white p-0 shadow-none" (click)="resetChat()" title="Reset chat">
+        <i class="bi bi-arrow-counterclockwise fs-5"></i>
+      </button>
+      <button class="btn btn-sm btn-link text-white p-0 shadow-none" (click)="toggleChat()" title="Close chat">
+        <i class="bi bi-x-lg fs-5"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages Body -->
+  <div class="chatbot-body p-3" id="chatbot-body">
+    <div class="chat-messages-wrapper d-flex flex-column gap-3">
+      <div *ngFor="let msg of messages" class="chat-message-bubble-wrapper d-flex" [class.justify-content-end]="!msg.isBot">
+        <div class="chat-message-bubble p-3 rounded-4 max-w-85" 
+             [class.bot-bubble]="msg.isBot" 
+             [class.user-bubble]="!msg.isBot">
+          <div class="message-content text-break" style="white-space: pre-line;">{{ msg.text }}</div>
+          <div class="message-time text-end mt-1 opacity-50" style="font-size: 0.65rem;">
+            {{ msg.timestamp | date:'shortTime' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div class="chat-message-bubble-wrapper d-flex" *ngIf="isTyping">
+        <div class="chat-message-bubble bot-bubble p-3 rounded-4">
+          <div class="typing-indicator d-flex align-items-center gap-1">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Action Chips -->
+  <div class="chatbot-chips p-2 bg-light border-top border-bottom overflow-x-auto d-flex gap-2 whitespace-nowrap scrollbar-none">
+    <button class="btn btn-outline-success btn-xs rounded-pill px-3 py-1" (click)="sendPresetQuestion('CHATBOT.CHIP_PICKUP')">
+      {{ 'CHATBOT.CHIP_PICKUP' | translate }}
+    </button>
+    <button class="btn btn-outline-success btn-xs rounded-pill px-3 py-1" (click)="sendPresetQuestion('CHATBOT.CHIP_REWARDS')">
+      {{ 'CHATBOT.CHIP_REWARDS' | translate }}
+    </button>
+    <button class="btn btn-outline-success btn-xs rounded-pill px-3 py-1" (click)="sendPresetQuestion('CHATBOT.CHIP_SEGREGATE')">
+      {{ 'CHATBOT.CHIP_SEGREGATE' | translate }}
+    </button>
+    <button class="btn btn-outline-success btn-xs rounded-pill px-3 py-1" (click)="sendPresetQuestion('CHATBOT.CHIP_AI')">
+      {{ 'CHATBOT.CHIP_AI' | translate }}
+    </button>
+  </div>
+
+  <!-- Input Footer -->
+  <form class="chatbot-footer d-flex align-items-center gap-2 p-2 bg-white" (ngSubmit)="sendMessage()">
+    <input type="text" 
+           class="form-control border-0 shadow-none bg-light rounded-pill px-3" 
+           [(ngModel)]="userInput" 
+           name="userInput" 
+           [placeholder]="'CHATBOT.PLACEHOLDER' | translate" 
+           autocomplete="off"
+           required>
+    <button type="submit" 
+            class="btn btn-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
+            style="width: 40px; height: 40px; min-width: 40px;"
+            [disabled]="!userInput.trim()">
+      <i class="bi bi-send-fill text-white"></i>
+    </button>
+  </form>
+</div>

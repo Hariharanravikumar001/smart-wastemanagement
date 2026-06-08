@@ -11,7 +11,7 @@ import AdminLog from '../models/AdminLog';
 // @access  Private (Volunteer)
 export const applyForOpportunity = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const { opportunity_id } = req.body;
+        const { opportunity_id, coverLetter } = req.body;
 
         if (!opportunity_id) {
             res.status(400).json({ message: 'Opportunity ID is required' });
@@ -43,11 +43,13 @@ export const applyForOpportunity = async (req: AuthRequest, res: Response): Prom
 
         const application = new Application({
             opportunity_id,
-            volunteer_id: req.user!.id
+            volunteer_id: req.user!.id,
+            coverLetter: coverLetter ? coverLetter.substring(0, 1000) : undefined
         });
 
         const savedApplication = await application.save();
         res.status(201).json(savedApplication);
+
     } catch (error) {
         console.error('Application creation error:', error);
         res.status(500).json({ message: 'Server error' });
@@ -89,7 +91,14 @@ export const getAdminApplications = async (req: AuthRequest, res: Response): Pro
 export const getVolunteerApplications = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const applications = await Application.find({ volunteer_id: req.user!.id })
-            .populate('opportunity_id', 'title description location duration status ngo_id')
+            .populate({
+                path: 'opportunity_id',
+                select: 'title description location duration status ngo_id',
+                populate: {
+                    path: 'ngo_id',
+                    select: 'name email'
+                }
+            })
             .sort({ createdAt: -1 })
             .limit(50)
             .lean();

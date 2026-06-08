@@ -5,7 +5,7 @@
       <div class="d-flex align-items-center">
         <span class="navbar-brand fw-bold mb-0">WasteZero</span>
       </div>
-      <div class="avatar-mini-mobile shadow-sm overflow-hidden" (click)="setActiveMenu('profile')">
+      <div class="avatar-mini-mobile shadow-sm overflow-hidden" [routerLink]="['/admin']" [queryParams]="{ tab: 'profile' }">
         <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
         <span *ngIf="!user.profileImage" class="text-white fw-bold">{{ user.name.charAt(0).toUpperCase() }}</span>
       </div>
@@ -15,27 +15,27 @@
   <!-- Mobile Bottom Navbar -->
   <nav class="navbar fixed-bottom bg-dark border-top border-light border-opacity-10 d-lg-none px-2 py-0 bottom-nav">
     <div class="container-fluid justify-content-around py-2">
-      <a class="nav-link-bottom" [class.active]="activeMenu === 'dashboard'" (click)="setActiveMenu('dashboard')">
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'dashboard'" [routerLink]="['/admin']" [queryParams]="{ tab: 'dashboard' }">
         <i class="bi bi-grid-1x2"></i>
         <span>Home</span>
       </a>
-      <a class="nav-link-bottom" [class.active]="activeMenu === 'all-opportunities'" (click)="setActiveMenu('all-opportunities')">
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'all-opportunities'" [routerLink]="['/admin']" [queryParams]="{ tab: 'all-opportunities' }">
         <i class="bi bi-briefcase"></i>
         <span>Tasks</span>
       </a>
-      <a class="nav-link-bottom" [class.active]="activeMenu === 'messages'" (click)="setActiveMenu('messages')">
-        <i class="bi bi-chat-dots"></i>
-        <span>Messages</span>
-      </a>
-      <a class="nav-link-bottom" [class.active]="activeMenu === 'reports'" (click)="setActiveMenu('reports')">
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'reports'" [routerLink]="['/admin']" [queryParams]="{ tab: 'reports' }">
         <i class="bi bi-file-earmark-bar-graph"></i>
         <span>Reports</span>
       </a>
-      <a class="nav-link-bottom" [class.active]="activeMenu === 'profile'" (click)="setActiveMenu('profile')">
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'messages'" [routerLink]="['/admin']" [queryParams]="{ tab: 'messages' }">
+        <i class="bi bi-chat-dots"></i>
+        <span>Messages</span>
+      </a>
+      <a class="nav-link-bottom" [class.active]="activeMenu === 'profile'" [routerLink]="['/admin']" [queryParams]="{ tab: 'profile' }">
         <i class="bi bi-person-circle"></i>
         <span>Profile</span>
       </a>
-      <a class="nav-link-bottom text-danger" (click)="logout()">
+      <a class="nav-link-bottom text-danger" (click)="logout()" style="cursor: pointer;">
         <i class="bi bi-box-arrow-right"></i>
         <span>Logout</span>
       </a>
@@ -43,29 +43,37 @@
   </nav>
 
   <!-- Sidebar -->
-  <aside class="admin-sidebar glass border-end">
-    <div class="sidebar-header d-flex align-items-center px-4 py-4">
-      <div class="brand-icon-wrap me-2 bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">♻️</div>
-      <span class="fs-4 fw-bold gradient-text">WasteZero</span>
+  <aside class="admin-sidebar border-end">
+    <div class="sidebar-header d-flex align-items-center px-3 py-3">
+      <div class="brand-icon-wrap me-2 bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">♻️</div>
+      <span class="fs-4 fw-bold gradient-text logo-text">WasteZero</span>
     </div>
 
-    <div class="sidebar-user p-4 mb-2 text-center border-bottom border-light border-opacity-10">
-      <div class="avatar shadow-md mb-3 mx-auto overflow-hidden premium-card" style="width: 80px; height: 80px;">
+    <!-- Expanded User Info -->
+    <div class="sidebar-user d-flex align-items-center gap-3 p-3 mb-2 border-bottom border-light border-opacity-10" *ngIf="!isSidebarCollapsed">
+      <div class="avatar shadow-md overflow-hidden premium-card" style="width: 44px; height: 44px; flex-shrink: 0;">
         <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
-        <span *ngIf="!user.profileImage" class="fs-2 fw-bold text-primary">{{ user.name.charAt(0).toUpperCase() }}</span>
+        <span *ngIf="!user.profileImage" class="fs-4 fw-bold text-primary">{{ user.name.charAt(0).toUpperCase() }}</span>
       </div>
-      <div class="user-info">
-        <h6 class="fw-bold mb-0 text-truncate">{{ user.name }}</h6>
-        <span
-          class="badge bg-primary bg-opacity-10 text-primary small border border-primary border-opacity-10 mt-1 px-3 py-1">Management</span>
+      <div class="user-info min-w-0 flex-grow-1">
+        <h6 class="fw-bold mb-0 text-truncate text-white" style="font-size: 14px;">{{ user.name }}</h6>
+        <span class="badge bg-primary bg-opacity-10 text-primary extra-small border border-primary border-opacity-10 mt-1 px-2 py-0.5">Management</span>
       </div>
     </div>
 
-    <nav class="sidebar-nav flex-grow-1 py-3 px-2">
+    <!-- Collapsed User Info -->
+    <div class="sidebar-user-collapsed py-3 text-center border-bottom border-light border-opacity-10" *ngIf="isSidebarCollapsed">
+      <div class="avatar shadow-md mx-auto overflow-hidden premium-card" style="width: 40px; height: 40px;" [routerLink]="['/admin']" [queryParams]="{ tab: 'profile' }">
+        <img *ngIf="user.profileImage" [src]="user.profileImage" alt="Profile" class="avatar-img" />
+        <span *ngIf="!user.profileImage" class="fs-5 fw-bold text-primary">{{ user.name.charAt(0).toUpperCase() }}</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav flex-grow-1 py-2 px-2">
       <div class="nav-label px-3 mb-2 text-muted extra-small text-uppercase fw-bold ls-wide">Main Menu</div>
-      <ul class="list-unstyled">
+      <ul class="list-unstyled mb-0">
         <li *ngFor="let item of menuItems">
-          <a (click)="setActiveMenu(item.id)"
+          <a [routerLink]="['/admin']" [queryParams]="{ tab: item.id }"
             class="nav-link d-flex align-items-center rounded-3 mb-1 px-3 py-2 transition-all cursor-pointer"
             [class.active]="activeMenu === item.id">
             <i class="bi {{ item.icon }} me-3 fs-5"></i>
@@ -77,12 +85,12 @@
 
     <div class="sidebar-footer p-3 mt-auto">
       <button
-        class="btn w-100 btn-light glass rounded-pill mb-3 d-flex align-items-center justify-content-center gap-2 border shadow-sm py-2"
+        class="btn w-100 btn-light glass rounded-pill mb-2 d-flex align-items-center justify-content-center gap-2 border shadow-sm py-2 theme-toggle-btn"
         (click)="toggleTheme()">
         <i class="bi" [class.bi-moon-stars-fill]="!isDarkMode" [class.bi-sun-fill]="isDarkMode"></i>
         <span class="small fw-bold">{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
       </button>
-      <button class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center gap-2 py-2"
+      <button class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center gap-2 py-2 logout-btn"
         (click)="logout()">
         <i class="bi bi-box-arrow-right"></i>
         <span class="small fw-bold">Logout</span>
@@ -119,94 +127,68 @@
       </div>
     </header>
 
-    <div class="content-body p-4">
+    <div class="content-body p-4" [class.p-0]="activeMenu === 'messages'">
       <!-- Dashboard Overview (shown when activeMenu is 'dashboard') -->
-      <div *ngIf="activeMenu === 'dashboard'">
+      <div *ngIf="activeMenu === 'dashboard'" class="dashboard-wrapper-inner">
         <div class="row g-4 mb-4">
-          <div class="col-md-3">
-            <div class="premium-card p-4 h-100">
+          <div class="col-sm-6 col-lg-3">
+            <div class="premium-card p-4 h-100 card-active-users text-white">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted fw-bold small text-uppercase ls-wide">Active Users</span>
-                <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-people fs-5"></i></div>
+                <span class="text-white opacity-75 fw-bold small text-uppercase ls-wide">Active Users</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-people fs-5"></i></div>
               </div>
-              <h2 class="fw-bold mb-1">{{ stats.activeUsers | number }}</h2>
-              <div class="small text-success d-flex align-items-center gap-1">
+              <h2 class="fw-bold mb-1 text-white">{{ stats.activeUsers | number }}</h2>
+              <div class="small text-white opacity-75 d-flex align-items-center gap-1">
                 <i class="bi bi-graph-up-arrow"></i> 
                 <span>{{ stats.activeUsersChange }}</span>
               </div>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="premium-card p-4 h-100">
+          <div class="col-sm-6 col-lg-3">
+            <div class="premium-card p-4 h-100 card-total-volunteers text-white">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted fw-bold small text-uppercase ls-wide">Total Volunteers</span>
-                <div class="stat-icon bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-heart-fill fs-5"></i></div>
+                <span class="text-white opacity-75 fw-bold small text-uppercase ls-wide">Total Volunteers</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-heart-fill fs-5"></i></div>
               </div>
-              <h2 class="fw-bold mb-1">{{ stats.totalVolunteers | number }}</h2>
-              <div class="small text-success d-flex align-items-center gap-1">
+              <h2 class="fw-bold mb-1 text-white">{{ stats.totalVolunteers | number }}</h2>
+              <div class="small text-white opacity-75 d-flex align-items-center gap-1">
                 <i class="bi bi-graph-up-arrow"></i> 
                 <span>{{ stats.totalVolunteersChange }}</span>
               </div>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="premium-card p-4 h-100">
+          <div class="col-sm-6 col-lg-3">
+            <div class="premium-card p-4 h-100 card-pickups-done text-white">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted fw-bold small text-uppercase ls-wide">Pickups Done</span>
-                <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-truck fs-5"></i></div>
+                <span class="text-white opacity-75 fw-bold small text-uppercase ls-wide">Pickups Done</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-truck fs-5"></i></div>
               </div>
-              <h2 class="fw-bold mb-1">{{ stats.completedPickups | number }}</h2>
-              <div class="small text-success d-flex align-items-center gap-1">
+              <h2 class="fw-bold mb-1 text-white">{{ stats.completedPickups | number }}</h2>
+              <div class="small text-white opacity-75 d-flex align-items-center gap-1">
                 <i class="bi bi-check-circle-fill"></i> 
                 <span>Verified</span>
               </div>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="premium-card p-4 h-100">
+          <div class="col-sm-6 col-lg-3">
+            <div class="premium-card p-4 h-100 card-system-health text-white">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted fw-bold small text-uppercase ls-wide">System Health</span>
-                <div class="stat-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-shield-check fs-5"></i></div>
+                <span class="text-white opacity-75 fw-bold small text-uppercase ls-wide">System Health</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-shield-check fs-5"></i></div>
               </div>
-              <h2 class="fw-bold mb-1 text-success">{{ stats.systemHealth }}</h2>
-              <div class="small text-muted">{{ stats.systemHealthStatus }}</div>
+              <h2 class="fw-bold mb-1 text-white">{{ stats.systemHealth }}</h2>
+              <div class="small text-white opacity-75">{{ stats.systemHealthStatus }}</div>
             </div>
           </div>
         </div>
 
-        <div class="row g-4">
-          <div class="col-lg-8">
-            <div class="premium-card h-100 overflow-hidden">
-              <div
-                class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold mb-0">System Performance Trends</h5>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-light glass border dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">
-                    {{ selectedRange === '1day' ? 'Today' : 
-                       selectedRange === '3days' ? 'Last 3D' : 
-                       selectedRange === '1week' ? 'Last 7D' : 'Last 30D' }}
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3">
-                    <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('1day')">Today</a></li>
-                    <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('3days')">Last 3 Days</a></li>
-                    <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('1week')">Last 7 Days</a></li>
-                    <li><a class="dropdown-item cursor-pointer" (click)="updateAnalytics('1month')">Last 30 Days</a></li>
-                  </ul>
-                </div>
-              </div>
-              <div class="card-body">
-                <div style="height: 250px; position: relative;">
-                  <canvas id="engagementChart"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4">
-            <div class="premium-card h-100">
+        <div class="row g-4 flex-grow-1">
+          <div class="col-lg-12 d-flex flex-column">
+            <div class="premium-card h-100 flex-grow-1 d-flex flex-column">
               <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 text-center">
                 <h5 class="fw-bold mb-0">Live Activity Stream</h5>
               </div>
-              <div class="card-body p-4">
+              <div class="card-body p-4 flex-grow-1">
                 <div class="activity-timeline">
                   <div class="activity-item d-flex gap-3 mb-4">
                     <div class="activity-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm"
@@ -320,6 +302,10 @@
                     <span class="profile-label">Location</span>
                     <div class="profile-value-box mb-0">{{ user.location || 'Not Specified' }}</div>
                   </div>
+                  <div class="col-md-6">
+                    <span class="profile-label">Contact Number</span>
+                    <div class="profile-value-box mb-0">{{ user.contactNumber || 'Not Specified' }}</div>
+                  </div>
                   <div class="col-12 mt-3">
                     <span class="profile-label">Administrative Skills</span>
                     <div class="d-flex flex-wrap gap-2 pt-1">
@@ -369,6 +355,10 @@
                   <div class="col-md-6">
                     <label class="profile-label">Location</label>
                     <input type="text" class="profile-input" [(ngModel)]="editUser.location" name="location">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="profile-label">Contact Number</label>
+                    <input type="tel" class="profile-input" [(ngModel)]="editUser.contactNumber" name="contactNumber" placeholder="+1234567890">
                   </div>
                   <div class="col-12">
                     <label class="profile-label">Skills (comma separated)</label>
@@ -454,23 +444,84 @@
                   <option value="in-progress">In Progress</option>
                 </select>
               </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold text-muted">Date</label>
+                <input type="date" class="form-control glass border rounded-3 py-2" [(ngModel)]="opportunityForm.startDate" name="startDate">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold text-muted">Time</label>
+                <input type="time" class="form-control glass border rounded-3 py-2" [(ngModel)]="opportunityForm.startTime" name="startTime">
+              </div>
               <div class="col-12">
                 <label class="form-label small fw-bold text-muted">Description *</label>
                 <textarea class="form-control glass border rounded-3 py-2" [(ngModel)]="opportunityForm.description" name="description" 
                   rows="3" placeholder="Describe the opportunity..." required></textarea>
               </div>
-              <div class="col-md-6">
-                <label class="form-label small fw-bold text-muted">Waste Type *</label>
-                <select class="form-select glass border rounded-3 py-2" [(ngModel)]="opportunityForm.wasteType" name="wasteType" required>
-                  <option value="">Select Category</option>
-                  <option value="Plastic">Plastic</option>
-                  <option value="Paper">Paper</option>
-                  <option value="Metal">Metal</option>
-                  <option value="Electronic">Electronic</option>
-                  <option value="Organic">Organic</option>
-                  <option value="Glass">Glass</option>
-                  <option value="Other">Other</option>
-                </select>
+              
+              <!-- Scheduling Section -->
+              <div class="col-12 border-top pt-3 mt-3">
+                <h6 class="fw-bold text-muted mb-2">🕒 Cleaning Schedule</h6>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label small fw-bold text-muted">Schedule Type</label>
+                    <select class="form-select glass border rounded-3 py-2" [(ngModel)]="opportunityForm.scheduleType" name="scheduleType" (change)="onScheduleTypeChange()">
+                      <option value="none">No Schedule (One-time)</option>
+                      <option value="daily">Daily Cleaning</option>
+                      <option value="weekly-2">Weekly (2 times per week)</option>
+                      <option value="weekly-3">Weekly (3 times per week)</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Work Time -->
+                  <div class="col-md-6" *ngIf="opportunityForm.scheduleType && opportunityForm.scheduleType !== 'none'">
+                    <label class="form-label small fw-bold text-muted">Work Completion Time</label>
+                    <input type="time" class="form-control glass border rounded-3 py-2" [(ngModel)]="opportunityForm.scheduleTime" name="scheduleTime">
+                  </div>
+                  
+                  <!-- Day Selection for Weekly Schedules -->
+                  <div class="col-12 mt-3" *ngIf="opportunityForm.scheduleType === 'weekly-2' || opportunityForm.scheduleType === 'weekly-3'">
+                    <label class="form-label small fw-bold text-muted d-block mb-2">
+                      Select Days <span class="text-danger">*</span>
+                      <span class="ms-2 text-muted fw-normal" style="font-size: 0.75rem;">
+                        (Select exactly {{ opportunityForm.scheduleType === 'weekly-2' ? '2' : '3' }} days)
+                      </span>
+                    </label>
+                    <div class="d-flex flex-wrap gap-2 mt-1">
+                      <button *ngFor="let day of weekDays" type="button"
+                        class="waste-type-chip"
+                        [class.active]="isScheduleDaySelected(day.value)"
+                        (click)="toggleScheduleDay(day.value)">
+                        <span class="chip-label">{{ day.value }}</span>
+                        <span class="chip-check" *ngIf="isScheduleDaySelected(day.value)">✓</span>
+                      </button>
+                    </div>
+                    <div *ngIf="opportunityForm.scheduleDays.length !== (opportunityForm.scheduleType === 'weekly-2' ? 2 : 3)" class="text-danger mt-1" style="font-size: 0.75rem;">
+                      ⚠️ Please select exactly {{ opportunityForm.scheduleType === 'weekly-2' ? 2 : 3 }} days (Currently selected: {{ opportunityForm.scheduleDays.length }})
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-bold text-muted">
+                  ♻️ Waste Types <span class="text-danger">*</span>
+                  <span class="ms-2 text-muted fw-normal" style="font-size: 0.75rem;">(Select one or more)</span>
+                </label>
+                <div class="d-flex flex-wrap gap-2 mt-1">
+                  <button *ngFor="let wt of wasteTypeOptions" type="button"
+                    class="waste-type-chip"
+                    [class.active]="isWasteTypeSelected(wt.value)"
+                    (click)="toggleWasteType(wt.value)">
+                    <span class="chip-icon">{{ wt.icon }}</span>
+                    <span class="chip-label">{{ wt.value }}</span>
+                    <span class="chip-check" *ngIf="isWasteTypeSelected(wt.value)">✓</span>
+                  </button>
+                </div>
+                <div *ngIf="opportunityForm.wasteType.length === 0" class="text-danger mt-1" style="font-size: 0.75rem;">
+                  ⚠️ Please select at least one waste type
+                </div>
+                <div *ngIf="opportunityForm.wasteType.length > 0" class="text-success mt-1" style="font-size: 0.75rem;">
+                  ✅ Selected: {{ opportunityForm.wasteType.join(', ') }}
+                </div>
               </div>
               <div class="col-12 text-end mt-4">
                 <button type="button" class="btn btn-light glass border rounded-pill px-4 me-2"
@@ -499,11 +550,12 @@
           
           <div class="card-body p-0">
             <!-- Desktop Table View -->
-            <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
+            <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+              <table class="table table-hover align-middle mb-0" style="min-width: 600px;">
                 <thead class="bg-light bg-opacity-50">
                   <tr>
                     <th class="px-4 py-3 border-0 small text-muted text-uppercase">Volunteer</th>
+                    <th class="py-3 border-0 small text-muted text-uppercase">Cover Letter</th>
                     <th class="py-3 border-0 small text-muted text-uppercase text-center">Status</th>
                     <th class="px-4 py-3 border-0 small text-muted text-uppercase text-end">Actions</th>
                   </tr>
@@ -514,6 +566,12 @@
                       <div class="fw-bold text-dark">{{ app.volunteer_id?.name || app.volunteer_id }}</div>
                       <div class="extra-small text-muted">{{ app.volunteer_id?.email }}</div>
                     </td>
+                    <td class="py-3" style="max-width: 220px;">
+                      <div *ngIf="app.coverLetter" class="small text-muted fst-italic" style="white-space: pre-line; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                        "{{ app.coverLetter }}"
+                      </div>
+                      <div *ngIf="!app.coverLetter" class="extra-small text-muted opacity-50">No cover letter provided</div>
+                    </td>
                     <td class="text-center">
                       <span class="badge rounded-pill border py-1 px-3 bg-opacity-10" 
                         [class.bg-warning]="app.status === 'pending'" [class.text-warning]="app.status === 'pending'" [class.border-warning]="app.status === 'pending'"
@@ -522,15 +580,20 @@
                         {{ app.status | titlecase }}
                       </span>
                     </td>
-                    <td class="px-4 text-end">
+                    <td class="px-4 text-end" style="white-space: nowrap;">
+                      <button class="btn btn-sm btn-outline-primary rounded-circle me-2"
+                        (click)="selectConversation({ partnerId: app.volunteer_id?._id || app.volunteer_id?.id || app.volunteer_id, partnerName: app.volunteer_id?.name || 'Volunteer', opportunityId: app.opportunity_id?._id || app.opportunity_id?.id || app.opportunity_id })"
+                        title="Message Volunteer">
+                        <i class="bi bi-chat-dots"></i>
+                      </button>
                       <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-success rounded-pill me-2 px-3 shadow-sm border-0"
-                        (click)="updateApplicationStatus(app._id || app.id, 'accepted')">Accept</button>
+                        (click)="confirmUpdateApplicationStatus(app._id || app.id, 'accepted')">Accept</button>
                       <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-outline-danger rounded-pill px-3"
-                        (click)="updateApplicationStatus(app._id || app.id, 'rejected')">Reject</button>
+                        (click)="confirmUpdateApplicationStatus(app._id || app.id, 'rejected')">Reject</button>
                     </td>
                   </tr>
                   <tr *ngIf="getApplicationsForCurrentView().length === 0">
-                    <td colspan="3" class="text-center py-5 text-muted">No applications found for this opportunity.</td>
+                    <td colspan="4" class="text-center py-5 text-muted">No applications found for this opportunity.</td>
                   </tr>
                 </tbody>
               </table>
@@ -552,7 +615,7 @@
           </div>
           <div class="card-body p-0">
             <!-- Desktop Table View -->
-            <div class="table-responsive d-none d-md-block">
+            <div class="table-responsive d-none d-lg-block">
               <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light bg-opacity-50">
                   <tr>
@@ -567,9 +630,33 @@
                   <tr *ngFor="let opp of filteredOpportunities" class="transition-all">
                     <td class="px-4 py-3">
                       <div class="fw-bold text-dark">{{ opp.title }}</div>
-                      <div class="extra-small text-muted mt-1">
-                        <i class="bi bi-tag-fill me-1 text-primary opacity-50"></i>
-                        {{ opp.wasteType }}
+                      <!-- Schedule info display -->
+                      <div class="extra-small text-muted mt-1" *ngIf="opp.startDate || (opp.scheduleType && opp.scheduleType !== 'none')">
+                        <i class="bi bi-clock me-1 text-primary"></i>
+                        <span *ngIf="opp.startDate">{{ opp.startDate }}<span *ngIf="opp.startTime"> at {{ opp.startTime }}</span></span>
+                        <span *ngIf="opp.startDate && opp.scheduleType && opp.scheduleType !== 'none'"> • </span>
+                        <span *ngIf="opp.scheduleType && opp.scheduleType !== 'none'" class="text-success fw-semibold">
+                          <span *ngIf="opp.scheduleType === 'daily'">Daily Cleaning</span>
+                          <span *ngIf="opp.scheduleType === 'weekly-2'">Weekly (2x: {{ asArray(opp.scheduleDays).join(', ') }})</span>
+                          <span *ngIf="opp.scheduleType === 'weekly-3'">Weekly (3x: {{ asArray(opp.scheduleDays).join(', ') }})</span>
+                          <span *ngIf="opp.scheduleTime"> at {{ opp.scheduleTime }}</span>
+                        </span>
+                      </div>
+                      <div class="extra-small mt-1 d-flex flex-wrap gap-1">
+                        <ng-container *ngIf="opp.wasteType">
+                          <ng-container *ngIf="isArray(opp.wasteType); else singleType">
+                            <span *ngFor="let wt of asArray(opp.wasteType)"
+                              class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 py-0" style="font-size:0.68rem;">
+                              {{ wt }}
+                            </span>
+                          </ng-container>
+                          <ng-template #singleType>
+                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 py-0" style="font-size:0.68rem;">
+                              {{ opp.wasteType }}
+                            </span>
+                          </ng-template>
+                        </ng-container>
+                        <span *ngIf="!opp.wasteType" class="text-muted opacity-40">—</span>
                       </div>
                     </td>
                     <td>
@@ -614,11 +701,23 @@
             </div>
 
             <!-- Mobile Card View -->
-            <div class="d-md-none">
+            <div class="d-lg-none">
               <div *ngFor="let opp of filteredOpportunities" class="opportunity-mobile-card p-3 border-bottom">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                   <div class="flex-grow-1">
                     <div class="fw-bold text-dark mb-1">{{ opp.title }}</div>
+                    <!-- Schedule info display -->
+                    <div class="extra-small text-muted mb-2" *ngIf="opp.startDate || (opp.scheduleType && opp.scheduleType !== 'none')">
+                      <i class="bi bi-clock me-1 text-primary"></i>
+                      <span *ngIf="opp.startDate">{{ opp.startDate }}<span *ngIf="opp.startTime"> at {{ opp.startTime }}</span></span>
+                      <span *ngIf="opp.startDate && opp.scheduleType && opp.scheduleType !== 'none'"> • </span>
+                      <span *ngIf="opp.scheduleType && opp.scheduleType !== 'none'" class="text-success fw-semibold">
+                        <span *ngIf="opp.scheduleType === 'daily'">Daily</span>
+                        <span *ngIf="opp.scheduleType === 'weekly-2'">Weekly (2x: {{ asArray(opp.scheduleDays).join(', ') }})</span>
+                        <span *ngIf="opp.scheduleType === 'weekly-3'">Weekly (3x: {{ asArray(opp.scheduleDays).join(', ') }})</span>
+                        <span *ngIf="opp.scheduleTime"> at {{ opp.scheduleTime }}</span>
+                      </span>
+                    </div>
                     <div class="badge bg-info bg-opacity-10 text-info rounded-pill extra-small px-3">
                       {{ opp.applicantCount || 0 }} Applicants
                     </div>
@@ -708,11 +807,11 @@
                     </div>
                   </td>
                   <td>
-                    <span class="badge rounded-pill px-3 py-1 border"
-                      [class.bg-danger]="user.role === 'Admin'" [class.text-danger]="user.role === 'Admin'" [class.border-danger]="user.role === 'Admin'" [class.bg-opacity-10]="user.role === 'Admin'"
-                      [class.bg-primary]="user.role === 'NGO'" [class.text-primary]="user.role === 'NGO'" [class.border-primary]="user.role === 'NGO'" [class.bg-opacity-10]="user.role === 'NGO'"
-                      [class.bg-info]="user.role === 'Volunteer'" [class.text-info]="user.role === 'Volunteer'" [class.border-info]="user.role === 'Volunteer'" [class.bg-opacity-10]="user.role === 'Volunteer'"
-                      [class.bg-success]="user.role === 'Citizen'" [class.text-success]="user.role === 'Citizen'" [class.border-success]="user.role === 'Citizen'" [class.bg-opacity-10]="user.role === 'Citizen'">
+                    <span class="badge rounded-pill px-3 py-1 border bg-opacity-10"
+                      [class.bg-danger]="user.role === 'Admin'" [class.text-danger]="user.role === 'Admin'" [class.border-danger]="user.role === 'Admin'"
+                      [class.bg-primary]="user.role === 'NGO'" [class.text-primary]="user.role === 'NGO'" [class.border-primary]="user.role === 'NGO'"
+                      [class.bg-info]="user.role === 'Volunteer'" [class.text-info]="user.role === 'Volunteer'" [class.border-info]="user.role === 'Volunteer'"
+                      [class.bg-success]="user.role === 'Citizen'" [class.text-success]="user.role === 'Citizen'" [class.border-success]="user.role === 'Citizen'">
                       {{ user.role }}
                     </span>
                   </td>
@@ -741,211 +840,208 @@
         </div>
       </div>
 
-      <!-- Messaging System -->
-      <div *ngIf="activeMenu === 'messages'" class="messages-view animate-fade-in premium-card overflow-hidden h-100 mb-4">
-        <div class="row g-0 h-100" style="min-height: 600px;">
-          <!-- Conversations List -->
-          <div class="col-md-4 col-lg-3 border-end h-100 conversation-sidebar bg-white bg-opacity-75 glass">
-            <div class="p-3 border-bottom bg-transparent">
-              <h6 class="fw-bold mb-0">Conversations</h6>
-            </div>
-            <div class="conversation-list overflow-auto" style="height: 550px;">
-              <div *ngFor="let conv of conversations" 
-                (click)="selectConversation(conv)"
-                class="conversation-item p-3 border-bottom cursor-pointer transition-all mx-2 my-1 rounded-3"
-                [class.active]="selectedPartner?.partnerId === conv.partnerId"
-                [class.bg-primary]="selectedPartner?.partnerId === conv.partnerId"
-                [class.bg-opacity-10]="selectedPartner?.partnerId === conv.partnerId">
-                <div class="d-flex align-items-center gap-3">
-                  <div class="avatar-sm bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 40px; height: 40px; flex-shrink: 0;">
-                    {{ conv.partnerName.charAt(0).toUpperCase() }}
-                  </div>
-                  <div class="flex-grow-1 min-width-0">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <h6 class="mb-0 fw-bold text-truncate extra-small" [class.text-primary]="selectedPartner?.partnerId === conv.partnerId">{{ conv.partnerName }}</h6>
-                      <span class="extra-small text-muted">{{ conv.lastMessageTime | date:'shortTime' }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <p class="text-muted extra-small mb-0 text-truncate">{{ conv.lastMessage }}</p>
-                      <span *ngIf="conv.unreadCount > 0" class="badge bg-danger rounded-pill extra-small">{{ conv.unreadCount }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div *ngIf="conversations.length === 0" class="p-4 text-center text-muted small">
-                No active conversations.
-              </div>
-            </div>
-          </div>
-
-          <!-- Active Chat Window -->
-          <div class="col-md-8 col-lg-9 d-flex flex-column h-100 bg-white">
-            <div *ngIf="selectedPartner" class="h-100 d-flex flex-column">
-              <!-- Chat Header -->
-              <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white sticky-top">
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-sm bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px;">
-                    {{ selectedPartner.partnerName.charAt(0).toUpperCase() }}
-                  </div>
-                  <div>
-                    <h6 class="fw-bold mb-0 text-dark">{{ selectedPartner.partnerName }}</h6>
-                    <small class="text-primary extra-small fw-bold" *ngIf="selectedPartner.opportunityTitle">
-                      <i class="bi bi-briefcase me-1"></i>{{ selectedPartner.opportunityTitle }}
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Chat Messages -->
-              <div class="chat-messages-container flex-grow-1 p-4 overflow-auto bg-light bg-opacity-25" style="height: 440px;">
-                <div *ngIf="isChatLoading" class="text-center py-5">
-                  <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                </div>
-                
-                <div *ngFor="let msg of activeChatMessages" class="mb-3 d-flex" 
-                  [class.justify-content-end]="msg.senderId === currentUser.id"
-                  [class.justify-content-start]="msg.senderId !== currentUser.id">
-                  <div class="message-bubble p-3 rounded-4 shadow-sm" 
-                    [style.max-width]="'75%'"
-                    [class.bg-primary]="msg.senderId === currentUser.id"
-                    [class.text-white]="msg.senderId === currentUser.id"
-                    [class.bg-white]="msg.senderId !== currentUser.id"
-                    [class.text-dark]="msg.senderId !== currentUser.id">
-                    <p class="mb-1 small">{{ msg.content }}</p>
-                    <div class="text-end" style="font-size: 0.6rem; opacity: 0.7;">
-                      {{ msg.timestamp | date:'shortTime' }}
-                      <i *ngIf="msg.senderId === currentUser.id" class="bi ms-1" 
-                        [class.bi-check]="!msg.isRead" [class.bi-check-all]="msg.isRead"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Chat Input -->
-              <div class="p-3 border-top bg-white">
-                <form (ngSubmit)="sendAdminMessage()" class="d-flex gap-2">
-                  <input type="text" 
-                    [(ngModel)]="newMessageContent" 
-                    name="newMessage"
-                    class="form-control rounded-pill px-4 border-0 bg-light" 
-                    placeholder="Type your message..."
-                    autocomplete="off">
-                  <button type="submit" 
-                    [disabled]="!newMessageContent.trim()"
-                    class="btn btn-primary rounded-circle p-2 d-flex align-items-center justify-content-center" 
-                    style="width: 40px; height: 40px;">
-                    <i class="bi bi-send-fill text-white"></i>
-                  </button>
-                </form>
-              </div>
-            </div>
-
-            <!-- Empty State -->
-            <div *ngIf="!selectedPartner" class="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-muted p-5">
-              <div class="display-1 mb-4 opacity-25 text-primary"><i class="bi bi-chat-quote"></i></div>
-              <h5 class="text-dark">Select a conversation to start chatting</h5>
-              <p class="small">Messages from volunteers will appear here.</p>
-            </div>
-          </div>
-        </div>
+      <div *ngIf="activeMenu === 'messages'" class="messages-view animate-fade-in w-100 mb-0">
+        <app-chat [isEmbedded]="true"></app-chat>
       </div>
 
       <!-- Reports & Analytics -->
       <div *ngIf="activeMenu === 'reports'">
         <div class="row g-4">
-          <div class="col-lg-7">
-            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
-              <h5 class="fw-bold mb-4">Engagement Analytics</h5>
+          <!-- Left Column (Engagement & Export) -->
+          <div class="col-lg-7 d-flex flex-column gap-4">
+            
+            <!-- Engagement Analytics Card -->
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+              <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-graph-up me-2"></i>Engagement Analytics</h5>
+              
               <div class="row g-3 mb-4">
                 <div class="col-sm-6">
-                  <div class="p-3 bg-light rounded-4">
-                    <small class="text-muted d-block mb-1">Total Impact</small>
-                    <h4 class="fw-bold mb-0">{{ engagementAnalytics.totalImpact ?? 0 }}kg</h4>
-                    <small [class.text-success]="(engagementAnalytics.totalImpactChange ?? 0) >= 0" 
-                           [class.text-danger]="(engagementAnalytics.totalImpactChange ?? 0) < 0">
-                      {{ (engagementAnalytics.totalImpactChange ?? 0) >= 0 ? '+' : '' }}{{ engagementAnalytics.totalImpactChange ?? 0 }}% from last month
-                    </small>
+                  <div class="p-3 rounded-4 border bg-light bg-opacity-25 d-flex align-items-center justify-content-between hover-lift transition-all">
+                    <div>
+                      <small class="text-muted d-block mb-1 fw-bold text-uppercase ls-wide" style="font-size: 10px;">Total Impact</small>
+                      <h3 class="fw-bold mb-0 text-dark">{{ engagementAnalytics.totalImpact ?? 0 }}kg</h3>
+                      <small [class.text-success]="(engagementAnalytics.totalImpactChange ?? 0) >= 0" 
+                             [class.text-danger]="(engagementAnalytics.totalImpactChange ?? 0) < 0" class="fw-bold extra-small mt-1 d-block">
+                        <i class="bi" [class.bi-arrow-up-right]="(engagementAnalytics.totalImpactChange ?? 0) >= 0" [class.bi-arrow-down-right]="(engagementAnalytics.totalImpactChange ?? 0) < 0"></i>
+                        {{ (engagementAnalytics.totalImpactChange ?? 0) >= 0 ? '+' : '' }}{{ engagementAnalytics.totalImpactChange ?? 0 }}% from last month
+                      </small>
+                    </div>
+                    <div class="stat-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; flex-shrink: 0;">
+                      <i class="bi bi-recycle fs-5"></i>
+                    </div>
                   </div>
                 </div>
                 <div class="col-sm-6">
-                  <div class="p-3 bg-light rounded-4">
-                    <small class="text-muted d-block mb-1">Volunteer Response Rate</small>
-                    <h4 class="fw-bold mb-0">{{ engagementAnalytics.responseRate ?? 0 }}%</h4>
-                    <small [class.text-success]="(engagementAnalytics.responseRateChange ?? 0) >= 0"
-                           [class.text-danger]="(engagementAnalytics.responseRateChange ?? 0) < 0">
-                      {{ (engagementAnalytics.responseRateChange ?? 0) >= 0 ? '+' : '' }}{{ engagementAnalytics.responseRateChange ?? 0 }}% improvement
-                    </small>
+                  <div class="p-3 rounded-4 border bg-light bg-opacity-25 d-flex align-items-center justify-content-between hover-lift transition-all">
+                    <div>
+                      <small class="text-muted d-block mb-1 fw-bold text-uppercase ls-wide" style="font-size: 10px;">Response Rate</small>
+                      <h3 class="fw-bold mb-0 text-dark">{{ engagementAnalytics.responseRate ?? 0 }}%</h3>
+                      <small [class.text-success]="(engagementAnalytics.responseRateChange ?? 0) >= 0"
+                             [class.text-danger]="(engagementAnalytics.responseRateChange ?? 0) < 0" class="fw-bold extra-small mt-1 d-block">
+                        <i class="bi" [class.bi-arrow-up-right]="(engagementAnalytics.responseRateChange ?? 0) >= 0" [class.bi-arrow-down-right]="(engagementAnalytics.responseRateChange ?? 0) < 0"></i>
+                        {{ (engagementAnalytics.responseRateChange ?? 0) >= 0 ? '+' : '' }}{{ engagementAnalytics.responseRateChange ?? 0 }}% improvement
+                      </small>
+                    </div>
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; flex-shrink: 0;">
+                      <i class="bi bi-patch-check-fill fs-5"></i>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-12 mb-4">
-                  <div class="flex-grow-1" style="height: 200px; position: relative;">
-                    <canvas id="reportsEngagementChart"></canvas>
-                  </div>
+
+              <!-- Real-time Engagement Analytics Chart -->
+              <div class="chart-container mt-4" style="position: relative; height: 300px; width: 100%;">
+                <canvas id="reportsEngagementChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Repositioned & Redesigned Data Export Card -->
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+              <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-download me-2"></i>Data Export</h5>
+              <p class="text-muted extra-small mb-4">Generate and download comprehensive platform reports in CSV or PDF format for offline analysis.</p>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <button class="btn btn-light border p-3 text-start rounded-4 hover-lift transition-all w-100 h-100 bg-white"
+                    (click)="downloadUserReport()">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-blue-light text-blue rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                        <i class="bi bi-file-earmark-spreadsheet fs-5"></i>
+                      </div>
+                      <div>
+                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 13px;">User Activity (CSV)</h6>
+                        <small class="text-muted extra-small">CSV data format</small>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div class="col-md-6">
+                  <button class="btn btn-light border p-3 text-start rounded-4 hover-lift transition-all w-100 h-100 bg-white"
+                    (click)="downloadUserReportPDF()">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                        <i class="bi bi-file-earmark-pdf fs-5"></i>
+                      </div>
+                      <div>
+                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 13px;">User Activity (PDF)</h6>
+                        <small class="text-muted extra-small">PDF report format</small>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div class="col-md-6">
+                  <button class="btn btn-light border p-3 text-start rounded-4 hover-lift transition-all w-100 h-100 bg-white"
+                    (click)="downloadOpportunityReport()">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-green-light text-green rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                        <i class="bi bi-briefcase-fill fs-5"></i>
+                      </div>
+                      <div>
+                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 13px;">Opportunities</h6>
+                        <small class="text-muted extra-small">Posted listings & stats</small>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div class="col-md-6">
+                  <button class="btn btn-light border p-3 text-start rounded-4 hover-lift transition-all w-100 h-100 bg-white"
+                    (click)="downloadApplicationReport()">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-purple-light text-purple rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0; background: rgba(139,92,246,0.1); color: #7c3aed;">
+                        <i class="bi bi-file-earmark-check-fill fs-5"></i>
+                      </div>
+                      <div>
+                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 13px;">Applications</h6>
+                        <small class="text-muted extra-small">Volunteer participation</small>
+                      </div>
+                    </div>
+                  </button>
                 </div>
               </div>
-              <div class="flex-grow-1" style="height: 300px; position: relative;">
-                <canvas id="opsByTypeChart"></canvas>
+
+              <div class="alert bg-warning bg-opacity-10 border-warning border-opacity-25 mt-3 mb-0 p-2 d-flex align-items-center">
+                <i class="bi bi-info-circle-fill me-2 text-warning fs-6"></i>
+                <span style="font-size: 11px;" class="text-muted">Reports are generated in real-time from the database.</span>
               </div>
             </div>
 
           </div>
+
+          <!-- Right Column (Charts) -->
           <div class="col-lg-5">
+            <!-- Advanced Geospatial & Category Analytics -->
             <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
-              <h5 class="fw-bold mb-4">Data Export</h5>
-              <p class="text-muted small mb-4">Generate and download comprehensive platform data in CSV format for
-                offline analysis.</p>
-
-              <div class="d-grid gap-3">
-                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all"
-                  (click)="downloadUserReport()">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-blue-light text-blue rounded-circle p-3 me-3">
-                      <i class="bi bi-people-fill fs-4"></i>
-                    </div>
-                    <div>
-                      <h6 class="fw-bold mb-1">User Activity Report</h6>
-                      <small class="text-muted">Status, roles, and engagement metrics</small>
-                    </div>
-                  </div>
-                </button>
-
-                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all"
-                  (click)="downloadOpportunityReport()">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-green-light text-green rounded-circle p-3 me-3">
-                      <i class="bi bi-briefcase-fill fs-4"></i>
-                    </div>
-                    <div>
-                      <h6 class="fw-bold mb-1">Opportunity Performance</h6>
-                      <small class="text-muted">Posted listings and participation data</small>
-                    </div>
-                  </div>
-                </button>
-
-                <button class="btn btn-light border p-4 text-start rounded-4 hover-lift transition-all"
-                  (click)="downloadApplicationReport()">
-                  <div class="d-flex align-items-center">
-                    <div class="bg-purple-light text-purple rounded-circle p-3 me-3" style="background: rgba(139,92,246,0.1); color: #7c3aed;">
-                      <i class="bi bi-file-earmark-check-fill fs-4"></i>
-                    </div>
-                    <div>
-                      <h6 class="fw-bold mb-1">Application Report</h6>
-                      <small class="text-muted">Total, accepted & rejected applications</small>
-                    </div>
-                  </div>
-                </button>
-
-                <div class="alert bg-warning bg-opacity-10 border-warning border-opacity-25 mt-3">
-                  <i class="bi bi-info-circle-fill me-2 text-warning"></i>
-                  <small>Reports are generated in real-time from the current database state.</small>
+              <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-pie-chart-fill me-2"></i>Waste by Location & Category</h5>
+              <p class="text-muted extra-small mb-4">Real-time geospatial distribution of collections and diverted waste types.</p>
+              
+              <!-- Location Distribution Doughnut Chart -->
+              <div class="mb-3">
+                <small class="fw-bold text-uppercase ls-wide text-muted extra-small d-block mb-2">Municipal Distribution (kg)</small>
+                <div class="chart-container" style="position: relative; height: 210px; width: 100%;">
+                  <canvas id="locationDistributionChart"></canvas>
+                </div>
+              </div>
+              
+              <!-- Waste Categories Bar Chart -->
+              <div class="mt-4 pt-4 border-top">
+                <small class="fw-bold text-uppercase ls-wide text-muted extra-small d-block mb-2">Category Performance (kg)</small>
+                <div class="chart-container" style="position: relative; height: 210px; width: 100%;">
+                  <canvas id="wasteCategoriesChart"></canvas>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <!-- FEEDBACK SECTION -->
+      <div *ngIf="activeMenu === 'feedback'" class="premium-card animate-fade-in overflow-hidden">
+        <div class="card-header bg-transparent border-bottom p-4">
+          <h4 class="fw-bold mb-1"><i class="bi bi-robot me-2 text-primary"></i>AI Sentiment Analysis</h4>
+          <p class="text-muted extra-small mb-0">Automatic detection of negative feedback and complaints.</p>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 custom-table">
+              <thead class="table-light text-muted small text-uppercase">
+                <tr>
+                  <th class="ps-4">User</th>
+                  <th>Feedback Content</th>
+                  <th>Sentiment</th>
+                  <th class="pe-4 text-end">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let fb of feedbacks" [class.bg-danger]="fb.isNegative" [class.bg-opacity-10]="fb.isNegative">
+                  <td class="ps-4">
+                    <div class="fw-bold">{{ fb.userName }}</div>
+                    <div class="extra-small text-muted">{{ fb.role }}</div>
+                  </td>
+                  <td class="text-wrap" style="max-width: 300px;">
+                    <div class="small">{{ fb.content }}</div>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill px-3 py-2"
+                      [class.bg-danger]="fb.isNegative" [class.text-white]="fb.isNegative"
+                      [class.bg-success]="!fb.isNegative" [class.bg-opacity-25]="!fb.isNegative" [class.text-success]="!fb.isNegative">
+                      {{ fb.isNegative ? 'Negative (' + fb.sentimentScore + ')' : 'Positive (' + fb.sentimentScore + ')' }}
+                    </span>
+                  </td>
+                  <td class="pe-4 text-end text-muted small">
+                    {{ fb.createdAt | date:'short' }}
+                  </td>
+                </tr>
+                <tr *ngIf="feedbacks.length === 0">
+                  <td colspan="4" class="text-center py-5 text-muted">No feedback collected yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 

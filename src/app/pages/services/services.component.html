@@ -4,14 +4,14 @@
     <div class="container py-lg-5">
       <div class="row justify-content-center">
         <div class="col-lg-8 animate-fade-in">
-          <span class="badge bg-success bg-opacity-10 text-success mb-3 px-3 py-2 rounded-pill fw-bold">OUR CAPABILITIES</span>
-          <h1 class="display-3 fw-bold mb-4 text-gradient">Sustainable Services for a <span class="text-dark">Greener Future</span></h1>
+          <span class="badge bg-success bg-opacity-10 text-success mb-3 px-3 py-2 rounded-pill fw-bold">{{ 'SERVICES.BADGE' | translate }}</span>
+          <h1 class="display-3 fw-bold mb-4 text-gradient">{{ 'SERVICES.TITLE' | translate }}<span class="text-dark">{{ 'SERVICES.TITLE_HIGHLIGHT' | translate }}</span></h1>
           <p class="lead text-secondary mx-auto mb-5" style="max-width: 700px;">
-            WasteZero combines advanced logistics, community participation, and data analytics to provide a holistic ecosystem for efficient waste management and environmental stewardship.
+            {{ 'SERVICES.LEAD' | translate }}
           </p>
           <div class="d-flex justify-content-center gap-3">
-            <a routerLink="/register" class="btn btn-success btn-lg px-5 rounded-pill shadow-sm fw-bold">Get Started</a>
-            <a href="#solutions" class="btn btn-outline-dark btn-lg px-5 rounded-pill fw-bold">View Solutions</a>
+            <a routerLink="/register" class="btn btn-success btn-lg px-5 rounded-pill shadow-sm fw-bold">{{ 'SERVICES.GET_STARTED' | translate }}</a>
+            <a href="#solutions" class="btn btn-outline-dark btn-lg px-5 rounded-pill fw-bold">{{ 'SERVICES.VIEW_SOLUTIONS' | translate }}</a>
           </div>
         </div>
       </div>
@@ -22,8 +22,8 @@
   <section id="solutions" class="py-5 bg-light-soft">
     <div class="container py-lg-5">
       <div class="text-center mb-5">
-        <h2 class="fw-bold display-5 mb-3">Enterprise-Grade Waste Solutions</h2>
-        <p class="text-secondary mx-auto mb-4" style="max-width: 600px;">We Provide specialized tools and services for every member of the circular economy ecosystem.</p>
+        <h2 class="fw-bold display-5 mb-3">{{ 'SERVICES.GRID_TITLE' | translate }}</h2>
+        <p class="text-secondary mx-auto mb-4" style="max-width: 600px;">{{ 'SERVICES.GRID_DESC' | translate }}</p>
       </div>
 
       <div class="row g-4">
@@ -33,24 +33,24 @@
               <div class="icon-box shadow-sm" [style.background-color]="service.color + '20'" [style.color]="service.color">
                 <i class="bi" [ngClass]="service.icon"></i>
               </div>
-              <span class="badge rounded-pill bg-light text-dark px-3 mt-1 border">Active Service</span>
+              <span class="badge rounded-pill bg-light text-dark px-3 mt-1 border">{{ 'SERVICES.ACTIVE_SERVICE' | translate }}</span>
             </div>
             
-            <h3 class="fw-bold mb-3">{{ service.title }}</h3>
-            <p class="text-secondary mb-4">{{ service.description }}</p>
+            <h3 class="fw-bold mb-3">{{ service.title | translate }}</h3>
+            <p class="text-secondary mb-4">{{ service.description | translate }}</p>
             
             <div class="service-features mb-4">
               <div class="row g-2">
                 <div class="col-sm-6 d-flex align-items-center mb-2" *ngFor="let detail of service.details">
                   <i class="bi bi-patch-check-fill text-success me-3"></i>
-                  <span class="small fw-semibold text-muted">{{ detail }}</span>
+                  <span class="small fw-semibold text-muted">{{ detail | translate }}</span>
                 </div>
               </div>
             </div>
             
             <div class="mt-auto pt-3 border-top border-light">
               <button class="btn btn-link text-success fw-bold p-0 text-decoration-none">
-                Explore Documentation <i class="bi bi-arrow-right ms-2"></i>
+                {{ 'SERVICES.EXPLORE_DOCS' | translate }} <i class="bi bi-arrow-right ms-2"></i>
               </button>
             </div>
           </div>
@@ -64,15 +64,15 @@
     <div class="container py-lg-5">
       <div class="row align-items-center g-5">
         <div class="col-lg-5">
-          <span class="badge bg-success bg-opacity-10 text-success mb-3 px-3 py-2 rounded-pill fw-bold">EASY PROCESS</span>
-          <h2 class="fw-bold display-5 mb-4">A simple journey for <span class="text-success">real impact.</span></h2>
-          <p class="text-secondary mb-4">Everything we do is designed to be frictionless for the end-user while maintaining high operational efficiency in the background.</p>
+          <span class="badge bg-success bg-opacity-10 text-success mb-3 px-3 py-2 rounded-pill fw-bold">{{ 'SERVICES.PROCESS_BADGE' | translate }}</span>
+          <h2 class="fw-bold display-5 mb-4">{{ 'SERVICES.PROCESS_TITLE' | translate }}<span class="text-success">{{ 'SERVICES.PROCESS_TITLE_HIGHLIGHT' | translate }}</span></h2>
+          <p class="text-secondary mb-4">{{ 'SERVICES.PROCESS_DESC' | translate }}</p>
           <ul class="list-unstyled mt-5">
             <li class="mb-4 d-flex align-items-start" *ngFor="let step of howItWorks; let i = index">
               <div class="step-number me-4 flex-shrink-0">{{ step.step }}</div>
               <div>
-                <h5 class="fw-bold mb-1">{{ step.title }}</h5>
-                <p class="text-secondary mb-0 small">{{ step.description }}</p>
+                <h5 class="fw-bold mb-1">{{ step.title | translate }}</h5>
+                <p class="text-secondary mb-0 small">{{ step.description | translate }}</p>
               </div>
             </li>
           </ul>
@@ -83,9 +83,9 @@
             <div class="position-absolute bottom-0 end-0 p-4 mb-4 me-4 bg-white rounded-4 shadow-lg animate-slide-up delay-2 d-none d-md-block" style="max-width: 280px;">
               <div class="d-flex align-items-center mb-3">
                 <div class="bg-success p-2 rounded-circle me-3"><i class="bi bi-lightning-charge-fill text-white"></i></div>
-                <h6 class="fw-bold mb-0">99.9% Efficiency</h6>
+                <h6 class="fw-bold mb-0">{{ 'SERVICES.DECORATIVE_EFFICIENCY' | translate }}</h6>
               </div>
-              <p class="text-muted extra-small mb-0">Our AI-driven routing ensures that pickups are never late and resources are never wasted.</p>
+              <p class="text-muted extra-small mb-0">{{ 'SERVICES.DECORATIVE_DESC' | translate }}</p>
             </div>
           </div>
         </div>
@@ -97,8 +97,8 @@
   <section class="py-5 bg-light-soft">
     <div class="container py-lg-5">
       <div class="text-center mb-5">
-        <h2 class="fw-bold display-5 mb-3">Frequently Asked Questions</h2>
-        <p class="text-secondary mx-auto mb-5" style="max-width: 600px;">Getting started with WasteZero is easy, but here are some things you might want to know.</p>
+        <h2 class="fw-bold display-5 mb-3">{{ 'SERVICES.FAQ_TITLE' | translate }}</h2>
+        <p class="text-secondary mx-auto mb-5" style="max-width: 600px;">{{ 'SERVICES.FAQ_DESC' | translate }}</p>
       </div>
 
       <div class="row justify-content-center">
@@ -107,36 +107,36 @@
             <div class="accordion-item border-bottom">
               <h2 class="accordion-header">
                 <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                  What types of waste do you handle?
+                  {{ 'SERVICES.FAQ_Q1' | translate }}
                 </button>
               </h2>
               <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                 <div class="accordion-body p-4 text-secondary">
-                  We handle recyclable materials (plastics, paper, glass, metals), organic/compostable waste, and even certain hazardous household items like batteries and e-waste. Specific guidelines are available when you schedule a pickup.
+                  {{ 'SERVICES.FAQ_A1' | translate }}
                 </div>
               </div>
             </div>
             <div class="accordion-item border-bottom">
               <h2 class="accordion-header">
                 <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                  Is there a fee for waste collection?
+                  {{ 'SERVICES.FAQ_Q2' | translate }}
                 </button>
               </h2>
               <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                 <div class="accordion-body p-4 text-secondary">
-                  Standard recycling pickups for citizens are currently free, supported by our partnerships with sustainable organizations. Premium/commercial bulk pickups may incur a small maintenance fee.
+                  {{ 'SERVICES.FAQ_A2' | translate }}
                 </div>
               </div>
             </div>
             <div class="accordion-item border-bottom">
               <h2 class="accordion-header">
                 <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
-                  How are volunteers verified?
+                  {{ 'SERVICES.FAQ_Q3' | translate }}
                 </button>
               </h2>
               <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                 <div class="accordion-body p-4 text-secondary">
-                  Every volunteer undergoes a brief background check and an orientation session before being allowed to handle pickups or participate in community drives. We prioritize safety and professionalism.
+                  {{ 'SERVICES.FAQ_A3' | translate }}
                 </div>
               </div>
             </div>
@@ -151,11 +151,11 @@
     <div class="container py-lg-5 text-center">
       <div class="row justify-content-center">
         <div class="col-lg-8">
-          <h2 class="fw-bold display-5 mb-4">Ready to Optimize Your Waste?</h2>
-          <p class="mb-5 opacity-75 lead px-md-5">Join our platform today and start experiencing the most advanced waste management tools in the industry.</p>
+          <h2 class="fw-bold display-5 mb-4">{{ 'SERVICES.CTA_TITLE' | translate }}</h2>
+          <p class="mb-5 opacity-75 lead px-md-5">{{ 'SERVICES.CTA_DESC' | translate }}</p>
           <div class="d-flex flex-wrap justify-content-center gap-3">
-            <a routerLink="/register" class="btn btn-success btn-lg px-5 rounded-pill shadow fw-bold">Sign Up Free</a>
-            <a routerLink="/contact" class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold">Request a Demo</a>
+            <a routerLink="/register" class="btn btn-success btn-lg px-5 rounded-pill shadow fw-bold">{{ 'SERVICES.CTA_BUTTON_SIGNUP' | translate }}</a>
+            <a routerLink="/contact" class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold">{{ 'SERVICES.CTA_BUTTON_DEMO' | translate }}</a>
           </div>
         </div>
       </div>

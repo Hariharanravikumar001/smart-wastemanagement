@@ -4,6 +4,7 @@ export interface Application {
     opportunity_id: any;
     volunteer_id: any;
     status: 'pending' | 'accepted' | 'rejected';
+    coverLetter?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

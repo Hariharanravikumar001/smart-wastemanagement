@@ -155,6 +155,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
           profileImage: user.profileImage,
           skills: user.skills,
           bio: user.bio,
+          rewardPoints: user.rewardPoints,
+          badges: user.badges,
           created_at: user.created_at
         });
       }
@@ -250,9 +252,12 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
 
     if (name) user.name = name;
     if (location !== undefined) user.location = location;
+    if (req.body.contactNumber !== undefined) user.contactNumber = req.body.contactNumber;
     if (profileImage !== undefined) user.profileImage = profileImage;
     if (skills !== undefined) user.skills = skills;
     if (req.body.bio !== undefined) user.bio = req.body.bio;
+    if (req.body.rewardPoints !== undefined) user.rewardPoints = req.body.rewardPoints;
+    if (req.body.badges !== undefined) user.badges = req.body.badges;
 
     await user.save();
     res.json({ message: 'Profile updated successfully', user: {
@@ -261,9 +266,12 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       email: user.email,
       role: user.role,
       location: user.location,
+      contactNumber: user.contactNumber,
       profileImage: user.profileImage,
       skills: user.skills,
       bio: user.bio,
+      rewardPoints: user.rewardPoints,
+      badges: user.badges,
       created_at: user.created_at
     }});
   } catch (err: any) {
@@ -613,6 +621,8 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
           profileImage: user.profileImage,
           skills: user.skills,
           bio: user.bio,
+          rewardPoints: user.rewardPoints,
+          badges: user.badges,
           created_at: user.created_at
         });
       }

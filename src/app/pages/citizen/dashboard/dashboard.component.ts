@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable, of, map, timer, switchMap, BehaviorSubject, combineLatest, catchError, shareReplay } from 'rxjs';
@@ -8,6 +8,7 @@ import { WasteRequestService } from '../../../services/waste-request.service';
 import { RouterModule } from '@angular/router';
 import { ChatService } from '../../../services/chat.service';
 import { SearchService } from '../../../services/search.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-citizen-dashboard',
@@ -16,7 +17,8 @@ import { SearchService } from '../../../services/search.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
+  isBrowser = typeof window !== 'undefined';
   @Output() setTab = new EventEmitter<string>();
   currentUser: User | null = null;
   
@@ -30,11 +32,20 @@ export class DashboardComponent implements OnInit {
   recentConversations$: Observable<any[]> = of([]);
   private refreshSubject = new BehaviorSubject<void>(undefined);
 
+
+
+  liveLocation: { lat: number, lng: number } | null = null;
+  private trackingMap: any = null;
+  private citizenMarker: any = null;
+  private volunteerMarker: any = null;
+  private locationSub: any = null;
+
   constructor(
     private authService: AuthService,
     private wasteService: WasteRequestService,
     private chatService: ChatService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -78,6 +89,28 @@ export class DashboardComponent implements OnInit {
         this.recentConversations$ = this.chatService.getConversations().pipe(
           map(convs => convs.slice(0, 3))
         );
+      }
+    });
+
+    this.locationSub = this.chatService.volunteerLocation$.subscribe(data => {
+      if (data) {
+        this.activeRequests$.subscribe(actives => {
+          if (actives.length > 0) {
+            const activeReq = actives[0];
+            if (activeReq.volunteerId === data.volunteerId) {
+              this.liveLocation = { lat: data.lat, lng: data.lng };
+              this.updateTrackingMap(activeReq.location, data.lat, data.lng);
+            }
+          }
+        });
+      } else {
+        this.liveLocation = null;
+        if (this.trackingMap) {
+          this.trackingMap.remove();
+          this.trackingMap = null;
+          this.citizenMarker = null;
+          this.volunteerMarker = null;
+        }
       }
     });
   }
@@ -138,5 +171,97 @@ export class DashboardComponent implements OnInit {
           return cat.join(', ');
       }
       return cat;
+  }
+
+
+
+  // Feedback State
+  feedbackContent: string = '';
+  isSubmittingFeedback: boolean = false;
+  feedbackSuccess: boolean = false;
+  feedbackError: string | null = null;
+
+  submitFeedback() {
+    if (!this.feedbackContent.trim()) return;
+    this.isSubmittingFeedback = true;
+    this.feedbackError = null;
+    this.feedbackSuccess = false;
+    
+    this.http.post('/api/feedback', { content: this.feedbackContent }).subscribe({
+      next: () => {
+        this.isSubmittingFeedback = false;
+        this.feedbackSuccess = true;
+        this.feedbackContent = '';
+        setTimeout(() => this.feedbackSuccess = false, 5000);
+      },
+      error: (err) => {
+        this.isSubmittingFeedback = false;
+        this.feedbackError = 'Failed to submit feedback. Please try again later.';
+      }
+    });
+  }
+
+  updateTrackingMap(locationString: string, volunteerLat: number, volunteerLng: number) {
+    if (!this.isBrowser) return;
+    setTimeout(() => {
+      const mapContainer = document.getElementById('trackingMap');
+      if (!mapContainer) return;
+
+      import('leaflet').then(L => {
+        const centerLat = 20.5937;
+        const centerLng = 78.9629;
+        const offsetLat = (locationString.length % 10) * 0.5 - 2.5;
+        const offsetLng = (locationString.length % 8) * 0.5 - 2.0;
+        const citizenLat = centerLat + offsetLat;
+        const citizenLng = centerLng + offsetLng;
+
+        if (!this.trackingMap) {
+          this.trackingMap = L.map('trackingMap').setView([citizenLat, citizenLng], 12);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(this.trackingMap);
+
+          const citizenIcon = L.divIcon({
+            html: '<div style="font-size: 24px;">🏡</div>',
+            className: 'citizen-div-icon',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+          });
+
+          this.citizenMarker = L.marker([citizenLat, citizenLng], { icon: citizenIcon }).addTo(this.trackingMap)
+            .bindPopup('<b>Your Home</b>').openPopup();
+
+          const truckIcon = L.divIcon({
+            html: '<div style="font-size: 28px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5)); transform: scaleX(-1); display: inline-block;">🚛</div>',
+            className: 'truck-div-icon',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+          });
+
+          this.volunteerMarker = L.marker([volunteerLat, volunteerLng], { icon: truckIcon }).addTo(this.trackingMap)
+            .bindPopup('<b>Volunteer is on the way</b>');
+        } else {
+          this.volunteerMarker.setLatLng([volunteerLat, volunteerLng]);
+        }
+
+        const bounds = L.latLngBounds([
+          [citizenLat, citizenLng],
+          [volunteerLat, volunteerLng]
+        ]);
+        this.trackingMap.fitBounds(bounds, { padding: [30, 30] });
+      });
+    }, 100);
+  }
+
+  ngOnDestroy() {
+    if (this.locationSub) {
+      this.locationSub.unsubscribe();
+    }
+    if (this.trackingMap) {
+      this.trackingMap.remove();
+      this.trackingMap = null;
+      this.citizenMarker = null;
+      this.volunteerMarker = null;
+    }
   }
 }
