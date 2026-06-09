@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://smart-wastemanagement-913z.onrender.com/api/:path*"
+      "destination": "https://smart-wastemanagement-backend.onrender.com/api/:path*"
     },
     {
       "source": "/((?!assets|favicon\\.ico|.*\\.js|.*\\.css|.*\\.png|.*\\.jpg|.*\\.svg|.*\\.ico|.*\\.woff|.*\\.woff2|.*\\.ttf|.*\\.eot|.*\\.map).*)",

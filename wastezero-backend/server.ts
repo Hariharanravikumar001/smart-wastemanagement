@@ -52,8 +52,32 @@ const port = process.env['PORT'] || 4000;
 initSocket(httpServer);
 
 // Middleware
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://127.0.0.1:4200',
+  'https://smart-wastemanagement-ten.vercel.app'
+];
+
+if (process.env['ALLOWED_ORIGINS']) {
+  const envOrigins = process.env['ALLOWED_ORIGINS'].split(',').map(o => o.trim());
+  allowedOrigins.push(...envOrigins);
+}
+
 app.use(cors({
-  origin: ['http://localhost:4200', 'http://127.0.0.1:4200', 'https://smart-wastemanagement-ten.vercel.app'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin matches allowed origins or is a vercel.app subdomain
+    const isAllowed = allowedOrigins.includes(origin) || origin.endsWith('.vercel.app');
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️ Blocked by CORS: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

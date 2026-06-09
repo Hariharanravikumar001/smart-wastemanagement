@@ -6,6 +6,7 @@ import { Message } from '../models/message.model';
 import { AuthService } from './auth.service';
 import { NotificationService } from './notification.service';
 import { io, Socket } from 'socket.io-client';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -83,9 +84,7 @@ export class ChatService {
     const user = this.authService.currentUserValue;
     if (!user) return;
 
-    const socketUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? ''
-      : 'https://smart-wastemanagement-913z.onrender.com';
+    const socketUrl = environment.socketUrl;
     this.socket = io(socketUrl, { path: '/socket.io' });
 
     this.socket.on('connect', () => {
