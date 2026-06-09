@@ -81,7 +81,16 @@ export class PickupRequestComponent implements OnInit {
       next: () => {
         this.success = true;
         this.submitting = false;
-        setTimeout(() => this.router.navigate(['/dashboard']), 2000);
+        setTimeout(() => {
+          const role = this.currentUser?.role?.toLowerCase() || '';
+          if (role === 'citizen' || role === 'user') {
+            this.router.navigate(['/citizen/dashboard']);
+          } else if (role === 'volunteer') {
+            this.router.navigate(['/volunteer/dashboard']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
+        }, 2000);
       },
       error: (err) => {
         console.error('Pickup submission error:', err);

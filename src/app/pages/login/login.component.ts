@@ -15,6 +15,7 @@ import { environment } from '../../../environments/environment';
 export class LoginComponent implements AfterViewInit {
   email = '';
   password = '';
+  rememberMe = false;
   errorMessage = '';
   isLoading = false;
 
@@ -95,7 +96,7 @@ export class LoginComponent implements AfterViewInit {
     this.errorMessage = '';
     if (this.email && this.password && !this.isLoading) {
       this.isLoading = true;
-      this.authService.login({ email: this.email, password: this.password }).subscribe({
+      this.authService.login({ email: this.email, password: this.password }, this.rememberMe).subscribe({
         next: (response) => {
            this.isLoading = false;
            console.log('Login successful, navigating based on role:', response.role);

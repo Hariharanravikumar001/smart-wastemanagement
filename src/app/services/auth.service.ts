@@ -45,8 +45,9 @@ export class AuthService {
     private http: HttpClient
   ) {
     if (isPlatformBrowser(this.platformId)) {
-      const savedUser = localStorage.getItem('wastezero_user');
-      const token = localStorage.getItem('wastezero_token');
+      // Check both persistent and session storage
+      const savedUser = localStorage.getItem('wastezero_user') || sessionStorage.getItem('wastezero_user');
+      const token = localStorage.getItem('wastezero_token') || sessionStorage.getItem('wastezero_token');
       
       if (savedUser && token) {
         // Simple JWT expiration check
@@ -75,14 +76,14 @@ export class AuthService {
   }
 
   // Uses actual backend API
-  login(userCredentials: any): Observable<any> {
+  login(userCredentials: any, rememberMe = true): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, userCredentials)
       .pipe(
         tap(response => {
            if (response && response.token) {
              const user: User = { 
                ...response, 
-               id: response.id || response._id || response.token, // Fallback to token only if absolutely necessary
+               id: response.id || response._id || response.token,
                role: this.mapRole(response.role),
                email: response.email || userCredentials.email,
                username: response.username || response.name,
@@ -90,8 +91,9 @@ export class AuthService {
              }; 
 
              if (isPlatformBrowser(this.platformId)) {
-                localStorage.setItem('wastezero_user', JSON.stringify(user));
-                localStorage.setItem('wastezero_token', response.token);
+               const storage = rememberMe ? localStorage : sessionStorage;
+               storage.setItem('wastezero_user', JSON.stringify(user));
+               storage.setItem('wastezero_token', response.token);
              }
              this.currentUserSubject.next(user);
            }
@@ -131,6 +133,8 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('wastezero_user');
       localStorage.removeItem('wastezero_token');
+      sessionStorage.removeItem('wastezero_user');
+      sessionStorage.removeItem('wastezero_token');
     }
     this.currentUserSubject.next(null);
   }

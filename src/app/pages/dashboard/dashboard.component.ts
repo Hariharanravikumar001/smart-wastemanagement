@@ -7,6 +7,7 @@ import { ChatService } from '../../services/chat.service';
 import { Message } from '../../models/message.model';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../services/theme.service';
+import { SearchService } from '../../services/search.service';
 import { CitizenDashboardComponent } from './components/citizen-dashboard/citizen-dashboard.component';
 import { VolunteerDashboardComponent } from './components/volunteer-dashboard/volunteer-dashboard.component';
 import { MessagesComponent } from '../messages/messages.component';
@@ -42,6 +43,11 @@ export class DashboardComponent implements OnInit {
   isSending = false;
   adminId: string | null = null;
 
+  // Search
+  searchQuery = '';
+  comingSoonMsg = '';
+  private comingSoonTimer: any;
+
   // Messages
   chatMessage = '';
   recentMessages$: Observable<Message[]> = of([]);
@@ -50,6 +56,7 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     private chatService: ChatService,
     private themeService: ThemeService,
+    private searchService: SearchService,
     private router: Router
   ) {}
 
@@ -58,6 +65,16 @@ export class DashboardComponent implements OnInit {
     if (tab !== 'profile') {
       this.isEditMode = false;
     }
+  }
+
+  onSearchInput() {
+    this.searchService.setSearchTerm(this.searchQuery);
+  }
+
+  showComingSoon(feature: string) {
+    clearTimeout(this.comingSoonTimer);
+    this.comingSoonMsg = feature;
+    this.comingSoonTimer = setTimeout(() => this.comingSoonMsg = '', 3000);
   }
 
   toggleSidebar() {

@@ -92,24 +92,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.locationSub = this.chatService.volunteerLocation$.subscribe(data => {
-      if (data) {
-        this.activeRequests$.subscribe(actives => {
-          if (actives.length > 0) {
-            const activeReq = actives[0];
-            if (activeReq.volunteerId === data.volunteerId) {
-              this.liveLocation = { lat: data.lat, lng: data.lng };
-              this.updateTrackingMap(activeReq.location, data.lat, data.lng);
-            }
+    this.locationSub = this.chatService.volunteerLocation$.pipe(
+      switchMap(data => {
+        if (!data) {
+          this.liveLocation = null;
+          if (this.trackingMap) {
+            this.trackingMap.remove();
+            this.trackingMap = null;
+            this.citizenMarker = null;
+            this.volunteerMarker = null;
           }
-        });
-      } else {
-        this.liveLocation = null;
-        if (this.trackingMap) {
-          this.trackingMap.remove();
-          this.trackingMap = null;
-          this.citizenMarker = null;
-          this.volunteerMarker = null;
+          return of(null);
+        }
+        return this.activeRequests$.pipe(
+          map(actives => ({ data, actives }))
+        );
+      })
+    ).subscribe(result => {
+      if (!result) return;
+      const { data, actives } = result;
+      if (actives.length > 0) {
+        const activeReq = actives[0];
+        if (activeReq.volunteerId === data.volunteerId) {
+          this.liveLocation = { lat: data.lat, lng: data.lng };
+          this.updateTrackingMap(activeReq.location, data.lat, data.lng);
         }
       }
     });

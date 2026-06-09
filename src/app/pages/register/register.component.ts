@@ -78,6 +78,12 @@ export class RegisterComponent {
     return this.password.length >= 8 && (this.passwordStrength === 'strong' || this.passwordStrength === 'very-strong' || this.passwordStrength === 'fair');
   }
 
+  isPhoneValid(): boolean {
+    if (!this.contactNumber) return false;
+    const digits = this.contactNumber.replace(/\D/g, '');
+    return digits.length >= 10;
+  }
+
   sendOtp() {
     if (!this.contactNumber) return;
     // Generate random 6-digit OTP
@@ -119,7 +125,7 @@ export class RegisterComponent {
       return;
     }
 
-    if (this.name && this.username && this.email && this.password && this.role && this.location && !this.passwordMismatch) {
+    if (this.name && this.username && this.email && this.password && this.role && this.location && this.contactNumber && !this.passwordMismatch) {
       this.authService.register(
         this.name, 
         this.username, 

@@ -81,13 +81,13 @@
         <i class="bi bi-person"></i>
         <span *ngIf="!sidebarCollapsed">My Profile</span>
       </button>
-      <button class="db-nav-item">
+      <button class="db-nav-item" (click)="showComingSoon('Settings')">
         <i class="bi bi-gear"></i>
         <span *ngIf="!sidebarCollapsed">Settings</span>
       </button>
-      <button class="db-nav-item">
+      <button class="db-nav-item" (click)="showComingSoon('Help & Support')">
         <i class="bi bi-question-circle"></i>
-        <span *ngIf="!sidebarCollapsed">Help & Support</span>
+        <span *ngIf="!sidebarCollapsed">Help &amp; Support</span>
       </button>
 
     </nav>
@@ -114,7 +114,12 @@
     <header class="db-topbar">
       <div class="db-search">
         <i class="bi bi-search db-search-icon"></i>
-        <input type="text" placeholder="Search pickups, opportunities..." class="db-search-input">
+        <input type="text" placeholder="Search pickups, opportunities..." class="db-search-input"
+          [(ngModel)]="searchQuery" (input)="onSearchInput()">
+      </div>
+      <!-- Coming Soon Toast -->
+      <div *ngIf="comingSoonMsg" class="db-coming-soon-toast">
+        <i class="bi bi-tools me-2"></i>{{ comingSoonMsg }} — Coming Soon!
       </div>
     </header>
 

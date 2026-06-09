@@ -738,3 +738,17 @@
 .dark-mode ::-webkit-scrollbar-thumb:hover {
   background: rgba(100, 116, 139, 0.8);
 }
+
+/* Coming Soon Toast */
+.db-coming-soon-toast {
+  margin-left: 16px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: white;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
