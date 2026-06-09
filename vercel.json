@@ -12,7 +12,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://smart-wastemanagement.onrender.com/api/$1"
+      "dest": "https://smart-wastemanagement-913z.onrender.com/api/$1"
     },
     {
       "src": "/(.*)",

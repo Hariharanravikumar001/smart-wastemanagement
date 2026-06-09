@@ -1,0 +1,59 @@
+=== WasteZero Smart Browser Test (Round 2) ===
+Started: 2026-05-27T06:29:25.120Z
+  Registered admin: User registered successfully
+  Registered citizen: User registered successfully
+  Registered volunteer: User registered successfully
+
+
+--- LANDING PAGE ---
+  H1: Smart Waste Pickup & Recycling
+✅ PASS: Landing page loads with hero
+✅ PASS: Navbar has login and register links
+
+--- AUTHENTICATION ---
+❌ FAIL: Citizen login redirects to /citizen — page.fill: Timeout 30000ms exceeded.
+  Links found: /forgot-password|/register
+❌ FAIL: Citizen sidebar has dashboard, pickup, history, messages — Missing nav items: /forgot-password|/register
+❌ FAIL: Citizen profile shows in sidebar — User profile block not visible in sidebar
+❌ FAIL: Dark mode toggle works — Dark mode toggle not found
+
+--- CITIZEN FEATURES ---
+  Stat cards found: 1
+✅ PASS: Citizen dashboard shows stats cards
+✅ PASS: Citizen can navigate to pickup-request
+  Fields: email|password|rememberMe
+❌ FAIL: Pickup request form has all required fields — Missing description or location field
+❌ FAIL: Citizen can submit pickup request — elementHandle.click: Timeout 30000ms exceeded.
+  History content: Welcome BackSign in to your WasteZero accountEmail address or UsernamePasswordForgot password?Rememb
+✅ PASS: Pickup history page loads
+✅ PASS: Statistics page loads with impact data
+✅ PASS: Citizen profile page shows edit form
+❌ FAIL: Citizen messages page loads — Messages content not found
+
+--- VOLUNTEER FEATURES ---
+❌ FAIL: Volunteer login redirects to /volunteer — page.fill: Timeout 30000ms exceeded.
+✅ PASS: Volunteer dashboard loads with stats
+✅ PASS: Volunteer opportunities page loads
+✅ PASS: Volunteer my-pickups page loads
+✅ PASS: Volunteer profile page loads
+❌ FAIL: Volunteer messages page loads — Volunteer messages page not loading
+
+--- ADMIN FEATURES ---
+❌ FAIL: Admin login redirects to /admin — page.fill: Timeout 30000ms exceeded.
+  Analytics cards found: 1
+❌ FAIL: Admin dashboard shows analytics cards — Not enough analytics cards: 1
+❌ FAIL: Admin can view all users list — User list table not found
+✅ PASS: Admin can view opportunities management
+❌ FAIL: Admin can create a new opportunity — Create opportunity button not found
+✅ PASS: Admin messages page loads
+
+--- FORGOT PASSWORD ---
+✅ PASS: Forgot password page loads
+✅ PASS: OTP flow: enter email and request OTP
+
+--- PAGE REFRESH STABILITY ---
+
+💥 FATAL: page.fill: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('input[type="email"]')[22m
+

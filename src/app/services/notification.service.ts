@@ -50,7 +50,10 @@ export class NotificationService {
     const user = this.authService.currentUserValue;
     if (!user) return;
 
-    this.socket = io({ path: '/socket.io' });
+    const socketUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? ''
+      : 'https://smart-wastemanagement-913z.onrender.com';
+    this.socket = io(socketUrl, { path: '/socket.io' });
     this.socket.on('connect', () => {
       this.socket?.emit('join', user.id);
     });

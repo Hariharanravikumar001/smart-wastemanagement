@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const wasteRequestController_1 = require("../controllers/wasteRequestController");
+const router = (0, express_1.Router)();
+router.post('/', wasteRequestController_1.createRequest);
+router.get('/', wasteRequestController_1.getAllRequests);
+router.get('/available', authMiddleware_1.authProtect, wasteRequestController_1.getAvailableRequests);
+router.get('/citizen/:citizenId', wasteRequestController_1.getRequestsByCitizen);
+router.get('/volunteer/:volunteerId', wasteRequestController_1.getRequestsByVolunteer);
+router.patch('/:id/status', wasteRequestController_1.updateRequestStatus);
+router.patch('/:id/reschedule', authMiddleware_1.authProtect, wasteRequestController_1.rescheduleRequest);
+router.post('/:id/verify-qr', authMiddleware_1.authProtect, wasteRequestController_1.verifyQrCode);
+exports.default = router;

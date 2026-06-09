@@ -1,0 +1,86 @@
+=== WasteZero Full Browser Test ===
+Started: 2026-05-28T05:11:09.220Z
+
+
+--- LANDING PAGE TESTS ---
+✅ PASS: Landing page loads
+✅ PASS: Landing hero section visible
+✅ PASS: Get Started button works
+✅ PASS: Login link in navbar
+
+--- PUBLIC PAGES TESTS ---
+✅ PASS: Services page loads
+✅ PASS: About Us page loads
+✅ PASS: Contact page loads
+✅ PASS: Terms of Service page loads
+✅ PASS: Privacy Policy page loads
+
+--- REGISTRATION TESTS ---
+✅ PASS: Register citizen account
+✅ PASS: Register volunteer account
+
+--- LOGIN TESTS ---
+  Pre-register admin: User registered successfully
+  Pre-register citizen: User registered successfully
+  Pre-register volunteer: User registered successfully
+✅ PASS: Login page loads
+✅ PASS: Login form validation - empty submit
+✅ PASS: Login with wrong credentials shows error
+✅ PASS: Citizen login and dashboard redirect
+✅ PASS: Citizen dashboard loads properly
+✅ PASS: Citizen dashboard has navigation items
+✅ PASS: Citizen can logout
+✅ PASS: Volunteer login and dashboard redirect
+✅ PASS: Volunteer dashboard loads
+✅ PASS: Admin login and dashboard redirect
+✅ PASS: Admin dashboard loads with stats
+
+--- ROUTE PROTECTION TESTS ---
+✅ PASS: Protected route /citizen redirects when not logged in
+✅ PASS: Protected route /admin redirects when not logged in
+✅ PASS: Login page accessible without auth
+✅ PASS: Register page accessible without auth
+
+--- CITIZEN FEATURE TESTS ---
+✅ PASS: Citizen pickup request page loads
+✅ PASS: Citizen can submit a pickup request
+✅ PASS: Citizen pickup history page loads
+✅ PASS: Citizen statistics page loads
+✅ PASS: Citizen profile page loads
+✅ PASS: Citizen messages page loads
+✅ PASS: Dark mode toggle works for citizen
+
+--- VOLUNTEER FEATURE TESTS ---
+✅ PASS: Volunteer opportunities page loads
+✅ PASS: Volunteer my-pickups page loads
+✅ PASS: Volunteer profile page loads
+✅ PASS: Volunteer messages page loads
+✅ PASS: Volunteer dashboard loads
+
+--- ADMIN FEATURE TESTS ---
+✅ PASS: Admin dashboard loads
+✅ PASS: Admin dashboard shows statistics/analytics
+✅ PASS: Admin can navigate to user management
+✅ PASS: Admin can navigate to opportunities management
+✅ PASS: Admin create opportunity form
+✅ PASS: Admin can view reports section
+
+--- FORGOT PASSWORD TESTS ---
+✅ PASS: Forgot password page loads
+✅ PASS: Forgot password form submits for valid email
+
+--- PAGE REFRESH TESTS ---
+✅ PASS: Page refresh works on: Citizen Dashboard
+✅ PASS: Page refresh works on: Pickup Request
+✅ PASS: Page refresh works on: Citizen Profile
+
+--- API ENDPOINT TESTS ---
+✅ PASS: API health check returns Connected
+✅ PASS: Login API returns JWT token
+✅ PASS: Opportunities API returns list
+
+=========================================
+TOTAL: 52 | PASS: 52 | FAIL: 0
+=========================================
+
+Full results saved to full_test_summary.json

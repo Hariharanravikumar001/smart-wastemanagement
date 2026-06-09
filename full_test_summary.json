@@ -1,0 +1,216 @@
+{
+  "timestamp": "2026-05-28T05:15:42.344Z",
+  "total": 52,
+  "pass": 52,
+  "fail": 0,
+  "results": [
+    {
+      "test": "Landing page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Landing hero section visible",
+      "status": "PASS"
+    },
+    {
+      "test": "Get Started button works",
+      "status": "PASS"
+    },
+    {
+      "test": "Login link in navbar",
+      "status": "PASS"
+    },
+    {
+      "test": "Services page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "About Us page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Contact page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Terms of Service page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Privacy Policy page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Register citizen account",
+      "status": "PASS"
+    },
+    {
+      "test": "Register volunteer account",
+      "status": "PASS"
+    },
+    {
+      "test": "Login page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Login form validation - empty submit",
+      "status": "PASS"
+    },
+    {
+      "test": "Login with wrong credentials shows error",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen login and dashboard redirect",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen dashboard loads properly",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen dashboard has navigation items",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen can logout",
+      "status": "PASS"
+    },
+    {
+      "test": "Volunteer login and dashboard redirect",
+      "status": "PASS"
+    },
+    {
+      "test": "Volunteer dashboard loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Admin login and dashboard redirect",
+      "status": "PASS"
+    },
+    {
+      "test": "Admin dashboard loads with stats",
+      "status": "PASS"
+    },
+    {
+      "test": "Protected route /citizen redirects when not logged in",
+      "status": "PASS"
+    },
+    {
+      "test": "Protected route /admin redirects when not logged in",
+      "status": "PASS"
+    },
+    {
+      "test": "Login page accessible without auth",
+      "status": "PASS"
+    },
+    {
+      "test": "Register page accessible without auth",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen pickup request page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen can submit a pickup request",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen pickup history page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen statistics page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen profile page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Citizen messages page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Dark mode toggle works for citizen",
+      "status": "PASS"
+    },
+    {
+      "test": "Volunteer opportunities page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Volunteer my-pickups page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Volunteer profile page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Volunteer messages page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Volunteer dashboard loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Admin dashboard loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Admin dashboard shows statistics/analytics",
+      "status": "PASS"
+    },
+    {
+      "test": "Admin can navigate to user management",
+      "status": "PASS"
+    },
+    {
+      "test": "Admin can navigate to opportunities management",
+      "status": "PASS"
+    },
+    {
+      "test": "Admin create opportunity form",
+      "status": "PASS"
+    },
+    {
+      "test": "Admin can view reports section",
+      "status": "PASS"
+    },
+    {
+      "test": "Forgot password page loads",
+      "status": "PASS"
+    },
+    {
+      "test": "Forgot password form submits for valid email",
+      "status": "PASS"
+    },
+    {
+      "test": "Page refresh works on: Citizen Dashboard",
+      "status": "PASS"
+    },
+    {
+      "test": "Page refresh works on: Pickup Request",
+      "status": "PASS"
+    },
+    {
+      "test": "Page refresh works on: Citizen Profile",
+      "status": "PASS"
+    },
+    {
+      "test": "API health check returns Connected",
+      "status": "PASS"
+    },
+    {
+      "test": "Login API returns JWT token",
+      "status": "PASS"
+    },
+    {
+      "test": "Opportunities API returns list",
+      "status": "PASS"
+    }
+  ]
+}
