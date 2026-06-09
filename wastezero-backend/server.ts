@@ -118,7 +118,9 @@ import routeOptimizationRoutes from './src/routes/routeOptimizationRoutes';
 app.use('/api/routes', routeOptimizationRoutes);
 
 // Database connection
+let lastMongoError: any = null;
 const mongoUri = process.env['MONGODB_URI'];
+let mongoUriDefined = !!mongoUri;
 if (!mongoUri) {
   console.error('⚠️ WARNING: MONGODB_URI is not defined in .env file');
 } else {
@@ -143,6 +145,7 @@ if (!mongoUri) {
       }
     })
     .catch(err => {
+      lastMongoError = err;
       console.error('❌ MongoDB Connection Error:', err.message);
       console.error('🔍 Error Details:', err); // Log full error object for diagnostics
       if (err.message.includes('querySrv ESERVFAIL') || err.message.includes('ECONNREFUSED') || err.message.includes('selection timed out') || err.message.includes('IP not whitelisted')) {
@@ -164,7 +167,13 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: statusMap[readyState] || 'Unknown', 
     readyState,
-    database: 'MongoDB Atlas' 
+    database: 'MongoDB Atlas',
+    mongoUriDefined,
+    lastMongoError: lastMongoError ? {
+      message: lastMongoError.message,
+      name: lastMongoError.name,
+      code: lastMongoError.code
+    } : null
   });
 });
 
