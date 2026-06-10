@@ -89,7 +89,7 @@ export class LoginComponent implements AfterViewInit {
           } else {
             console.error('Google Login error:', err);
             const serverError = err.error?.error ? ` (${err.error.error})` : '';
-            const clientIdInfo = err.error?.configuredClientIdPrefix ? ` [Server Client ID prefix: ${err.error.configuredClientIdPrefix}...]` : '';
+            const clientIdInfo = err.error?.configuredClientId ? ` [Server Client ID: ${err.error.configuredClientId}]` : '';
             this.errorMessage = `Google Sign-In failed${serverError}${clientIdInfo}. Please try again.`;
           }
         }

@@ -670,7 +670,7 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
     res.status(400).json({ 
       message: 'Google authentication failed',
       error: err.message,
-      configuredClientIdPrefix: process.env['GOOGLE_CLIENT_ID'] ? process.env['GOOGLE_CLIENT_ID'].substring(0, 15) : 'undefined'
+      configuredClientId: process.env['GOOGLE_CLIENT_ID'] ? `[${process.env['GOOGLE_CLIENT_ID']}]` : 'undefined'
     });
   }
 };
