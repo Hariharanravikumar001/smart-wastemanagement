@@ -15,8 +15,8 @@ let _googleClient: OAuth2Client | null = null;
 const getGoogleClient = () => {
   if (_googleClient) return _googleClient;
   
-  const clientId = process.env['GOOGLE_CLIENT_ID'];
-  const clientSecret = process.env['GOOGLE_CLIENT_SECRET'];
+  const clientId = process.env['GOOGLE_CLIENT_ID']?.trim();
+  const clientSecret = process.env['GOOGLE_CLIENT_SECRET']?.trim();
   
   if (!clientId || clientId === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
     // console.warn('⚠️ WARNING: GOOGLE_CLIENT_ID is not configured. Google Login will use fallback or fail.');
@@ -595,7 +595,7 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
       }
     } else {
       const googleClient = getGoogleClient();
-      const googleClientId = process.env['GOOGLE_CLIENT_ID'];
+      const googleClientId = process.env['GOOGLE_CLIENT_ID']?.trim();
 
       const ticket = await googleClient.verifyIdToken({
         idToken,
