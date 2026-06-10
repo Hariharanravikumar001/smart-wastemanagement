@@ -53,6 +53,31 @@
 
             <div id="googleBtnContainer" class="d-flex justify-content-center mb-3"></div>
 
+            <!-- Mock Google Sign-In for Local Development -->
+            <div *ngIf="isDev" class="mt-4 p-3 border border-warning border-opacity-25 rounded-3 bg-warning bg-opacity-5">
+              <div class="d-flex align-items-center mb-2 text-warning-emphasis">
+                <i class="bi bi-shield-fill-exclamation me-2 fs-5 text-warning"></i>
+                <span class="fw-bold small text-uppercase" style="letter-spacing: 0.5px;">Local Dev Google Fallback</span>
+              </div>
+              <p class="text-muted small mb-3">
+                Since Google Login requires authorized domains, use these mock actions to test local authentication flows:
+              </p>
+              <div class="d-grid gap-2">
+                <button type="button" class="btn btn-outline-success btn-sm rounded-pill fw-semibold py-2 transition-all d-flex align-items-center justify-content-center" (click)="useMockGoogleLogin('citizen')">
+                  <i class="bi bi-person-circle me-2"></i> Sign in as Citizen (Mock Google)
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill fw-semibold py-2 transition-all d-flex align-items-center justify-content-center" (click)="useMockGoogleLogin('volunteer')">
+                  <i class="bi bi-bicycle me-2"></i> Sign in as Volunteer (Mock Google)
+                </button>
+                <button type="button" class="btn btn-outline-info btn-sm rounded-pill fw-semibold py-2 transition-all d-flex align-items-center justify-content-center text-dark" (click)="useMockGoogleLogin('ngo')">
+                  <i class="bi bi-building me-2"></i> Sign in as NGO (Mock Google)
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill fw-semibold py-2 transition-all d-flex align-items-center justify-content-center" (click)="useMockGoogleLogin('new')">
+                  <i class="bi bi-person-plus me-2"></i> Register New User (Mock Google)
+                </button>
+              </div>
+            </div>
+
             <div class="text-center mt-4">
               <p class="text-muted mb-0">Don't have an account? <a routerLink="/register" class="text-success fw-bold text-decoration-none">Sign up</a></p>
             </div>

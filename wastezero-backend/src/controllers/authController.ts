@@ -558,15 +558,53 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    const googleClient = getGoogleClient();
-    const googleClientId = process.env['GOOGLE_CLIENT_ID'];
+    let payload;
 
-    const ticket = await googleClient.verifyIdToken({
-      idToken,
-      audience: googleClientId || 'YOUR_GOOGLE_CLIENT_ID_HERE',
-    });
-    
-    const payload = ticket.getPayload();
+    if (idToken.startsWith('mock_google_token_')) {
+      // Safety check: mock login is NOT allowed in production
+      if (process.env['NODE_ENV'] === 'production') {
+        res.status(400).json({ message: 'Mock Google Login not allowed in production' });
+        return;
+      }
+
+      const roleSuffix = idToken.replace('mock_google_token_', '');
+
+      if (roleSuffix === 'new') {
+        payload = {
+          email: 'mock.newuser@example.com',
+          name: 'Mock Google New User',
+          picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150'
+        };
+      } else {
+        const mappedRole = roleSuffix === 'volunteer' ? 'volunteer' : roleSuffix === 'ngo' ? 'ngo' : roleSuffix === 'admin' ? 'admin' : 'citizen';
+        // Try to find a user of this role to make local testing easier
+        const existingUser = await User.findOne({ role: mappedRole });
+        if (existingUser) {
+          payload = {
+            email: existingUser.email,
+            name: existingUser.name,
+            picture: existingUser.profileImage || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150'
+          };
+        } else {
+          payload = {
+            email: `mock.${mappedRole}@example.com`,
+            name: `Mock Google ${mappedRole.charAt(0).toUpperCase() + mappedRole.slice(1)}`,
+            picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150'
+          };
+        }
+      }
+    } else {
+      const googleClient = getGoogleClient();
+      const googleClientId = process.env['GOOGLE_CLIENT_ID'];
+
+      const ticket = await googleClient.verifyIdToken({
+        idToken,
+        audience: googleClientId || 'YOUR_GOOGLE_CLIENT_ID_HERE',
+      });
+      
+      payload = ticket.getPayload();
+    }
+
     if (!payload || !payload.email) {
       res.status(400).json({ message: 'Invalid Google token payload' });
       return;
@@ -629,6 +667,10 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
     );
   } catch (err: any) {
     console.error('Google Login Error:', err.message);
-    res.status(400).json({ message: 'Google authentication failed' });
+    res.status(400).json({ 
+      message: 'Google authentication failed',
+      error: err.message,
+      configuredClientIdPrefix: process.env['GOOGLE_CLIENT_ID'] ? process.env['GOOGLE_CLIENT_ID'].substring(0, 15) : 'undefined'
+    });
   }
 };

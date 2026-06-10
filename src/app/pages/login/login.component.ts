@@ -18,13 +18,16 @@ export class LoginComponent implements AfterViewInit {
   rememberMe = false;
   errorMessage = '';
   isLoading = false;
+  isDev = false;
 
   constructor(
     private authService: AuthService, 
     private router: Router, 
     private ngZone: NgZone,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) {
+    this.isDev = !environment.production && isPlatformBrowser(this.platformId);
+  }
 
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
@@ -85,11 +88,17 @@ export class LoginComponent implements AfterViewInit {
             });
           } else {
             console.error('Google Login error:', err);
-            this.errorMessage = 'Google Sign-In failed. Please try again.';
+            const serverError = err.error?.error ? ` (${err.error.error})` : '';
+            const clientIdInfo = err.error?.configuredClientIdPrefix ? ` [Server Client ID prefix: ${err.error.configuredClientIdPrefix}...]` : '';
+            this.errorMessage = `Google Sign-In failed${serverError}${clientIdInfo}. Please try again.`;
           }
         }
       });
     });
+  }
+
+  useMockGoogleLogin(role: string) {
+    this.handleCredentialResponse({ credential: 'mock_google_token_' + role });
   }
 
   onSubmit() {
