@@ -604,9 +604,9 @@
         <!-- Main Opportunities List View -->
         <div *ngIf="!showOpportunityForm && !viewingApplicationsFor"
           class="premium-card overflow-hidden">
-          <div class="card-header bg-transparent border-0 p-4 d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0 gradient-text">Global Opportunity Oversight</h5>
-            <div class="d-flex align-items-center gap-3">
+          <div class="card-header bg-transparent border-0 p-4 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+            <h5 class="fw-bold mb-0 gradient-text text-center text-sm-start">Global Opportunity Oversight</h5>
+            <div class="d-flex align-items-center justify-content-center justify-content-sm-end gap-2 flex-wrap">
               <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">{{ filteredOpportunities.length }} Active Tasks</span>
               <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" (click)="openCreateOpportunityForm()">
                 <i class="bi bi-plus-lg me-1"></i> New Project
