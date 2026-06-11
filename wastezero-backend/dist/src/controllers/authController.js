@@ -16,8 +16,8 @@ let _googleClient = null;
 const getGoogleClient = () => {
     if (_googleClient)
         return _googleClient;
-    const clientId = process.env['GOOGLE_CLIENT_ID'];
-    const clientSecret = process.env['GOOGLE_CLIENT_SECRET'];
+    const clientId = process.env['GOOGLE_CLIENT_ID']?.trim();
+    const clientSecret = process.env['GOOGLE_CLIENT_SECRET']?.trim();
     if (!clientId || clientId === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
         // console.warn('⚠️ WARNING: GOOGLE_CLIENT_ID is not configured. Google Login will use fallback or fail.');
     }
@@ -507,13 +507,50 @@ const googleLogin = async (req, res) => {
             res.status(400).json({ message: 'IdToken is required' });
             return;
         }
-        const googleClient = getGoogleClient();
-        const googleClientId = process.env['GOOGLE_CLIENT_ID'];
-        const ticket = await googleClient.verifyIdToken({
-            idToken,
-            audience: googleClientId || 'YOUR_GOOGLE_CLIENT_ID_HERE',
-        });
-        const payload = ticket.getPayload();
+        let payload;
+        if (idToken.startsWith('mock_google_token_')) {
+            // Safety check: mock login is NOT allowed in production
+            if (process.env['NODE_ENV'] === 'production') {
+                res.status(400).json({ message: 'Mock Google Login not allowed in production' });
+                return;
+            }
+            const roleSuffix = idToken.replace('mock_google_token_', '');
+            if (roleSuffix === 'new') {
+                payload = {
+                    email: 'mock.newuser@example.com',
+                    name: 'Mock Google New User',
+                    picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150'
+                };
+            }
+            else {
+                const mappedRole = roleSuffix === 'volunteer' ? 'volunteer' : roleSuffix === 'ngo' ? 'ngo' : roleSuffix === 'admin' ? 'admin' : 'citizen';
+                // Try to find a user of this role to make local testing easier
+                const existingUser = await User_1.default.findOne({ role: mappedRole });
+                if (existingUser) {
+                    payload = {
+                        email: existingUser.email,
+                        name: existingUser.name,
+                        picture: existingUser.profileImage || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150'
+                    };
+                }
+                else {
+                    payload = {
+                        email: `mock.${mappedRole}@example.com`,
+                        name: `Mock Google ${mappedRole.charAt(0).toUpperCase() + mappedRole.slice(1)}`,
+                        picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150'
+                    };
+                }
+            }
+        }
+        else {
+            const googleClient = getGoogleClient();
+            const googleClientId = process.env['GOOGLE_CLIENT_ID']?.trim();
+            const ticket = await googleClient.verifyIdToken({
+                idToken,
+                audience: googleClientId || 'YOUR_GOOGLE_CLIENT_ID_HERE',
+            });
+            payload = ticket.getPayload();
+        }
         if (!payload || !payload.email) {
             res.status(400).json({ message: 'Invalid Google token payload' });
             return;
@@ -567,7 +604,11 @@ const googleLogin = async (req, res) => {
     }
     catch (err) {
         console.error('Google Login Error:', err.message);
-        res.status(400).json({ message: 'Google authentication failed' });
+        res.status(400).json({
+            message: 'Google authentication failed',
+            error: err.message,
+            configuredClientId: process.env['GOOGLE_CLIENT_ID'] ? `[${process.env['GOOGLE_CLIENT_ID']}]` : 'undefined'
+        });
     }
 };
 exports.googleLogin = googleLogin;

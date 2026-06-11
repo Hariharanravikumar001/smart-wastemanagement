@@ -17,6 +17,8 @@ export class RegisterComponent {
   email = '';
   password = '';
   confirmPassword = '';
+  showPassword = false;
+  showConfirmPassword = false;
   location = '';
   contactNumber = '';
   role: 'User' | 'Volunteer' | 'Admin' | 'Citizen' | 'NGO' | '' = '';

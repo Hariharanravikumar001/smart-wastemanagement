@@ -15,6 +15,7 @@ import { environment } from '../../../environments/environment';
 export class LoginComponent implements AfterViewInit {
   email = '';
   password = '';
+  showPassword = false;
   rememberMe = false;
   errorMessage = '';
   isLoading = false;

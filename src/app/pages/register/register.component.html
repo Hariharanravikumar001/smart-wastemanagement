@@ -84,9 +84,12 @@
                 <label for="password" class="form-label fw-semibold">Password</label>
                 <div class="input-group input-group-lg">
                   <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                  <input type="password" class="form-control border-start-0 ps-0 bg-light" id="password" name="password" 
+                  <input [type]="showPassword ? 'text' : 'password'" class="form-control border-start-0 ps-0 bg-light" id="password" name="password" 
                     [(ngModel)]="password" required placeholder="Create a password" (input)="onPasswordInput()"
                     minlength="8">
+                  <button type="button" class="btn border-0 bg-transparent text-muted pe-3 d-flex align-items-center shadow-none" (click)="showPassword = !showPassword" aria-label="Toggle password visibility">
+                    <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                  </button>
                 </div>
                 <!-- Password Strength Meter -->
                 <div *ngIf="passwordStrength" class="mt-2">
@@ -115,7 +118,10 @@
                 <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
                 <div class="input-group input-group-lg">
                   <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock-fill text-muted"></i></span>
-                  <input type="password" class="form-control border-start-0 ps-0 bg-light" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required placeholder="Confirm your password" [class.is-invalid]="passwordMismatch">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control border-start-0 ps-0 bg-light" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required placeholder="Confirm your password" [class.is-invalid]="passwordMismatch">
+                  <button type="button" class="btn border-0 bg-transparent text-muted pe-3 d-flex align-items-center shadow-none" (click)="showConfirmPassword = !showConfirmPassword" aria-label="Toggle confirm password visibility">
+                    <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                  </button>
                 </div>
                 <div class="invalid-feedback" *ngIf="passwordMismatch">
                   Passwords do not match.

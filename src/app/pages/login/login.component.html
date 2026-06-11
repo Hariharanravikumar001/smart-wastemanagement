@@ -31,7 +31,10 @@
                 </div>
                 <div class="input-group input-group-lg">
                   <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                  <input type="password" class="form-control border-start-0 ps-0 bg-light" id="password" name="password" [(ngModel)]="password" required placeholder="••••••••">
+                  <input [type]="showPassword ? 'text' : 'password'" class="form-control border-start-0 ps-0 bg-light" id="password" name="password" [(ngModel)]="password" required placeholder="••••••••">
+                  <button type="button" class="btn border-0 bg-transparent text-muted pe-3 d-flex align-items-center shadow-none" (click)="showPassword = !showPassword" aria-label="Toggle password visibility">
+                    <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                  </button>
                 </div>
               </div>
 
