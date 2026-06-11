@@ -555,7 +555,7 @@
           
           <div class="card-body p-0">
             <!-- Desktop Table View -->
-            <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+            <div class="table-responsive d-none d-lg-block" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
               <table class="table table-hover align-middle mb-0" style="min-width: 600px;">
                 <thead class="bg-light bg-opacity-50">
                   <tr>
@@ -602,6 +602,48 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="d-lg-none">
+              <div *ngFor="let app of getApplicationsForCurrentView()" class="p-3 border-bottom application-mobile-card">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <div class="fw-bold text-dark">{{ app.volunteer_id?.name || app.volunteer_id }}</div>
+                    <div class="extra-small text-muted">{{ app.volunteer_id?.email }}</div>
+                  </div>
+                  <span class="badge rounded-pill border py-1 px-3 bg-opacity-10 extra-small" 
+                    [class.bg-warning]="app.status === 'pending'" [class.text-warning]="app.status === 'pending'" [class.border-warning]="app.status === 'pending'"
+                    [class.bg-success]="app.status === 'accepted'" [class.text-success]="app.status === 'accepted'" [class.border-success]="app.status === 'accepted'"
+                    [class.bg-danger]="app.status === 'rejected'" [class.text-danger]="app.status === 'rejected'" [class.border-danger]="app.status === 'rejected'">
+                    {{ app.status | titlecase }}
+                  </span>
+                </div>
+                
+                <div class="my-3 p-3 bg-light rounded-3" *ngIf="app.coverLetter">
+                  <div class="small fw-semibold text-muted mb-1" style="font-size: 0.75rem;">Cover Letter:</div>
+                  <p class="small text-muted mb-0 fst-italic" style="white-space: pre-line;">
+                    "{{ app.coverLetter }}"
+                  </p>
+                </div>
+                <div class="my-2 text-muted opacity-50 small italic" *ngIf="!app.coverLetter">
+                  No cover letter provided
+                </div>
+                
+                <div class="d-flex justify-content-end gap-2 pt-2 border-top mt-2">
+                  <button class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                    (click)="selectConversation({ partnerId: app.volunteer_id?._id || app.volunteer_id?.id || app.volunteer_id, partnerName: app.volunteer_id?.name || 'Volunteer', opportunityId: app.opportunity_id?._id || app.opportunity_id?.id || app.opportunity_id })">
+                    <i class="bi bi-chat-dots me-1"></i> Message
+                  </button>
+                  <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-success rounded-pill px-3 border-0"
+                    (click)="confirmUpdateApplicationStatus(app._id || app.id, 'accepted')">Accept</button>
+                  <button *ngIf="app.status === 'pending'" class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                    (click)="confirmUpdateApplicationStatus(app._id || app.id, 'rejected')">Reject</button>
+                </div>
+              </div>
+              <div *ngIf="getApplicationsForCurrentView().length === 0" class="text-center py-5 text-muted small">
+                No applications found for this opportunity.
+              </div>
             </div>
           </div>
         </div>
