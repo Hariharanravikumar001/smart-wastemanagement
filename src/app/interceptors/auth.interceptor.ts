@@ -10,7 +10,7 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let token = '';
     if (isPlatformBrowser(this.platformId)) {
-      token = localStorage.getItem('wastezero_token') || '';
+      token = localStorage.getItem('wastezero_token') || sessionStorage.getItem('wastezero_token') || '';
     }
 
     let clonedReq = req;

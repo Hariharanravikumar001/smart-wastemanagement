@@ -78,7 +78,7 @@ export class NotificationService {
   }
 
   private getHeaders(): HttpHeaders {
-    const token = isPlatformBrowser(this.platformId) ? localStorage.getItem('wastezero_token') : null;
+    const token = isPlatformBrowser(this.platformId) ? (localStorage.getItem('wastezero_token') || sessionStorage.getItem('wastezero_token')) : null;
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 

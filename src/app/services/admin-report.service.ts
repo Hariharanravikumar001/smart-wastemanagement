@@ -21,7 +21,7 @@ export class AdminReportService {
   private getHeaders(): HttpHeaders {
     let token = '';
     if (isPlatformBrowser(this.platformId)) {
-      token = localStorage.getItem('wastezero_token') || '';
+      token = localStorage.getItem('wastezero_token') || sessionStorage.getItem('wastezero_token') || '';
     }
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
