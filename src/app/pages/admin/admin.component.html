@@ -31,9 +31,14 @@
         <i class="bi bi-chat-dots"></i>
         <span>Messages</span>
       </a>
-      <a class="nav-link-bottom" [class.active]="activeMenu === 'profile'" [routerLink]="['/admin']" [queryParams]="{ tab: 'profile' }">
-        <i class="bi bi-person-circle"></i>
-        <span>Profile</span>
+      <a class="nav-link-bottom position-relative" (click)="toggleNotifDrawer()" style="cursor: pointer;">
+        <i class="bi bi-bell"></i>
+        <span>Alerts</span>
+        <span
+          class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger border border-2 border-white"
+          *ngIf="(unreadNotifications$ | async) as count" [class.d-none]="count === 0" style="font-size: 0.55rem; transform: translate(30%, 20%); padding: 2px 5px;">
+          {{ count }}
+        </span>
       </a>
       <a class="nav-link-bottom text-danger" (click)="logout()" style="cursor: pointer;">
         <i class="bi bi-box-arrow-right"></i>
