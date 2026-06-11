@@ -132,7 +132,7 @@
       </div>
     </header>
 
-    <div class="content-body p-4" [class.p-0]="activeMenu === 'messages'">
+    <div class="content-body" [ngClass]="activeMenu === 'messages' ? 'p-0' : 'p-4'">
       <!-- Dashboard Overview (shown when activeMenu is 'dashboard') -->
       <div *ngIf="activeMenu === 'dashboard'" class="dashboard-wrapper-inner">
         <div class="row g-4 mb-4">

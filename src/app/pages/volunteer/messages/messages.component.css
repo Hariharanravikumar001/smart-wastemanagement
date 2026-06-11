@@ -2,6 +2,13 @@
   height: calc(100vh - 120px);
 }
 
+@media (max-width: 991.98px) {
+  .db-body {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+}
+
 .conversation-list {
   scrollbar-width: thin;
   scrollbar-color: rgba(0,0,0,0.05) transparent;

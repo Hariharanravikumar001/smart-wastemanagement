@@ -1,5 +1,8 @@
 <div [ngClass]="isEmbedded ? 'chat-embedded-wrapper w-100 h-100' : 'container-fluid bg-light min-vh-100 d-flex align-items-center justify-content-center py-3 py-md-5'">
-  <div class="chat-main-container shadow-lg rounded-4 overflow-hidden d-flex bg-white w-100" [ngStyle]="{'height': isEmbedded ? '100%' : '85vh'}">
+  <div class="chat-main-container overflow-hidden d-flex bg-white w-100" 
+       [class.shadow-lg]="!isEmbedded" 
+       [class.rounded-4]="!isEmbedded" 
+       [ngStyle]="{'height': isEmbedded ? '100%' : '85vh'}">
     
     <!-- Left Sidebar: Conversations List -->
     <div class="chat-sidebar border-end d-flex flex-column bg-white h-100" 
