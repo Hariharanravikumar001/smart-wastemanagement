@@ -9,6 +9,7 @@ import Message from '../models/Message';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { sendEmail } from '../utils/emailService';
 import crypto from 'crypto';
+import LoginHistory from '../models/LoginHistory';
 
 let _googleClient: OAuth2Client | null = null;
 
@@ -119,15 +120,53 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       ]
     });
     if (!user) {
+      await LoginHistory.create({
+        email,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'Failed'
+      });
       res.status(400).json({ message: 'Invalid email or password' });
       return;
     }
 
     const isMatch = await bcrypt.compare(password, user.password as string);
     if (!isMatch) {
+      await LoginHistory.create({
+        userId: user.id,
+        email: user.email,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'Failed'
+      });
       res.status(400).json({ message: 'Invalid email or password' });
       return;
     }
+
+    if (user.twoFactorEnabled) {
+      await LoginHistory.create({
+        userId: user.id,
+        email: user.email,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: '2FA Required'
+      });
+      res.json({
+        status: '2fa_required',
+        email: user.email,
+        message: 'Two-Factor Authentication is required.'
+      });
+      return;
+    }
+
+    // Success login log
+    await LoginHistory.create({
+      userId: user.id,
+      email: user.email,
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+      status: 'Success'
+    });
 
     const payload = {
       user: {
@@ -631,6 +670,15 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
       user.profileImage = picture;
       await user.save();
     }
+
+    // Success login log
+    await LoginHistory.create({
+      userId: user.id,
+      email: user.email,
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+      status: 'Success'
+    });
 
     // Generate platform JWT
     const jwtPayload = {

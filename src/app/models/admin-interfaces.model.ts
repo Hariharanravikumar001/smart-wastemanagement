@@ -12,6 +12,22 @@ export interface EngagementAnalytics {
     labels: string[];
     data: number[];
   };
+  monthlyCollections?: {
+    labels: string[];
+    data: number[];
+  };
+  recyclingRate?: {
+    labels: string[];
+    data: number[];
+  };
+  userGrowth?: {
+    labels: string[];
+    data: number[];
+  };
+  pickupSuccessRate?: {
+    labels: string[];
+    data: number[];
+  };
 }
 
 export interface OpportunityForm {

@@ -19,6 +19,9 @@ export interface IUser extends Document {
   isSuspended: boolean;
   rewardPoints: number;
   badges: string[];
+  isEmailVerified: boolean;
+  twoFactorEnabled: boolean;
+  twoFactorSecret?: string;
 }
 
 const UserSchema: Schema = new Schema({
@@ -44,7 +47,10 @@ const UserSchema: Schema = new Schema({
   lastActive: { type: Date, default: Date.now },
   isSuspended: { type: Boolean, default: false },
   rewardPoints: { type: Number, default: 0 },
-  badges: { type: [String], default: [] }
+  badges: { type: [String], default: [] },
+  isEmailVerified: { type: Boolean, default: false },
+  twoFactorEnabled: { type: Boolean, default: false },
+  twoFactorSecret: { type: String }
 }, {
   toJSON: {
     transform: (doc, ret: any) => {

@@ -69,6 +69,10 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
   private opsByTypeChart: any;
   private locationDistributionChart: any;
   private wasteCategoriesChart: any;
+  private monthlyCollectionsChart: any;
+  private recyclingRateChart: any;
+  private userGrowthChart: any;
+  private pickupSuccessRateChart: any;
   private isBrowser: boolean;
 
 
@@ -265,6 +269,22 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.wasteCategoriesChart) {
       this.wasteCategoriesChart.destroy();
       this.wasteCategoriesChart = null;
+    }
+    if (this.monthlyCollectionsChart) {
+      this.monthlyCollectionsChart.destroy();
+      this.monthlyCollectionsChart = null;
+    }
+    if (this.recyclingRateChart) {
+      this.recyclingRateChart.destroy();
+      this.recyclingRateChart = null;
+    }
+    if (this.userGrowthChart) {
+      this.userGrowthChart.destroy();
+      this.userGrowthChart = null;
+    }
+    if (this.pickupSuccessRateChart) {
+      this.pickupSuccessRateChart.destroy();
+      this.pickupSuccessRateChart = null;
     }    const reportsCanvas = document.getElementById('reportsEngagementChart') as HTMLCanvasElement;
     if (reportsCanvas) {
       const ctx = reportsCanvas.getContext('2d');
@@ -399,6 +419,92 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
     }
+
+    const monthlyCanvas = document.getElementById('monthlyCollectionsChart') as HTMLCanvasElement;
+    if (monthlyCanvas) {
+      const ctx = monthlyCanvas.getContext('2d');
+      if (ctx) {
+        const labels = this.engagementAnalytics?.monthlyCollections?.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        const data = this.engagementAnalytics?.monthlyCollections?.data || [0, 0, 0, 0, 0, 0];
+        this.monthlyCollectionsChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Monthly Collections',
+              data: data,
+              backgroundColor: '#3b82f6',
+              borderRadius: 6
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+    }
+
+    const recyclingCanvas = document.getElementById('recyclingRateChart') as HTMLCanvasElement;
+    if (recyclingCanvas) {
+      const ctx = recyclingCanvas.getContext('2d');
+      if (ctx) {
+        const labels = this.engagementAnalytics?.recyclingRate?.labels || ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Paper', 'Other'];
+        const data = this.engagementAnalytics?.recyclingRate?.data || [0, 0, 0, 0, 0, 0];
+        this.recyclingRateChart = new Chart(ctx, {
+          type: 'polarArea',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: ['rgba(16, 185, 129, 0.7)', 'rgba(59, 130, 246, 0.7)', 'rgba(251, 191, 36, 0.7)', 'rgba(167, 139, 250, 0.7)', 'rgba(244, 63, 94, 0.7)', 'rgba(107, 114, 128, 0.7)']
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+    }
+
+    const growthCanvas = document.getElementById('userGrowthChart') as HTMLCanvasElement;
+    if (growthCanvas) {
+      const ctx = growthCanvas.getContext('2d');
+      if (ctx) {
+        const labels = this.engagementAnalytics?.userGrowth?.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        const data = this.engagementAnalytics?.userGrowth?.data || [0, 0, 0, 0, 0, 0];
+        this.userGrowthChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Active Users',
+              data: data,
+              borderColor: '#a78bfa',
+              backgroundColor: 'rgba(167, 139, 250, 0.1)',
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+    }
+
+    const successCanvas = document.getElementById('pickupSuccessRateChart') as HTMLCanvasElement;
+    if (successCanvas) {
+      const ctx = successCanvas.getContext('2d');
+      if (ctx) {
+        const labels = this.engagementAnalytics?.pickupSuccessRate?.labels || ['Completed', 'Pending', 'Scheduled', 'Cancelled'];
+        const data = this.engagementAnalytics?.pickupSuccessRate?.data || [0, 0, 0, 0];
+        this.pickupSuccessRateChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: ['#10b981', '#fbbf24', '#3b82f6', '#f43f5e']
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+    }
   }
 
   private updateCharts() {
@@ -466,7 +572,11 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
             activeUsersChange: analytics.activeUsersChange !== undefined ? `${analytics.activeUsersChange >= 0 ? '+' : ''}${analytics.activeUsersChange}% monthly` : 'Live data',
             totalVolunteers: analytics.totalVolunteers || 0,
             totalVolunteersChange: analytics.totalVolunteersChange !== undefined ? `${analytics.totalVolunteersChange >= 0 ? '+' : ''}${analytics.totalVolunteersChange}% monthly` : 'Live data',
-            completedPickups: analytics.completedPickups || 0
+            completedPickups: analytics.completedPickups || 0,
+            activeNgos: analytics.activeNgos || 0,
+            pickupsToday: analytics.pickupsToday || 0,
+            wasteRecycled: analytics.totalImpact || 0,
+            estimatedRevenue: analytics.estimatedRevenue || 0
           });
 
           this.updateCharts();

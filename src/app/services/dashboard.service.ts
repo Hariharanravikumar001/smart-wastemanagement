@@ -13,6 +13,10 @@ export interface DashboardStats {
   activeUsersChange: string;
   totalVolunteers: number;
   totalVolunteersChange: string;
+  activeNgos?: number;
+  pickupsToday?: number;
+  wasteRecycled?: number;
+  estimatedRevenue?: number;
 }
 
 @Injectable({
@@ -27,7 +31,11 @@ export class DashboardService {
     activeUsers: 0,
     activeUsersChange: '+5.2% from last month',
     totalVolunteers: 0,
-    totalVolunteersChange: '+12 new today'
+    totalVolunteersChange: '+12 new today',
+    activeNgos: 0,
+    pickupsToday: 0,
+    wasteRecycled: 0,
+    estimatedRevenue: 0
   });
 
   public stats$: Observable<DashboardStats> = this.statsSubject.asObservable();

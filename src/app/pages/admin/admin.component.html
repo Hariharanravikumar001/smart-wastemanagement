@@ -136,53 +136,70 @@
       <!-- Dashboard Overview (shown when activeMenu is 'dashboard') -->
       <div *ngIf="activeMenu === 'dashboard'" class="dashboard-wrapper-inner">
         <div class="row g-4 mb-4">
-          <div class="col-sm-6 col-lg-3">
+          <!-- Total Users -->
+          <div class="col-sm-6 col-lg-4 col-xl-2">
             <div class="premium-card p-4 h-100 card-active-users text-white">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-white opacity-75 fw-bold small text-uppercase ls-wide">Active Users</span>
-                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-people fs-5"></i></div>
+                <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">Total Users</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;"><i class="bi bi-people fs-6"></i></div>
               </div>
-              <h2 class="fw-bold mb-1 text-white">{{ stats.activeUsers | number }}</h2>
-              <div class="small text-white opacity-75 d-flex align-items-center gap-1">
-                <i class="bi bi-graph-up-arrow"></i> 
-                <span>{{ stats.activeUsersChange }}</span>
-              </div>
+              <h3 class="fw-bold mb-1 text-white">{{ stats.activeUsers | number }}</h3>
+              <div class="small text-white opacity-75 text-truncate">{{ stats.activeUsersChange }}</div>
             </div>
           </div>
-          <div class="col-sm-6 col-lg-3">
+          <!-- Active NGOs -->
+          <div class="col-sm-6 col-lg-4 col-xl-2">
+            <div class="premium-card p-4 h-100 card-active-ngos text-white" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">Active NGOs</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;"><i class="bi bi-building fs-6"></i></div>
+              </div>
+              <h3 class="fw-bold mb-1 text-white">{{ stats.activeNgos | number }}</h3>
+              <div class="small text-white opacity-75 text-truncate">Partners</div>
+            </div>
+          </div>
+          <!-- Active Agents -->
+          <div class="col-sm-6 col-lg-4 col-xl-2">
             <div class="premium-card p-4 h-100 card-total-volunteers text-white">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-white opacity-75 fw-bold small text-uppercase ls-wide">Total Volunteers</span>
-                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-heart-fill fs-5"></i></div>
+                <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">Active Agents</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;"><i class="bi bi-person-badge fs-6"></i></div>
               </div>
-              <h2 class="fw-bold mb-1 text-white">{{ stats.totalVolunteers | number }}</h2>
-              <div class="small text-white opacity-75 d-flex align-items-center gap-1">
-                <i class="bi bi-graph-up-arrow"></i> 
-                <span>{{ stats.totalVolunteersChange }}</span>
-              </div>
+              <h3 class="fw-bold mb-1 text-white">{{ stats.totalVolunteers | number }}</h3>
+              <div class="small text-white opacity-75 text-truncate">{{ stats.totalVolunteersChange }}</div>
             </div>
           </div>
-          <div class="col-sm-6 col-lg-3">
+          <!-- Pickups Today -->
+          <div class="col-sm-6 col-lg-4 col-xl-2">
+            <div class="premium-card p-4 h-100 card-pickups-today text-white" style="background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">Pickups Today</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;"><i class="bi bi-calendar-event fs-6"></i></div>
+              </div>
+              <h3 class="fw-bold mb-1 text-white">{{ stats.pickupsToday | number }}</h3>
+              <div class="small text-white opacity-75 text-truncate">Scheduled</div>
+            </div>
+          </div>
+          <!-- Waste Recycled -->
+          <div class="col-sm-6 col-lg-4 col-xl-2">
             <div class="premium-card p-4 h-100 card-pickups-done text-white">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-white opacity-75 fw-bold small text-uppercase ls-wide">Pickups Done</span>
-                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-truck fs-5"></i></div>
+                <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">Waste Recycled</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;"><i class="bi bi-recycle fs-6"></i></div>
               </div>
-              <h2 class="fw-bold mb-1 text-white">{{ stats.completedPickups | number }}</h2>
-              <div class="small text-white opacity-75 d-flex align-items-center gap-1">
-                <i class="bi bi-check-circle-fill"></i> 
-                <span>Verified</span>
-              </div>
+              <h3 class="fw-bold mb-1 text-white">{{ stats.wasteRecycled | number }} kg</h3>
+              <div class="small text-white opacity-75 text-truncate">Diverted</div>
             </div>
           </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="premium-card p-4 h-100 card-system-health text-white">
+          <!-- Estimated Revenue -->
+          <div class="col-sm-6 col-lg-4 col-xl-2">
+            <div class="premium-card p-4 h-100 card-system-health text-white" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-white opacity-75 fw-bold small text-uppercase ls-wide">System Health</span>
-                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;"><i class="bi bi-shield-check fs-5"></i></div>
+                <span class="text-white opacity-75 fw-bold extra-small text-uppercase ls-wide">Est. Revenue</span>
+                <div class="stat-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;"><i class="bi bi-currency-dollar fs-6"></i></div>
               </div>
-              <h2 class="fw-bold mb-1 text-white">{{ stats.systemHealth }}</h2>
-              <div class="small text-white opacity-75">{{ stats.systemHealthStatus }}</div>
+              <h3 class="fw-bold mb-1 text-white">${{ stats.estimatedRevenue | number:'1.2-2' }}</h3>
+              <div class="small text-white opacity-75 text-truncate">Eco Value</div>
             </div>
           </div>
         </div>
@@ -1038,6 +1055,46 @@
                 <div class="chart-container" style="position: relative; height: 210px; width: 100%;">
                   <canvas id="wasteCategoriesChart"></canvas>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Analytics Dashboard Charts Row -->
+        <div class="row g-4 mt-2">
+          <!-- Monthly Collections -->
+          <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
+              <h6 class="fw-bold text-muted mb-3 text-uppercase ls-wide" style="font-size: 11px;"><i class="bi bi-calendar-range me-2 text-primary"></i>Monthly Collections</h6>
+              <div class="chart-container" style="position: relative; height: 200px; width: 100%;">
+                <canvas id="monthlyCollectionsChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- Recycling Rate -->
+          <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
+              <h6 class="fw-bold text-muted mb-3 text-uppercase ls-wide" style="font-size: 11px;"><i class="bi bi-pie-chart-fill me-2 text-success"></i>Recycling Rate</h6>
+              <div class="chart-container" style="position: relative; height: 200px; width: 100%;">
+                <canvas id="recyclingRateChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- User Growth -->
+          <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
+              <h6 class="fw-bold text-muted mb-3 text-uppercase ls-wide" style="font-size: 11px;"><i class="bi bi-graph-up-arrow me-2 text-warning"></i>User Growth</h6>
+              <div class="chart-container" style="position: relative; height: 200px; width: 100%;">
+                <canvas id="userGrowthChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- Pickup Success Rate -->
+          <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
+              <h6 class="fw-bold text-muted mb-3 text-uppercase ls-wide" style="font-size: 11px;"><i class="bi bi-check-circle me-2 text-danger"></i>Success Rate</h6>
+              <div class="chart-container" style="position: relative; height: 200px; width: 100%;">
+                <canvas id="pickupSuccessRateChart"></canvas>
               </div>
             </div>
           </div>
