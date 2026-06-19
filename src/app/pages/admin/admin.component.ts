@@ -229,7 +229,8 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.isBrowser) {
       const savedTheme = localStorage.getItem('admin_theme');
-      this.isDarkMode = savedTheme === 'dark';
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.isDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
       this.applyTheme();
     }
 

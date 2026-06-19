@@ -3,6 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 import { isPlatformBrowser } from '@angular/common';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ export class AppComponent implements OnInit {
     private router: Router, 
     private authService: AuthService,
     private translate: TranslateService,
+    private themeService: ThemeService,
     @Inject(PLATFORM_ID) private platformId: any
   ) {
     // Set default and saved language configuration
