@@ -839,6 +839,13 @@
             <p class="text-muted extra-small mb-0">Monitor and manage platform participants</p>
           </div>
           <div class="d-flex align-items-center gap-3">
+            <select class="form-select form-select-sm rounded-pill px-3 py-2 border bg-white text-secondary shadow-none cursor-pointer" style="min-width: 140px;" [(ngModel)]="selectedUserRole" (change)="filterUsers()">
+              <option value="">All Roles</option>
+              <option value="Admin">Admin</option>
+              <option value="NGO">NGO</option>
+              <option value="Volunteer">Volunteer</option>
+              <option value="Citizen">Citizen</option>
+            </select>
             <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 border border-primary border-opacity-10">
               {{ filteredUsers.length }} Total Entities
             </span>

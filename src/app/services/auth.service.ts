@@ -180,8 +180,9 @@ export class AuthService {
   }
 
   // Legacy Mock methods below (kept for partial compatibility if needed by other components)
-  public getAllUsers(): Observable<User[]> {
-    return this.http.get<any>(`${this.apiUrl}/admin/users`).pipe(
+  public getAllUsers(page?: number, limit: number = 1000): Observable<User[]> {
+    const params = page !== undefined ? `?page=${page}&limit=${limit}` : `?limit=${limit}`;
+    return this.http.get<any>(`${this.apiUrl}/admin/users${params}`).pipe(
       map(response => {
         const users = response.users || (Array.isArray(response) ? response : []);
         return users.map((u: any) => ({

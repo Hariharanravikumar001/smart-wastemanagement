@@ -58,6 +58,7 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Search
   globalSearchTerm: string = '';
+  selectedUserRole: string = '';
   filteredOpportunities: Opportunity[] = [];
 
   // Feedbacks
@@ -822,16 +823,22 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   filterUsers() {
-    if (!this.globalSearchTerm.trim()) {
-      this.filteredUsers = [...this.allUsers];
-      return;
+    let filtered = [...this.allUsers];
+    
+    if (this.selectedUserRole) {
+      filtered = filtered.filter(u => u.role === this.selectedUserRole);
     }
-    const term = this.globalSearchTerm.toLowerCase();
-    this.filteredUsers = this.allUsers.filter(u => 
-      u.name.toLowerCase().includes(term) || 
-      u.email.toLowerCase().includes(term) ||
-      u.role.toLowerCase().includes(term)
-    );
+    
+    if (this.globalSearchTerm.trim()) {
+      const term = this.globalSearchTerm.toLowerCase();
+      filtered = filtered.filter(u => 
+        u.name.toLowerCase().includes(term) || 
+        u.email.toLowerCase().includes(term) ||
+        u.role.toLowerCase().includes(term)
+      );
+    }
+    
+    this.filteredUsers = filtered;
   }
 
   toggleUserStatus(user: User) {
