@@ -57,7 +57,10 @@ const UserSchema = new mongoose_1.Schema({
     lastActive: { type: Date, default: Date.now },
     isSuspended: { type: Boolean, default: false },
     rewardPoints: { type: Number, default: 0 },
-    badges: { type: [String], default: [] }
+    badges: { type: [String], default: [] },
+    isEmailVerified: { type: Boolean, default: false },
+    twoFactorEnabled: { type: Boolean, default: false },
+    twoFactorSecret: { type: String }
 }, {
     toJSON: {
         transform: (doc, ret) => {

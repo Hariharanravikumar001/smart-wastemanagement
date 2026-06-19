@@ -345,8 +345,8 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
     if (locationCanvas) {
       const ctx = locationCanvas.getContext('2d');
       if (ctx) {
-        const locations = ['Gachibowli', 'Madhapur', 'Miyapur', 'Hyderabad', 'Secunderabad'];
-        const values = [45, 60, 30, 95, 55];
+        const locations = this.engagementAnalytics?.locationDistribution?.labels || ['Gachibowli', 'Madhapur', 'Miyapur', 'Hyderabad', 'Secunderabad'];
+        const values = this.engagementAnalytics?.locationDistribution?.data || [45, 60, 30, 95, 55];
         this.locationDistributionChart = new Chart(ctx, {
           type: 'doughnut',
           data: {
@@ -379,8 +379,8 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
     if (wasteCanvas) {
       const ctx = wasteCanvas.getContext('2d');
       if (ctx) {
-        const categories = ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Paper'];
-        const values = [120, 185, 45, 60, 95];
+        const categories = this.engagementAnalytics?.wasteCategories?.labels || ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Paper'];
+        const values = this.engagementAnalytics?.wasteCategories?.data || [120, 185, 45, 60, 95];
         
         // Premium horizontal gradient for horizontal bars
         const barGradient = ctx.createLinearGradient(0, 0, 300, 0);
@@ -514,11 +514,60 @@ export class AdminComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.reportsEngagementChart) {
       const labels = this.engagementAnalytics?.trends?.labels || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       const data = this.engagementAnalytics?.trends?.data || [0, 0, 0, 0, 0, 0, 0];
-
       this.reportsEngagementChart.data.labels = labels;
       this.reportsEngagementChart.data.datasets[0].data = data;
       this.reportsEngagementChart.update();
-    } else {
+    }
+
+    if (this.locationDistributionChart) {
+      const labels = this.engagementAnalytics?.locationDistribution?.labels || ['Gachibowli', 'Madhapur', 'Miyapur', 'Hyderabad', 'Secunderabad'];
+      const data = this.engagementAnalytics?.locationDistribution?.data || [45, 60, 30, 95, 55];
+      this.locationDistributionChart.data.labels = labels;
+      this.locationDistributionChart.data.datasets[0].data = data;
+      this.locationDistributionChart.update();
+    }
+
+    if (this.wasteCategoriesChart) {
+      const labels = this.engagementAnalytics?.wasteCategories?.labels || ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Paper'];
+      const data = this.engagementAnalytics?.wasteCategories?.data || [120, 185, 45, 60, 95];
+      this.wasteCategoriesChart.data.labels = labels;
+      this.wasteCategoriesChart.data.datasets[0].data = data;
+      this.wasteCategoriesChart.update();
+    }
+
+    if (this.monthlyCollectionsChart) {
+      const labels = this.engagementAnalytics?.monthlyCollections?.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+      const data = this.engagementAnalytics?.monthlyCollections?.data || [0, 0, 0, 0, 0, 0];
+      this.monthlyCollectionsChart.data.labels = labels;
+      this.monthlyCollectionsChart.data.datasets[0].data = data;
+      this.monthlyCollectionsChart.update();
+    }
+
+    if (this.recyclingRateChart) {
+      const labels = this.engagementAnalytics?.recyclingRate?.labels || ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Paper', 'Other'];
+      const data = this.engagementAnalytics?.recyclingRate?.data || [0, 0, 0, 0, 0, 0];
+      this.recyclingRateChart.data.labels = labels;
+      this.recyclingRateChart.data.datasets[0].data = data;
+      this.recyclingRateChart.update();
+    }
+
+    if (this.userGrowthChart) {
+      const labels = this.engagementAnalytics?.userGrowth?.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+      const data = this.engagementAnalytics?.userGrowth?.data || [0, 0, 0, 0, 0, 0];
+      this.userGrowthChart.data.labels = labels;
+      this.userGrowthChart.data.datasets[0].data = data;
+      this.userGrowthChart.update();
+    }
+
+    if (this.pickupSuccessRateChart) {
+      const labels = this.engagementAnalytics?.pickupSuccessRate?.labels || ['Completed', 'Pending', 'Scheduled', 'Cancelled'];
+      const data = this.engagementAnalytics?.pickupSuccessRate?.data || [0, 0, 0, 0];
+      this.pickupSuccessRateChart.data.labels = labels;
+      this.pickupSuccessRateChart.data.datasets[0].data = data;
+      this.pickupSuccessRateChart.update();
+    }
+
+    if (!this.reportsEngagementChart && !this.monthlyCollectionsChart && !this.recyclingRateChart && !this.userGrowthChart && !this.pickupSuccessRateChart && !this.locationDistributionChart && !this.wasteCategoriesChart) {
       this.initCharts();
     }
   }

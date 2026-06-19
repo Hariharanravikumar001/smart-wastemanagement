@@ -7,6 +7,7 @@ exports.getFeedback = exports.submitFeedback = void 0;
 const Feedback_1 = __importDefault(require("../models/Feedback"));
 const sentiment_1 = __importDefault(require("sentiment"));
 const https_1 = __importDefault(require("https"));
+const User_1 = __importDefault(require("../models/User"));
 const sentiment = new sentiment_1.default();
 const analyzeFeedbackWithGemini = (content, apiKey) => {
     return new Promise((resolve) => {
@@ -59,8 +60,9 @@ const submitFeedback = async (req, res) => {
     try {
         const { content } = req.body;
         const userId = req.user.id;
-        const userName = req.user.name;
         const role = req.user.role;
+        const user = await User_1.default.findById(userId);
+        const userName = user ? user.name : 'Anonymous';
         if (!content) {
             return res.status(400).json({ message: 'Content is required' });
         }

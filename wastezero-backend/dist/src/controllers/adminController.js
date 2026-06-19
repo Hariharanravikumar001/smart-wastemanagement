@@ -15,6 +15,8 @@ const getAnalytics = async (req, res) => {
         const analyticsNow = new Date();
         const analyticsThirtyDaysAgo = new Date(analyticsNow.getTime() - (30 * 24 * 60 * 60 * 1000));
         const analyticsSixtyDaysAgo = new Date(analyticsNow.getTime() - (60 * 24 * 60 * 60 * 1000));
+        const startOfToday = new Date(analyticsNow);
+        startOfToday.setHours(0, 0, 0, 0);
         // Use Promise.allSettled to parallelize queries and prevent one failure from blocking others
         const results = await Promise.allSettled([
             // 0: WasteRequest Stats
@@ -30,7 +32,7 @@ const getAnalytics = async (req, res) => {
             ]),
             // 1: activeUsersCount
             User_1.default.countDocuments(),
-            // 2: volunteersCount
+            // 2: volunteersCount (agents)
             User_1.default.countDocuments({ role: 'volunteer' }),
             // 3: totalOpportunities
             Opportunity_1.default.countDocuments({ isDeleted: false }),
@@ -51,6 +53,52 @@ const getAnalytics = async (req, res) => {
                         previousTotal: { $sum: { $cond: [{ $and: [{ $gte: ['$createdAt', analyticsSixtyDaysAgo] }, { $lt: ['$createdAt', analyticsThirtyDaysAgo] }] }, 1, 0] } },
                         previousAccepted: { $sum: { $cond: [{ $and: [{ $gte: ['$createdAt', analyticsSixtyDaysAgo] }, { $lt: ['$createdAt', analyticsThirtyDaysAgo] }, { $eq: ['$status', 'accepted'] }] }, 1, 0] } }
                     } }
+            ]),
+            // 8: activeNgosCount
+            User_1.default.countDocuments({ role: 'ngo' }),
+            // 9: pickupsTodayCount
+            WasteRequest_1.default.countDocuments({ createdAt: { $gte: startOfToday } }),
+            // 10: Location Distribution (real)
+            WasteRequest_1.default.aggregate([
+                { $match: { status: 'Completed' } },
+                { $group: {
+                        _id: '$location',
+                        totalWeight: { $sum: '$weight' }
+                    } },
+                { $sort: { totalWeight: -1 } },
+                { $limit: 5 }
+            ]),
+            // 11: Category Performance (real)
+            WasteRequest_1.default.aggregate([
+                { $match: { status: 'Completed' } },
+                { $unwind: '$wasteCategory' },
+                { $group: {
+                        _id: '$wasteCategory',
+                        totalWeight: { $sum: '$weight' }
+                    } },
+                { $sort: { totalWeight: -1 } }
+            ]),
+            // 12: Monthly Collections (real)
+            WasteRequest_1.default.aggregate([
+                { $match: { status: 'Completed', createdAt: { $gte: new Date(analyticsNow.getFullYear(), analyticsNow.getMonth() - 5, 1) } } },
+                { $group: {
+                        _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } },
+                        totalWeight: { $sum: '$weight' }
+                    } }
+            ]),
+            // 13: User Growth (real)
+            User_1.default.aggregate([
+                { $group: {
+                        _id: { month: { $month: '$created_at' }, year: { $year: '$created_at' } },
+                        count: { $sum: 1 }
+                    } }
+            ]),
+            // 14: Pickup Status distribution (real)
+            WasteRequest_1.default.aggregate([
+                { $group: {
+                        _id: '$status',
+                        count: { $sum: 1 }
+                    } }
             ])
         ]);
         // Process Waste Stats
@@ -70,6 +118,8 @@ const getAnalytics = async (req, res) => {
         const activeOpportunities = results[4].status === 'fulfilled' ? results[4].value : 0;
         const completedOpportunities = results[5].status === 'fulfilled' ? results[5].value : 0;
         const totalApplications = results[6].status === 'fulfilled' ? results[6].value : 0;
+        const activeNgosCount = results[8].status === 'fulfilled' ? results[8].value : 0;
+        const pickupsTodayCount = results[9].status === 'fulfilled' ? results[9].value : 0;
         // Process App Stats
         const appsRaw = results[7].status === 'fulfilled' ? results[7].value[0] : null;
         const apps = appsRaw || { total: 0, accepted: 0, recentTotal: 0, recentAccepted: 0, previousTotal: 0, previousAccepted: 0 };
@@ -81,6 +131,8 @@ const getAnalytics = async (req, res) => {
             responseRateChange = Math.round(recentRate - previousRate);
         else if (recentRate > 0)
             responseRateChange = Math.round(recentRate);
+        // Mock revenue: $0.15 per kg recycled
+        const estimatedRevenue = Number((totalImpact * 0.15).toFixed(2));
         // 5. Pickup Trends Data (Separate to keep main response fast if needed)
         let startDate = new Date();
         let labels = [];
@@ -130,6 +182,65 @@ const getAnalytics = async (req, res) => {
                     trendData[dayDiff]++;
             }
         });
+        // Process Location Distribution
+        const locationRaw = results[10].status === 'fulfilled' ? results[10].value : [];
+        let locationLabels = locationRaw.map((l) => l._id);
+        let locationData = locationRaw.map((l) => l.totalWeight || 0);
+        if (locationLabels.length === 0) {
+            locationLabels = ['Gachibowli', 'Madhapur', 'Miyapur', 'Hyderabad', 'Secunderabad'];
+            locationData = [45, 60, 30, 95, 55];
+        }
+        const locationDistribution = { labels: locationLabels, data: locationData };
+        // Process Category Performance
+        const categoryRaw = results[11].status === 'fulfilled' ? results[11].value : [];
+        let categoryLabels = categoryRaw.map((c) => c._id);
+        let categoryData = categoryRaw.map((c) => c.totalWeight || 0);
+        if (categoryLabels.length === 0) {
+            categoryLabels = ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Paper'];
+            categoryData = [120, 185, 45, 60, 95];
+        }
+        const wasteCategories = { labels: categoryLabels, data: categoryData };
+        const recyclingRate = { labels: categoryLabels, data: categoryData };
+        // Process Monthly Collections
+        const monthlyRaw = results[12].status === 'fulfilled' ? results[12].value : [];
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        let monthlyLabels = [];
+        let monthlyData = [];
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(analyticsNow.getFullYear(), analyticsNow.getMonth() - i, 1);
+            const m = d.getMonth() + 1;
+            const y = d.getFullYear();
+            monthlyLabels.push(monthNames[d.getMonth()]);
+            const matched = monthlyRaw.find((r) => r._id.month === m && r._id.year === y);
+            monthlyData.push(matched ? matched.totalWeight : 0);
+        }
+        const monthlyCollections = { labels: monthlyLabels, data: monthlyData };
+        // Process User Growth (Cumulative)
+        const userGrowthRaw = results[13].status === 'fulfilled' ? results[13].value : [];
+        let userGrowthLabels = [];
+        let userGrowthData = [];
+        const startOfWindow = new Date(analyticsNow.getFullYear(), analyticsNow.getMonth() - 5, 1);
+        const baseCount = await User_1.default.countDocuments({ created_at: { $lt: startOfWindow } });
+        let runningTotal = baseCount;
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(analyticsNow.getFullYear(), analyticsNow.getMonth() - i, 1);
+            const m = d.getMonth() + 1;
+            const y = d.getFullYear();
+            userGrowthLabels.push(monthNames[d.getMonth()]);
+            const matched = userGrowthRaw.find((r) => r._id.month === m && r._id.year === y);
+            runningTotal += matched ? matched.count : 0;
+            userGrowthData.push(runningTotal);
+        }
+        const userGrowth = { labels: userGrowthLabels, data: userGrowthData };
+        // Process Pickup Success Rate
+        const statusRaw = results[14].status === 'fulfilled' ? results[14].value : [];
+        const statusKeys = ['Completed', 'Pending', 'Scheduled', 'Cancelled'];
+        let statusData = [];
+        statusKeys.forEach(status => {
+            const matched = statusRaw.find((s) => s._id === status);
+            statusData.push(matched ? matched.count : 0);
+        });
+        const pickupSuccessRate = { labels: statusKeys, data: statusData };
         res.status(200).json({
             totalImpact,
             totalImpactChange,
@@ -142,7 +253,16 @@ const getAnalytics = async (req, res) => {
             activeOpportunities,
             completedOpportunities,
             totalApplications,
-            trends: { labels, data: trendData }
+            activeNgos: activeNgosCount,
+            pickupsToday: pickupsTodayCount,
+            estimatedRevenue,
+            trends: { labels, data: trendData },
+            locationDistribution,
+            wasteCategories,
+            monthlyCollections,
+            recyclingRate,
+            userGrowth,
+            pickupSuccessRate
         });
     }
     catch (error) {

@@ -28,6 +28,14 @@ export interface EngagementAnalytics {
     labels: string[];
     data: number[];
   };
+  locationDistribution?: {
+    labels: string[];
+    data: number[];
+  };
+  wasteCategories?: {
+    labels: string[];
+    data: number[];
+  };
 }
 
 export interface OpportunityForm {

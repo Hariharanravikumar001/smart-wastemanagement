@@ -55,7 +55,49 @@ export const getAnalytics = async (req: AuthRequest, res: Response): Promise<voi
             // 8: activeNgosCount
             User.countDocuments({ role: 'ngo' }),
             // 9: pickupsTodayCount
-            WasteRequest.countDocuments({ createdAt: { $gte: startOfToday } })
+            WasteRequest.countDocuments({ createdAt: { $gte: startOfToday } }),
+            // 10: Location Distribution (real)
+            WasteRequest.aggregate([
+                { $match: { status: 'Completed' } },
+                { $group: {
+                    _id: '$location',
+                    totalWeight: { $sum: '$weight' }
+                }},
+                { $sort: { totalWeight: -1 } },
+                { $limit: 5 }
+            ]),
+            // 11: Category Performance (real)
+            WasteRequest.aggregate([
+                { $match: { status: 'Completed' } },
+                { $unwind: '$wasteCategory' },
+                { $group: {
+                    _id: '$wasteCategory',
+                    totalWeight: { $sum: '$weight' }
+                }},
+                { $sort: { totalWeight: -1 } }
+            ]),
+            // 12: Monthly Collections (real)
+            WasteRequest.aggregate([
+                { $match: { status: 'Completed', createdAt: { $gte: new Date(analyticsNow.getFullYear(), analyticsNow.getMonth() - 5, 1) } } },
+                { $group: {
+                    _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } },
+                    totalWeight: { $sum: '$weight' }
+                }}
+            ]),
+            // 13: User Growth (real)
+            User.aggregate([
+                { $group: {
+                    _id: { month: { $month: '$created_at' }, year: { $year: '$created_at' } },
+                    count: { $sum: 1 }
+                }}
+            ]),
+            // 14: Pickup Status distribution (real)
+            WasteRequest.aggregate([
+                { $group: {
+                    _id: '$status',
+                    count: { $sum: 1 }
+                }}
+            ])
         ]);
 
         // Process Waste Stats
@@ -133,26 +175,69 @@ export const getAnalytics = async (req: AuthRequest, res: Response): Promise<voi
             }
         });
 
-        // Structure Analytics Dashboard Charts Data
-        const monthlyCollections = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            data: [45, 68, 92, 120, 185, completedPickups || 210]
-        };
+        // Process Location Distribution
+        const locationRaw = results[10].status === 'fulfilled' ? (results[10].value as any) : [];
+        let locationLabels = locationRaw.map((l: any) => l._id);
+        let locationData = locationRaw.map((l: any) => l.totalWeight || 0);
+        if (locationLabels.length === 0) {
+            locationLabels = ['Gachibowli', 'Madhapur', 'Miyapur', 'Hyderabad', 'Secunderabad'];
+            locationData = [45, 60, 30, 95, 55];
+        }
+        const locationDistribution = { labels: locationLabels, data: locationData };
 
-        const recyclingRate = {
-            labels: ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Paper', 'Other'],
-            data: [72, 85, 38, 55, 65, 48]
-        };
+        // Process Category Performance
+        const categoryRaw = results[11].status === 'fulfilled' ? (results[11].value as any) : [];
+        let categoryLabels = categoryRaw.map((c: any) => c._id);
+        let categoryData = categoryRaw.map((c: any) => c.totalWeight || 0);
+        if (categoryLabels.length === 0) {
+            categoryLabels = ['Plastic', 'Organic', 'E-Waste', 'Metal', 'Paper'];
+            categoryData = [120, 185, 45, 60, 95];
+        }
+        const wasteCategories = { labels: categoryLabels, data: categoryData };
+        const recyclingRate = { labels: categoryLabels, data: categoryData };
 
-        const userGrowth = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            data: [15, 35, 62, 110, 190, activeUsersCount || 230]
-        };
+        // Process Monthly Collections
+        const monthlyRaw = results[12].status === 'fulfilled' ? (results[12].value as any) : [];
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        let monthlyLabels: string[] = [];
+        let monthlyData: number[] = [];
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(analyticsNow.getFullYear(), analyticsNow.getMonth() - i, 1);
+            const m = d.getMonth() + 1;
+            const y = d.getFullYear();
+            monthlyLabels.push(monthNames[d.getMonth()]);
+            const matched = monthlyRaw.find((r: any) => r._id.month === m && r._id.year === y);
+            monthlyData.push(matched ? matched.totalWeight : 0);
+        }
+        const monthlyCollections = { labels: monthlyLabels, data: monthlyData };
 
-        const pickupSuccessRate = {
-            labels: ['Completed', 'Pending', 'Scheduled', 'Cancelled'],
-            data: [completedPickups || 80, 20, 15, 8]
-        };
+        // Process User Growth (Cumulative)
+        const userGrowthRaw = results[13].status === 'fulfilled' ? (results[13].value as any) : [];
+        let userGrowthLabels: string[] = [];
+        let userGrowthData: number[] = [];
+        const startOfWindow = new Date(analyticsNow.getFullYear(), analyticsNow.getMonth() - 5, 1);
+        const baseCount = await User.countDocuments({ created_at: { $lt: startOfWindow } });
+        let runningTotal = baseCount;
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(analyticsNow.getFullYear(), analyticsNow.getMonth() - i, 1);
+            const m = d.getMonth() + 1;
+            const y = d.getFullYear();
+            userGrowthLabels.push(monthNames[d.getMonth()]);
+            const matched = userGrowthRaw.find((r: any) => r._id.month === m && r._id.year === y);
+            runningTotal += matched ? matched.count : 0;
+            userGrowthData.push(runningTotal);
+        }
+        const userGrowth = { labels: userGrowthLabels, data: userGrowthData };
+
+        // Process Pickup Success Rate
+        const statusRaw = results[14].status === 'fulfilled' ? (results[14].value as any) : [];
+        const statusKeys = ['Completed', 'Pending', 'Scheduled', 'Cancelled'];
+        let statusData: number[] = [];
+        statusKeys.forEach(status => {
+            const matched = statusRaw.find((s: any) => s._id === status);
+            statusData.push(matched ? matched.count : 0);
+        });
+        const pickupSuccessRate = { labels: statusKeys, data: statusData };
 
         res.status(200).json({
             totalImpact,
@@ -170,6 +255,8 @@ export const getAnalytics = async (req: AuthRequest, res: Response): Promise<voi
             pickupsToday: pickupsTodayCount,
             estimatedRevenue,
             trends: { labels, data: trendData },
+            locationDistribution,
+            wasteCategories,
             monthlyCollections,
             recyclingRate,
             userGrowth,

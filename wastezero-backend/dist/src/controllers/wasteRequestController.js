@@ -123,6 +123,22 @@ const updateRequestStatus = async (req, res) => {
         }
         const wasAlreadyCompleted = existingRequest.status === 'Completed';
         const isNowCompleted = updateData.status === 'Completed';
+        // SMS / Email updates on transition
+        if (updateData.status && updateData.status !== existingRequest.status && existingRequest.citizenId) {
+            Promise.resolve().then(() => __importStar(require('../models/User'))).then(({ default: User }) => {
+                User.findById(existingRequest.citizenId).then(user => {
+                    if (user && user.email) {
+                        Promise.resolve().then(() => __importStar(require('../utils/emailService'))).then(({ sendEmail }) => {
+                            const transitionSubject = `WasteZero Pickup Update - Status: ${updateData.status}`;
+                            const transitionHtml = `<h3>Your pickup status has been updated to: <b>${updateData.status}</b></h3><p>Description: ${existingRequest.description}</p>`;
+                            sendEmail(user.email, transitionSubject, `Your pickup status is now: ${updateData.status}`, transitionHtml)
+                                .then(() => console.log(`[EMAIL UPDATE] Status transition notification sent to ${user.email}`))
+                                .catch(e => console.error('Failed to send status update email:', e));
+                        });
+                    }
+                });
+            });
+        }
         Object.assign(existingRequest, updateData);
         const updatedRequest = await existingRequest.save();
         // Auto soft-delete messages between volunteer and citizen on completion

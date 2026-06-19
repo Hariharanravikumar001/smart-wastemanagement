@@ -12,6 +12,7 @@ const WasteRequest_1 = __importDefault(require("../models/WasteRequest"));
 const Application_1 = __importDefault(require("../models/Application"));
 const Message_1 = __importDefault(require("../models/Message"));
 const emailService_1 = require("../utils/emailService");
+const LoginHistory_1 = __importDefault(require("../models/LoginHistory"));
 let _googleClient = null;
 const getGoogleClient = () => {
     if (_googleClient)
@@ -105,14 +106,50 @@ const loginUser = async (req, res) => {
             ]
         });
         if (!user) {
+            await LoginHistory_1.default.create({
+                email,
+                ipAddress: req.ip,
+                userAgent: req.headers['user-agent'],
+                status: 'Failed'
+            });
             res.status(400).json({ message: 'Invalid email or password' });
             return;
         }
         const isMatch = await bcryptjs_1.default.compare(password, user.password);
         if (!isMatch) {
+            await LoginHistory_1.default.create({
+                userId: user.id,
+                email: user.email,
+                ipAddress: req.ip,
+                userAgent: req.headers['user-agent'],
+                status: 'Failed'
+            });
             res.status(400).json({ message: 'Invalid email or password' });
             return;
         }
+        if (user.twoFactorEnabled) {
+            await LoginHistory_1.default.create({
+                userId: user.id,
+                email: user.email,
+                ipAddress: req.ip,
+                userAgent: req.headers['user-agent'],
+                status: '2FA Required'
+            });
+            res.json({
+                status: '2fa_required',
+                email: user.email,
+                message: 'Two-Factor Authentication is required.'
+            });
+            return;
+        }
+        // Success login log
+        await LoginHistory_1.default.create({
+            userId: user.id,
+            email: user.email,
+            ipAddress: req.ip,
+            userAgent: req.headers['user-agent'],
+            status: 'Success'
+        });
         const payload = {
             user: {
                 id: user.id,
@@ -419,7 +456,7 @@ const getUserStats = async (req, res) => {
         const volunteers = await User_1.default.countDocuments({ role: 'volunteer' });
         const citizens = await User_1.default.countDocuments({ role: { $in: ['user', 'citizen'] } });
         const admins = await User_1.default.countDocuments({ role: { $in: ['admin', 'ngo'] } });
-        const suspended = await User_1.default.countDocuments({ suspended: true });
+        const suspended = await User_1.default.countDocuments({ isSuspended: true });
         res.json({ total, volunteers, regularUsers: citizens, admins, suspended });
     }
     catch (err) {
@@ -574,6 +611,14 @@ const googleLogin = async (req, res) => {
             user.profileImage = picture;
             await user.save();
         }
+        // Success login log
+        await LoginHistory_1.default.create({
+            userId: user.id,
+            email: user.email,
+            ipAddress: req.ip,
+            userAgent: req.headers['user-agent'],
+            status: 'Success'
+        });
         // Generate platform JWT
         const jwtPayload = {
             user: {

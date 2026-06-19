@@ -419,7 +419,9 @@ const completeOpportunity = async (req, res) => {
         }
         // Notify NGO
         if (opportunity.ngo_id) {
-            await (0, notificationService_1.createNotification)(opportunity.ngo_id.toString(), 'Project Completed', `Volunteer ${req.user['name']} has marked the project "${opportunity.title}" as completed.`, 'success');
+            const volunteer = await User_1.default.findById(req.user.id);
+            const volunteerName = volunteer ? volunteer.name : 'A volunteer';
+            await (0, notificationService_1.createNotification)(opportunity.ngo_id.toString(), 'Project Completed', `Volunteer ${volunteerName} has marked the project "${opportunity.title}" as completed.`, 'success');
         }
         res.status(200).json({ message: 'Opportunity marked as completed', opportunity });
     }
