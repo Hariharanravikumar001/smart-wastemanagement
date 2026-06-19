@@ -427,10 +427,12 @@ export const completeOpportunity = async (req: AuthRequest, res: Response): Prom
 
         // Notify NGO
         if (opportunity.ngo_id) {
+            const volunteer = await User.findById(req.user!.id);
+            const volunteerName = volunteer ? volunteer.name : 'A volunteer';
             await createNotification(
                 opportunity.ngo_id.toString(),
                 'Project Completed',
-                `Volunteer ${req.user!['name']} has marked the project "${opportunity.title}" as completed.`,
+                `Volunteer ${volunteerName} has marked the project "${opportunity.title}" as completed.`,
                 'success'
             );
         }

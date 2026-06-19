@@ -462,7 +462,7 @@ export const getUserStats = async (req: AuthRequest, res: Response): Promise<voi
         const volunteers = await User.countDocuments({ role: 'volunteer' });
         const citizens = await User.countDocuments({ role: { $in: ['user', 'citizen'] } });
         const admins = await User.countDocuments({ role: { $in: ['admin', 'ngo'] } });
-        const suspended = await User.countDocuments({ suspended: true });
+        const suspended = await User.countDocuments({ isSuspended: true });
 
         res.json({ total, volunteers, regularUsers: citizens, admins, suspended });
     } catch (err: any) {

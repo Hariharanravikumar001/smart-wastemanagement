@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Feedback from '../models/Feedback';
 import Sentiment from 'sentiment';
 import https from 'https';
+import User from '../models/User';
 
 const sentiment = new Sentiment();
 
@@ -59,8 +60,10 @@ export const submitFeedback = async (req: Request, res: Response) => {
   try {
     const { content } = req.body;
     const userId = (req as any).user.id;
-    const userName = (req as any).user.name;
     const role = (req as any).user.role;
+
+    const user = await User.findById(userId);
+    const userName = user ? user.name : 'Anonymous';
 
     if (!content) {
       return res.status(400).json({ message: 'Content is required' });

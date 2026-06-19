@@ -9,7 +9,7 @@ export const optimizeRoute = async (req: Request, res: Response): Promise<void> 
     // Fetch all accepted pickups for this volunteer
     const pickups = await WasteRequest.find({
       volunteerId,
-      status: { $in: ['accepted', 'in_progress'] }
+      status: { $in: ['Scheduled', 'In Progress'] }
     });
 
     if (!pickups || pickups.length === 0) {
